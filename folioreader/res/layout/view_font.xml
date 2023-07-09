@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:layout_gravity="bottom">
+    tools:layout_gravity="bottom"
+    android:background="#ffffff"
+    >
 
     <LinearLayout
         android:id="@+id/ll_light"

@@ -120,8 +120,8 @@ dependencies {
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
 
-    implementation 'androidx.room:room-runtime:2.0.0'
-    kapt "androidx.room:room-compiler:2.0.0"
+//    implementation 'androidx.room:room-runtime:2.0.0'
+//    kapt "androidx.room:room-compiler:2.0.0"
 
 }
 apply from: '../folioreader/bintray/bintrayv1.gradle'

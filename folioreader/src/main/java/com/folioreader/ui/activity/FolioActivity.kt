@@ -28,11 +28,7 @@ import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
-import android.os.Handler
-import android.os.Parcelable
+import android.os.*
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
@@ -47,6 +43,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.folioreader.Config
@@ -66,19 +63,13 @@ import com.folioreader.model.sqlite.BookmarkTable
 import com.folioreader.model.sqlite.BooksTable
 import com.folioreader.ui.adapter.FolioPageFragmentAdapter
 import com.folioreader.ui.adapter.SearchAdapter
-import com.folioreader.ui.fragment.FolioPageFragment
-import com.folioreader.ui.fragment.MediaControllerFragment
-import com.folioreader.ui.fragment.TableOfContentFragment
+import com.folioreader.ui.fragment.*
 import com.folioreader.ui.view.ConfigBottomSheetDialogFragment
 import com.folioreader.ui.view.DirectionalViewpager
 import com.folioreader.ui.view.FolioAppBarLayout
 import com.folioreader.ui.view.MediaControllerCallback
-import com.folioreader.util.AppUtil
+import com.folioreader.util.*
 import com.folioreader.util.AppUtil.Companion.getSavedConfig
-import com.folioreader.util.FileUtil
-import com.folioreader.util.OnHighlightListener
-import com.folioreader.util.ReadLocatorListener
-import com.folioreader.util.UiUtil
 import com.folioreader.viewmodels.PageTrackerViewModel
 import com.folioreader.viewmodels.PageTrackerViewModelFactory
 import org.greenrobot.eventbus.EventBus
@@ -333,7 +324,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
         mEpubSourceType = EpubSourceType.SD_CARD
         if(mEpubFilePath== null){
-            mEpubFilePath = path;
+            mEpubFilePath = path
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 //        initActionBar()
@@ -412,11 +403,18 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         //亮度、背景
         iv_light?.setOnClickListener {
-            showConfigBottomSheetDialogFragment()
+            val ft: FragmentTransaction =
+                supportFragmentManager.beginTransaction()
+            ft.replace(R.id.fl_main, LightFragment())
+            ft.commit()
         }
         //字体
         iv_font?.setOnClickListener {
-            showConfigBottomSheetDialogFragment()
+            val ft: FragmentTransaction =
+                supportFragmentManager.beginTransaction()
+            ft.replace(R.id.fl_main, FontFragment())
+            ft.commit()
+//            showConfigBottomSheetDialogFragment()
         }
     }
 

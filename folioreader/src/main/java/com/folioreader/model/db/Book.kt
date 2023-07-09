@@ -8,9 +8,9 @@ package com.folioreader.model.db
 
 import android.net.Uri
 import android.os.Build
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+//import androidx.room.ColumnInfo
+//import androidx.room.Entity
+//import androidx.room.PrimaryKey
 import java.net.URI
 import java.nio.file.Paths
 
