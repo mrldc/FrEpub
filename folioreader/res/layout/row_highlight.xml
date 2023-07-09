@@ -54,7 +54,7 @@
             android:layout_marginEnd="16dp"
             android:src="@mipmap/ic_highline_item" />
 
-        <TextView
+      <!--  <TextView
             android:id="@+id/tv_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,14 +65,14 @@
             android:background="@drawable/shape_4_solid_f8f8f8_bg"
             android:textSize="16sp"
             android:textColor="#999999"
-            android:text="P23" />
+            android:text="P23" />-->
 
         <com.folioreader.ui.view.UnderlinedTextView
             android:id="@+id/utv_highlight_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_toEndOf="@+id/tv_left"
+            android:layout_toEndOf="@+id/iv_item"
             android:layout_centerVertical="true"
             android:ellipsize="end"
             android:maxLines="3"

@@ -23,6 +23,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Rect
@@ -144,6 +145,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var iv_font: ImageView? = null
     private var rl_top: RelativeLayout? = null
     private var rl_bottom: LinearLayout? = null
+    private var rl_edit: LinearLayout? = null
     //阅读记录
     private var readBook: Book?  =null
 
@@ -297,6 +299,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         folioReader!!.setConfig(config, true)
 
         handler = Handler()
+
         val display = windowManager.defaultDisplay
         displayMetrics = resources.displayMetrics
         display.getRealMetrics(displayMetrics)
@@ -372,6 +375,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         iv_font = findViewById(R.id.iv_font)
         rl_top = findViewById(R.id.rl_top)
         rl_bottom = findViewById(R.id.rl_bottom)
+        rl_edit = findViewById(R.id.rl_edit)
         //返回
         ivBack?.setOnClickListener {
             topActivity = true
@@ -395,11 +399,17 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         //目录
         iv_directory?.setOnClickListener {
+
             goToTableOfCOntentActivity()
+            flMain!!.visibility = View.VISIBLE
+            rl_edit!!.visibility = View.GONE
         }
         //笔记页面
         iv_write?.setOnClickListener {
-            startContentHighlightActivity()
+           // startContentHighlightActivity()
+            gaToHighlightFragment()
+            flMain!!.visibility = View.VISIBLE
+            rl_edit!!.visibility = View.GONE
         }
         //亮度、背景
         iv_light?.setOnClickListener {
@@ -407,6 +417,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 supportFragmentManager.beginTransaction()
             ft.replace(R.id.fl_main, LightFragment())
             ft.commit()
+            flMain!!.visibility = View.VISIBLE
+            rl_edit!!.visibility = View.GONE
         }
         //字体
         iv_font?.setOnClickListener {
@@ -414,6 +426,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 supportFragmentManager.beginTransaction()
             ft.replace(R.id.fl_main, FontFragment())
             ft.commit()
+            flMain!!.visibility = View.VISIBLE
+            rl_edit!!.visibility = View.GONE
 //            showConfigBottomSheetDialogFragment()
         }
     }
@@ -560,7 +574,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         when (item.itemId) {
             android.R.id.home -> {
                 Log.v(LOG_TAG, "-> onOptionsItemSelected -> drawer")
-                startContentHighlightActivity()
+               // startContentHighlightActivity()
                 return true
             }
             R.id.itemBookmark -> {
@@ -655,36 +669,25 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         val tableOfContentFragment = TableOfContentFragment.newInstance(
             pubBox!!.publication,
-            intent.getStringExtra(CHAPTER_SELECTED),
-            intent.getStringExtra(BOOK_TITLE),readBook!!.cfi
+            spine!![currentChapterIndex].href,
+            readBook!!.title,
+            readBook!!.cfi
         )
         tableOfContentFragment.setActivityCallback(this);
         val ft =
             supportFragmentManager.beginTransaction()
         ft.replace(R.id.fl_main, tableOfContentFragment)
         ft.commit()
-//        startActivityForResult(intent, RequestCode.CONTENT_HIGHLIGHT.value)
-//        overridePendingTransition(R.anim.slide_in_left, R.anim.disappear)
-
-//        val intent = Intent(this@FolioActivity, TableOfContentActivity::class.java)
 //
-//        intent.putExtra(Constants.PUBLICATION, pubBox!!.publication)
-//        try {
-//            intent.putExtra(CHAPTER_SELECTED, spine!![currentChapterIndex].href)
-//        } catch (e: NullPointerException) {
-//            Log.w(LOG_TAG, "-> ", e)
-//            intent.putExtra(CHAPTER_SELECTED, "")
-//        } catch (e: IndexOutOfBoundsException) {
-//            Log.w(LOG_TAG, "-> ", e)
-//            intent.putExtra(CHAPTER_SELECTED, "")
-//        }
-//
-//        intent.putExtra(FolioReader.EXTRA_BOOK_ID, mBookId)
-//        intent.putExtra(BOOK_TITLE, bookFileName)
-//        startActivityForResult(intent, RequestCode.CONTENT_HIGHLIGHT.value)
-//        overridePendingTransition(R.anim.slide_in_left, R.anim.disappear)
     }
-
+    private fun gaToHighlightFragment(){
+        val bookId = mBookId
+        val bookTitle = bookFileName
+        val highlightFragment = HighlightFragment.newInstance(bookId, bookTitle)
+        val ft = supportFragmentManager.beginTransaction()
+        ft.replace(R.id.fl_main, highlightFragment)
+        ft.commit()
+    }
     /**
      * 修改为跳转笔记主页
      */
@@ -991,11 +994,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         distractionFreeMode = visibility != View.SYSTEM_UI_FLAG_VISIBLE
         Log.v(LOG_TAG, "-> distractionFreeMode = $distractionFreeMode")
         if (distractionFreeMode) {
-            rl_top!!.visibility == View.GONE
-            rl_bottom!!.visibility == View.GONE
+            rl_top!!.visibility = View.GONE
+            rl_bottom!!.visibility = View.GONE
+            rl_edit!!.visibility = View.GONE
+            flMain!!.visibility = View.GONE
         } else {
-            rl_top!!.visibility == View.VISIBLE
-            rl_bottom!!.visibility == View.VISIBLE
+            rl_top!!.visibility = View.VISIBLE
+            rl_bottom!!.visibility = View.VISIBLE
+            rl_edit!!.visibility = View.VISIBLE
         }
 
 //        if (actionBar != null) {
@@ -1085,9 +1091,11 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                     }, 1000)
 
                 }
+                flMain!!.visibility = View.GONE
                 return true
             }
         }
+
         return false
     }
 
@@ -1199,6 +1207,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 mediaControllerFragment!!.setPlayButtonDrawable()
                 currentChapterIndex = position
                 pageTrackerViewModel.setCurrentChapter(position + 1)
+
+
+                mFolioPageFragmentAdapter!!.fragments[position]!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK)
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -1432,8 +1443,10 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 }
             }else{
                  addReadRecord = BooksTable.updateBook(mBookId,readLocator.href,readLocator.locations.cfi,this)
+                 readBook!!.href = readLocator.href
+                 readBook!!.cfi = readLocator.locations.cfi
                 if(addReadRecord){
-                    Log.v(LOG_TAG,"添加阅读记录成功")
+                    Log.v(LOG_TAG,"更新阅读记录成功")
                 }
             }
 
@@ -1441,11 +1454,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     }
 
     override fun onFolioReaderClosed() {
-        TODO("Not yet implemented")
+        Log.v(LOG_TAG,"onFolioReaderClosed")
     }
 
     override fun onHighlight(highlight: HighLight?, type: HighLight.HighLightAction?) {
-        TODO("Not yet implemented")
+        Log.v(LOG_TAG,"onHighlight")
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+    }
 }

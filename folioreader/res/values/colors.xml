@@ -15,6 +15,7 @@
 
     <color name="gray_text">#B6B6B6</color>
     <color name="red">#ff0000</color>
+    <color name="redO">#ff6633</color>
     <color name="night_text_color">#767676</color>
     <color name="night_title_text_color">#848484</color>
     <color name="white">#FFFFFF</color>
@@ -28,5 +29,8 @@
     <color name="highlight_green">#C0ED72</color>
     <color name="highlight_blue">#ADD8FF</color>
     <color name="highlight_pink">#FFB0CA</color>
+    <color name="background"> #E3E0D5</color>
+
+
 
 </resources>

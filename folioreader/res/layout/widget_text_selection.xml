@@ -2,6 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
+    android:background="@android:color/transparent"
+
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
@@ -9,17 +11,20 @@
         android:layout_height="wrap_content"
         app:cardCornerRadius="2dp"
         app:cardElevation="5dp"
+        android:background="@android:color/transparent"
         app:cardUseCompatPadding="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="388dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?popUpWindowBackground">
+            android:background="@android:color/transparent"
+
+            >
 
             <LinearLayout
                 android:id="@+id/firstSectionLayout"
-                android:layout_width="388dp"
-                android:layout_height="120dp"
+                android:layout_width="420dp"
+                android:layout_height="100dp"
                 android:background="@drawable/shape_20_solid_cc000000_bg"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -39,7 +44,7 @@
                     android:textColor="@color/white" />
 
                 <TextView
-                    android:id="@+id/tv_delete_line"
+                    android:id="@+id/tv_dv_line"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -47,7 +52,7 @@
                     android:drawableTop="@mipmap/ic_selection_font1"
                     android:drawablePadding="6dp"
                     android:gravity="center"
-                    android:text="删除划线"
+                    android:text="划线"
                     android:textColor="@color/white" />
 
                 <TextView
@@ -76,12 +81,14 @@
                 android:id="@+id/highlightScrollView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/firstHorizontalDivider">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -101,13 +108,13 @@
                     <LinearLayout
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="5dp"
                         android:background="@drawable/shape_20_solid_cc000000_bg"
                         android:gravity="center"
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:id="@+id/iv_font_1"
+                            android:id="@+id/underlineHighlight2"
                             style="@style/ImageViewTextSelectorMarker"
                             app:srcCompat="@mipmap/ic_selection_font1" />
                     </LinearLayout>
@@ -115,13 +122,13 @@
                     <LinearLayout
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="5dp"
                         android:background="@drawable/shape_20_solid_cc000000_bg"
                         android:gravity="center"
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:id="@+id/iv_font_2"
+                            android:id="@+id/UnderlineDotted2"
                             style="@style/ImageViewTextSelectorMarker"
                             app:srcCompat="@mipmap/ic_selection_font2" />
                     </LinearLayout>
@@ -129,7 +136,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="60dp"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="5dp"
                         android:background="@drawable/shape_20_solid_cc000000_bg"
                         android:gravity="center"
                         android:orientation="horizontal">
@@ -137,27 +144,27 @@
                         <ImageView
                             android:id="@+id/iv_right_white"
                             style="@style/ImageViewTextSelectorMarker"
-                            android:layout_marginStart="20dp"
+                            android:layout_marginStart="7dp"
                             android:background="@drawable/shape_10_solid_dd4f0f_bg"
                             app:srcCompat="@mipmap/ic_selection_right_white" />
 
                         <ImageView
                             android:id="@+id/iv_green"
                             style="@style/ImageViewTextSelectorMarker"
-                            android:layout_marginStart="10dp"
+                            android:layout_marginStart="5dp"
                             android:background="@drawable/shape_10_solid_6dd53c_bg" />
 
                         <ImageView
                             android:id="@+id/iv_blue"
                             style="@style/ImageViewTextSelectorMarker"
-                            android:layout_marginStart="10dp"
+                            android:layout_marginStart="5dp"
                             android:background="@drawable/shape_10_solid_3ca4de_bg" />
 
                         <ImageView
                             android:id="@+id/iv_pink"
                             style="@style/ImageViewTextSelectorMarker"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginEnd="20dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="7dp"
                             android:background="@drawable/shape_10_solid_da50ce_bg" />
                     </LinearLayout>
                 </LinearLayout>

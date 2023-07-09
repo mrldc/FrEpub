@@ -3,6 +3,7 @@ package com.folioreader.ui.fragment
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.net.Uri
@@ -24,6 +25,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE
 import com.folioreader.Config
 import com.folioreader.FolioReader
 import com.folioreader.R
@@ -69,6 +71,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
     companion object {
 
+        var lock ="lock"
         @JvmField
         val LOG_TAG: String = FolioPageFragment::class.java.simpleName
 
@@ -95,6 +98,10 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             args.putSerializable(BUNDLE_SPINE_ITEM, spineRef)
             fragment.arguments = args
             return fragment
+        }
+
+        private fun FolioPageFragment() {
+
         }
     }
 
@@ -393,6 +400,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             override fun onPageSelected(position: Int) {
                 pageViewModel.setCurrentPage(position + 1)
                 Log.v(LOG_TAG, "-> onPageSelected -> $position")
+
                 //获取当前页位置，判断是否有标签
                 currentPageHasBookmark = false
                 getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK)
@@ -400,7 +408,13 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             }
 
             override fun onPageScrollStateChanged(state: Int) {
+                Log.v(LOG_TAG, "-> onPageScrollStateChanged -> $state")
+                if(state == SCROLL_STATE_IDLE){
+
+
+                }
                 // pageViewModel.setCurrentPage(webViewPager.currentItem + 1)
+
             }
         })
 
@@ -540,6 +554,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                     loadingView!!.hide()
                 }
             }
+
         }
 
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
@@ -1005,5 +1020,14 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     fun emitPageDetails() {
         Log.d("MYTAG", "webPageAdapter: ")
 //        return null;
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.v(LOG_TAG,"onConfigurationChanged")
+        mWebview!!.loadUrl( String.format(
+            "javascript:initHorizontalDirection('%s')",
+            2
+        ))
     }
 }

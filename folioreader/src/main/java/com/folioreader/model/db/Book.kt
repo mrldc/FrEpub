@@ -22,7 +22,7 @@ data class Book(
    // @ColumnInfo(name = CREATION_DATE, defaultValue = "CURRENT_TIMESTAMP")
     val creationDate: String? = null,
    // @ColumnInfo(name = HREF)
-    val href: String,
+    var href: String,
    // @ColumnInfo(name = TITLE)
     val title: String,
    // @ColumnInfo(name = AUTHOR)
@@ -33,7 +33,7 @@ data class Book(
     val progression: String? = null,
    // @ColumnInfo(name = TYPE)
     val type: String,
-    var cfi: String
+    var cfi: String?
 ) {
 
     val fileName: String?

@@ -38,6 +38,15 @@ import com.folioreader.util.HighlightUtil
 import com.folioreader.util.UiUtil
 import dalvik.system.PathClassLoader
 import kotlinx.android.synthetic.main.text_selection.view.*
+import kotlinx.android.synthetic.main.widget_text_selection.view.UnderlineDotted2
+import kotlinx.android.synthetic.main.widget_text_selection.view.iv_blue
+import kotlinx.android.synthetic.main.widget_text_selection.view.iv_green
+import kotlinx.android.synthetic.main.widget_text_selection.view.iv_pink
+import kotlinx.android.synthetic.main.widget_text_selection.view.iv_right_white
+import kotlinx.android.synthetic.main.widget_text_selection.view.tv_copy
+import kotlinx.android.synthetic.main.widget_text_selection.view.tv_dv_line
+import kotlinx.android.synthetic.main.widget_text_selection.view.tv_write
+import kotlinx.android.synthetic.main.widget_text_selection.view.underlineHighlight2
 import org.json.JSONObject
 import org.springframework.util.ReflectionUtils
 import java.lang.ref.WeakReference
@@ -297,46 +306,54 @@ class FolioWebView : WebView {
             ContextThemeWrapper(context, R.style.FolioDayTheme)
         }
         Log.i(LOG_TAG, config.toString())
-        viewTextSelection = LayoutInflater.from(ctw).inflate(R.layout.text_selection, null)
+        viewTextSelection = LayoutInflater.from(ctw).inflate(R.layout.widget_text_selection, null)
         viewTextSelection.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
-        viewTextSelection.yellowHighlight.setOnClickListener {
+        viewTextSelection.iv_pink.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> yellowHighlight")
             onHighlightColorItemsClicked(HighlightStyle.Yellow, false)
         }
-        viewTextSelection.greenHighlight.setOnClickListener {
+        viewTextSelection.iv_green.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> greenHighlight")
             onHighlightColorItemsClicked(HighlightStyle.Green, false)
         }
-        viewTextSelection.blueHighlight.setOnClickListener {
+        viewTextSelection.iv_blue.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> blueHighlight")
             onHighlightColorItemsClicked(HighlightStyle.Blue, false)
         }
-        viewTextSelection.pinkHighlight.setOnClickListener {
+        viewTextSelection.iv_right_white.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> pinkHighlight")
             onHighlightColorItemsClicked(HighlightStyle.Pink, false)
         }
-        viewTextSelection.underlineHighlight.setOnClickListener {
+      /*  viewTextSelection.underlineHighlight.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> underlineHighlight")
             onHighlightColorItemsClicked(HighlightStyle.UnderlineDotted, false)
+        }*/
+        //下划线
+        viewTextSelection.underlineHighlight2.setOnClickListener {
+            Log.v(LOG_TAG, "-> onClick -> underlineHighlight")
+            onHighlightColorItemsClicked(HighlightStyle.Underline, false)
         }
-
-        viewTextSelection.deleteHighlight.setOnClickListener {
+        viewTextSelection.UnderlineDotted2.setOnClickListener {
+            Log.v(LOG_TAG, "-> onClick -> UnderlineDotted")
+            onHighlightColorItemsClicked(HighlightStyle.UnderlineDotted, false)
+        }
+       /* viewTextSelection.deleteHighlight.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> deleteHighlight")
             dismissPopupWindow()
           //  loadUrl("javascript:clearSelection()")
             loadUrl("javascript:deleteThisHighlight()")
-        }
+        }*/
 
-        viewTextSelection.copySelection.setOnClickListener {
+        viewTextSelection.tv_copy.setOnClickListener {
             dismissPopupWindow()
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
         }
-        viewTextSelection.shareSelection.setOnClickListener {
+        viewTextSelection.tv_dv_line.setOnClickListener {
             dismissPopupWindow()
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
         }
-        viewTextSelection.defineSelection.setOnClickListener {
+        viewTextSelection.tv_write.setOnClickListener {
             dismissPopupWindow()
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
         }
@@ -348,7 +365,7 @@ class FolioWebView : WebView {
         uiHandler.post { loadUrl("javascript:clearSelection()") }
 
         when (id) {
-            R.id.copySelection -> {
+            R.id.tv_copy -> {
                 Log.v(LOG_TAG, "-> onTextSelectionItemClicked -> copySelection -> $selectedText")
                 UiUtil.copyToClipboard(context, selectedText)
                 Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT)
@@ -358,7 +375,7 @@ class FolioWebView : WebView {
                 Log.v(LOG_TAG, "-> onTextSelectionItemClicked -> shareSelection -> $selectedText")
                 UiUtil.share(context, selectedText)
             }
-            R.id.defineSelection -> {
+            R.id.tv_write -> {
                 Log.v(LOG_TAG, "-> onTextSelectionItemClicked -> defineSelection -> $selectedText")
                 uiHandler.post { showDictDialog(selectedText) }
             }
