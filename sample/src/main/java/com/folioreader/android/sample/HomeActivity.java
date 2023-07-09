@@ -56,7 +56,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity
-        implements OnHighlightListener, ReadLocatorListener, FolioReader.OnClosedListener {
+        implements OnHighlightListener,ReadLocatorListener, FolioReader.OnClosedListener {
 
     private static final String LOG_TAG = HomeActivity.class.getSimpleName();
     private FolioReader folioReader;
@@ -149,7 +149,7 @@ public class HomeActivity extends AppCompatActivity
         return ReadLocator.fromJson(jsonString);
     }
 
-    @Override
+    //@Override
     public void saveReadLocator(ReadLocator readLocator, String mBookId, String markType) {
         Log.i(LOG_TAG, "-> saveReadLocator -> " + readLocator.toJson()+" markType:"+markType);
         //收到获取阅读位置信息

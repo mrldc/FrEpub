@@ -3,6 +3,7 @@ apply from: '../config/quality/quality.gradle'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: "org.jetbrains.kotlin.kapt"
 
 ext {
     bintrayRepo = 'maven'
@@ -90,7 +91,7 @@ dependencies {
     implementation 'com.daimajia.swipelayout:library:1.2.0@aar'
 
     //Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin_stdlib"
 
     implementation 'org.greenrobot:eventbus:3.1.1'
 
@@ -118,5 +119,9 @@ dependencies {
 
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
+
+    implementation 'androidx.room:room-runtime:2.0.0'
+    kapt "androidx.room:room-compiler:2.0.0"
+
 }
 apply from: '../folioreader/bintray/bintrayv1.gradle'

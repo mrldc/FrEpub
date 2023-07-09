@@ -30,6 +30,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Parcelable
 import android.text.TextUtils
@@ -52,12 +53,17 @@ import com.folioreader.Config
 import com.folioreader.Constants
 import com.folioreader.Constants.*
 import com.folioreader.FolioReader
+import com.folioreader.FolioReader.OnClosedListener
 import com.folioreader.R
 import com.folioreader.model.DisplayUnit
+import com.folioreader.model.HighLight
 import com.folioreader.model.HighlightImpl
+import com.folioreader.model.db.Book
 import com.folioreader.model.event.MediaOverlayPlayPauseEvent
 import com.folioreader.model.locators.ReadLocator
 import com.folioreader.model.locators.SearchLocator
+import com.folioreader.model.sqlite.BookmarkTable
+import com.folioreader.model.sqlite.BooksTable
 import com.folioreader.ui.adapter.FolioPageFragmentAdapter
 import com.folioreader.ui.adapter.SearchAdapter
 import com.folioreader.ui.fragment.FolioPageFragment
@@ -68,7 +74,10 @@ import com.folioreader.ui.view.DirectionalViewpager
 import com.folioreader.ui.view.FolioAppBarLayout
 import com.folioreader.ui.view.MediaControllerCallback
 import com.folioreader.util.AppUtil
+import com.folioreader.util.AppUtil.Companion.getSavedConfig
 import com.folioreader.util.FileUtil
+import com.folioreader.util.OnHighlightListener
+import com.folioreader.util.ReadLocatorListener
 import com.folioreader.util.UiUtil
 import com.folioreader.viewmodels.PageTrackerViewModel
 import com.folioreader.viewmodels.PageTrackerViewModelFactory
@@ -80,10 +89,12 @@ import org.readium.r2.streamer.parser.EpubParser
 import org.readium.r2.streamer.parser.PubBox
 import org.readium.r2.streamer.server.Server
 import java.lang.ref.WeakReference
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.ceil
 
 class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControllerCallback,
+    OnHighlightListener, ReadLocatorListener, OnClosedListener,
     View.OnSystemUiVisibilityChangeListener {
     private var bookFileName: String? = null
 
@@ -100,7 +111,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var entryReadLocator: ReadLocator? = null
     private var lastReadLocator: ReadLocator? = null
     private var bookmarkReadLocator: ReadLocator? = null
-
+    private var folioReader: FolioReader? = null
     private var outState: Bundle? = null
     private var savedInstanceState: Bundle? = null
 
@@ -108,6 +119,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var pubBox: PubBox? = null
     private var spine: List<Link>? = null
 
+    private var config: Config? = null
     private var mBookId: String? = null
     private var mEpubFilePath: String? = null
     private var mEpubSourceType: EpubSourceType? = null
@@ -121,6 +133,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var searchAdapterDataBundle: Bundle? = null
     private var searchQuery: CharSequence? = null
     private var searchLocator: SearchLocator? = null
+
+
 
     private var displayMetrics: DisplayMetrics? = null
     private var density: Float = 0.toFloat()
@@ -139,6 +153,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var iv_font: ImageView? = null
     private var rl_top: RelativeLayout? = null
     private var rl_bottom: LinearLayout? = null
+    //阅读记录
+    private var readBook: Book?  =null
 
     // page count
     private lateinit var pageTrackerViewModel: PageTrackerViewModel
@@ -255,6 +271,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             // FolioActivity is topActivity, so need to broadcast ReadLocator.
             finish()
         }
+        //当有阅读记录时，跳转
+        if(readBook != null){
+            goToChapter(readBook!!.href,readBook!!.cfi)
+
+        }
+
     }
 
     override fun onStop() {
@@ -265,9 +287,23 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        folioReader = FolioReader.get()
+            .setOnHighlightListener(this)
+            .setReadLocatorListener(this)
+            .setOnClosedListener(this)
         // Need to add when vector drawables support library is used.
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+        //配置阅读器
+         config = getSavedConfig(applicationContext)
+        if (config == null) config = Config()
+        config!!.allowedDirection = Config.AllowedDirection.ONLY_HORIZONTAL
+        config!!.isShowTextSelection = true
+        /*folioReader.setConfig(config, true)
+                        .openBook(R.raw.four);*/
+        val path: String = applicationContext.getExternalFilesDir(
+            Environment.DIRECTORY_DOCUMENTS
+        ).toString() + "/10005.epub"
+        folioReader!!.setConfig(config, true)
 
         handler = Handler()
         val display = windowManager.defaultDisplay
@@ -295,11 +331,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
 
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
-        mEpubSourceType = intent.extras!!.getSerializable(INTENT_EPUB_SOURCE_TYPE) as EpubSourceType
-        if (mEpubSourceType == EpubSourceType.RAW) {
-            mEpubRawId = intent.extras!!.getInt(INTENT_EPUB_SOURCE_PATH)
-        } else {
-            mEpubFilePath = intent.extras!!.getString(INTENT_EPUB_SOURCE_PATH)
+        mEpubSourceType = EpubSourceType.SD_CARD
+        if(mEpubFilePath== null){
+            mEpubFilePath = path;
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 //        initActionBar()
@@ -430,19 +464,19 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         toolbar!!.setTitleTextColor(ContextCompat.getColor(this, R.color.black))
 
-        val config = AppUtil.getSavedConfig(applicationContext)!!
+        config = AppUtil.getSavedConfig(applicationContext)!!
 
         // Update drawer color
         val newNavIcon = toolbar!!.navigationIcon
-        UiUtil.setColorIntToDrawable(config.themeColor, newNavIcon)
+        UiUtil.setColorIntToDrawable(config!!.themeColor, newNavIcon)
         toolbar!!.navigationIcon = newNavIcon
 
         // Update toolbar colors
         createdMenu?.let { m ->
-            UiUtil.setColorIntToDrawable(config.themeColor, m.findItem(R.id.itemBookmark).icon)
-            UiUtil.setColorIntToDrawable(config.themeColor, m.findItem(R.id.itemSearch).icon)
-            UiUtil.setColorIntToDrawable(config.themeColor, m.findItem(R.id.itemConfig).icon)
-            UiUtil.setColorIntToDrawable(config.themeColor, m.findItem(R.id.itemTts).icon)
+            UiUtil.setColorIntToDrawable(config!!.themeColor, m.findItem(R.id.itemBookmark).icon)
+            UiUtil.setColorIntToDrawable(config!!.themeColor, m.findItem(R.id.itemSearch).icon)
+            UiUtil.setColorIntToDrawable(config!!.themeColor, m.findItem(R.id.itemConfig).icon)
+            UiUtil.setColorIntToDrawable(config!!.themeColor, m.findItem(R.id.itemTts).icon)
         }
 
         toolbar?.getOverflowIcon()?.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
@@ -458,19 +492,19 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         toolbar!!.setTitleTextColor(ContextCompat.getColor(this, R.color.night_title_text_color))
 
-        val config = AppUtil.getSavedConfig(applicationContext)!!
+        config = AppUtil.getSavedConfig(applicationContext)!!
 
         // Update drawer color
         val newNavIcon = toolbar!!.navigationIcon
-        UiUtil.setColorIntToDrawable(config.nightThemeColor, newNavIcon)
+        UiUtil.setColorIntToDrawable(config!!.nightThemeColor, newNavIcon)
         toolbar!!.navigationIcon = newNavIcon
 
         // Update toolbar colors
         createdMenu?.let { m ->
-            UiUtil.setColorIntToDrawable(config.nightThemeColor, m.findItem(R.id.itemBookmark).icon)
-            UiUtil.setColorIntToDrawable(config.nightThemeColor, m.findItem(R.id.itemSearch).icon)
-            UiUtil.setColorIntToDrawable(config.nightThemeColor, m.findItem(R.id.itemConfig).icon)
-            UiUtil.setColorIntToDrawable(config.nightThemeColor, m.findItem(R.id.itemTts).icon)
+            UiUtil.setColorIntToDrawable(config!!.nightThemeColor, m.findItem(R.id.itemBookmark).icon)
+            UiUtil.setColorIntToDrawable(config!!.nightThemeColor, m.findItem(R.id.itemSearch).icon)
+            UiUtil.setColorIntToDrawable(config!!.nightThemeColor, m.findItem(R.id.itemConfig).icon)
+            UiUtil.setColorIntToDrawable(config!!.nightThemeColor, m.findItem(R.id.itemTts).icon)
         }
 
         toolbar?.getOverflowIcon()?.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
@@ -621,14 +655,15 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     private fun goToTableOfCOntentActivity() {
 
-        val contentFrameLayout = TableOfContentFragment.newInstance(
+        val tableOfContentFragment = TableOfContentFragment.newInstance(
             pubBox!!.publication,
             intent.getStringExtra(CHAPTER_SELECTED),
-            intent.getStringExtra(BOOK_TITLE)
+            intent.getStringExtra(BOOK_TITLE),readBook!!.cfi
         )
+        tableOfContentFragment.setActivityCallback(this);
         val ft =
             supportFragmentManager.beginTransaction()
-        ft.replace(R.id.fl_main, contentFrameLayout)
+        ft.replace(R.id.fl_main, tableOfContentFragment)
         ft.commit()
 //        startActivityForResult(intent, RequestCode.CONTENT_HIGHLIGHT.value)
 //        overridePendingTransition(R.anim.slide_in_left, R.anim.disappear)
@@ -674,8 +709,17 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         intent.putExtra(FolioReader.EXTRA_BOOK_ID, mBookId)
         intent.putExtra(BOOK_TITLE, bookFileName)
 
-        startActivityForResult(intent, RequestCode.CONTENT_HIGHLIGHT.value)
+       startActivityForResult(intent, RequestCode.CONTENT_HIGHLIGHT.value)
         overridePendingTransition(R.anim.slide_in_left, R.anim.disappear)
+
+        /* val contentFrameLayout = TableOfContentFragment.newInstance(
+            pubBox!!.publication,
+            spine!![currentChapterIndex].href,
+            bookFileName
+        )
+        val ft = supportFragmentManager.beginTransaction()
+        ft.replace(R.id.parent, contentFrameLayout)
+        ft.commit()*/
     }
 
     private fun showConfigBottomSheetDialogFragment() {
@@ -735,7 +779,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             }
         }
 
-        portNumber = intent.getIntExtra(FolioReader.EXTRA_PORT_NUMBER, DEFAULT_PORT_NUMBER)
+
+        portNumber = folioReader!!.portNumber
         portNumber = AppUtil.getAvailablePortNumber(portNumber)
 
         r2StreamerServer = Server(portNumber)
@@ -766,6 +811,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 }
             }
         }
+        //获取当前阅读记录
+        readBook = BooksTable.getBookByBooKId(mBookId,this)
+
 
         // searchUri currently not in use as it's uri is constructed through Retrofit,
         // code kept just in case if required in future.
@@ -843,7 +891,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         var topDistraction = 0
         if (!distractionFreeMode) {
-            topDistraction = statusBarHeight
+            //topDistraction = statusBarHeight
             if (actionBar != null) topDistraction += actionBar!!.height
         }
 
@@ -869,7 +917,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     override fun getBottomDistraction(unit: DisplayUnit): Int {
 
         var bottomDistraction = 0
-        if (!distractionFreeMode) bottomDistraction = appBarLayout!!.navigationBarHeight
+        if (!distractionFreeMode) bottomDistraction = rl_bottom!!.height
 
         return when (unit) {
             DisplayUnit.PX -> bottomDistraction
@@ -893,14 +941,17 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private fun computeViewportRect(): Rect {
         //Log.v(LOG_TAG, "-> computeViewportRect");
 
-        val viewportRect = Rect(appBarLayout!!.insets)
+        val viewportRect = Rect()
+        rl_bottom!!.getGlobalVisibleRect(viewportRect)
+
         if (distractionFreeMode) viewportRect.left = 0
         viewportRect.top = getTopDistraction(DisplayUnit.PX)
-        if (distractionFreeMode) {
+        viewportRect.right = displayMetrics!!.widthPixels
+       /* if (distractionFreeMode) {
             viewportRect.right = displayMetrics!!.widthPixels
         } else {
             viewportRect.right = displayMetrics!!.widthPixels - viewportRect.right
-        }
+        }*/
         viewportRect.bottom = displayMetrics!!.heightPixels - getBottomDistraction(DisplayUnit.PX)
 
         return viewportRect
@@ -1018,14 +1069,24 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
      * @return true if href is of EPUB or false if other link
      */
     override fun goToChapter(href: String): Boolean {
-
+        return goToChapter(href,null)
+    }
+    override fun goToChapter(href: String?, cfi: String?): Boolean {
+        Log.v(LOG_TAG,"goToChapter->href:"+href+" cfi:"+cfi)
         for (link in spine!!) {
-            if (href.contains(link.href!!)) {
+            if (href!!.contains(link.href!!)) {
                 currentChapterIndex = spine!!.indexOf(link)
                 mFolioPageViewPager!!.currentItem = currentChapterIndex
                 val folioPageFragment = currentFragment
                 folioPageFragment!!.scrollToFirst()
-                folioPageFragment.scrollToAnchorId(href)
+                folioPageFragment.scrollToAnchorId(href!!)
+                if(cfi != null){
+                    val handlerTime = Handler()
+                    handlerTime.postDelayed({
+                        folioPageFragment!!.scrollToCFI(cfi)
+                    }, 1000)
+
+                }
                 return true
             }
         }
@@ -1063,7 +1124,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
             when (data.getStringExtra(TYPE)) {
                 CHAPTER_SELECTED -> {
-                    goToChapter(data.getStringExtra(SELECTED_CHAPTER_POSITION)!!)
+                    goToChapter(data.getStringExtra(SELECTED_CHAPTER_POSITION)!!,data.getStringExtra(CFI)!!)
 
                 }
                 HIGHLIGHT_SELECTED -> {
@@ -1194,7 +1255,11 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 lastReadLocator = readLocator
             }
             currentChapterIndex = getChapterIndex(readLocator)
+            if(currentChapterIndex == 0 && readBook != null){
+                currentChapterIndex = getChapterIndex(HREF, readBook!!.href)
+            }
             mFolioPageViewPager!!.currentItem = currentChapterIndex
+
         }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -1248,8 +1313,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private fun setConfig(savedInstanceState: Bundle?) {
 
         var config: Config?
-        val intentConfig = intent.getParcelableExtra<Config>(Config.INTENT_CONFIG)
-        val overrideConfig = intent.getBooleanExtra(Config.EXTRA_OVERRIDE_CONFIG, false)
+        val intentConfig = this.config
+        val overrideConfig = folioReader!!.overrideConfig
         val savedConfig = AppUtil.getSavedConfig(this)
 
         config = if (savedInstanceState != null) {
@@ -1326,6 +1391,63 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 bundle?.putParcelable(FolioPageFragment.BUNDLE_SEARCH_LOCATOR, null)
             }
         }
+    }
+    //接收阅读位置信息
+    override fun saveReadLocator(readLocator: ReadLocator, mBookId: String?, markType: String) {
+        Log.i(
+            LOG_TAG,
+            "-> saveReadLocator -> " + readLocator.toJson() + " markType:" + markType
+        )
+        //收到获取阅读位置信息
+        val simpleDateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
+        val cfi = readLocator.href + readLocator.locations.cfi
+        if (FolioReader.EXTRA_BOOKMARK_ADD == markType) { //添加标签
+            val insertResult = BookmarkTable(this).insertBookmark(
+                mBookId,
+                simpleDateFormat.format(Date()),
+                readLocator.title,
+                readLocator.toJson().toString(),
+                cfi
+            )
+            if (insertResult) {
+                Toast.makeText(
+                    this, "已添加到书签", Toast.LENGTH_SHORT
+                ).show()
+            }
+        } else if (FolioReader.EXTRA_BOOKMARK_DELETE == markType) { //删除标签
+            val bookmarkId = BookmarkTable.getBookmarkIdByCfi(cfi, mBookId, this)
+            if (bookmarkId != -1) {
+                val deleteResult = BookmarkTable.deleteBookmarkById(bookmarkId, this)
+                if (deleteResult) {
+                    Toast.makeText(
+                        this, "已删除书签", Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }else if(FolioReader.ACTION_READ_MARK == markType){//阅读记录
+            var addReadRecord : Boolean
+            if(readBook == null){//没有阅读记录，新增
+                addReadRecord = BooksTable(this).insertBook(mBookId,readLocator.href,bookFileName,null,null, "1",readLocator.locations.cfi)
+                if(addReadRecord){
+                    Log.v(LOG_TAG,"新增阅读记录成功")
+                    readBook = BooksTable.getBookByBooKId(mBookId,this)
+                }
+            }else{
+                 addReadRecord = BooksTable.updateBook(mBookId,readLocator.href,readLocator.locations.cfi,this)
+                if(addReadRecord){
+                    Log.v(LOG_TAG,"添加阅读记录成功")
+                }
+            }
+
+        }
+    }
+
+    override fun onFolioReaderClosed() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onHighlight(highlight: HighLight?, type: HighLight.HighLightAction?) {
+        TODO("Not yet implemented")
     }
 
 }

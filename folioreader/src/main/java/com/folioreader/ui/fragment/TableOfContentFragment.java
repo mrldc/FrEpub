@@ -20,6 +20,7 @@ import com.folioreader.Config;
 import com.folioreader.R;
 import com.folioreader.event.MessageEvent;
 import com.folioreader.model.TOCLinkWrapper;
+import com.folioreader.ui.activity.FolioActivityCallback;
 import com.folioreader.ui.adapter.TOCAdapter;
 import com.folioreader.util.AppUtil;
 
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.folioreader.Constants.BOOK_TITLE;
+import static com.folioreader.Constants.CFI;
 import static com.folioreader.Constants.CHAPTER_SELECTED;
 import static com.folioreader.Constants.PUBLICATION;
 import static com.folioreader.Constants.SELECTED_CHAPTER_POSITION;
@@ -44,15 +46,21 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
     private Config mConfig;
     private String mBookTitle;
     private Publication publication;
+    private String cfi;
+    private FolioActivityCallback activityCallback;
 
     public static TableOfContentFragment newInstance(Publication publication,
-                                                     String selectedChapterHref, String bookTitle) {
+                                                     String selectedChapterHref, String bookTitle,String cfi) {
         TableOfContentFragment tableOfContentFragment = new TableOfContentFragment();
         Bundle args = new Bundle();
         args.putSerializable(PUBLICATION, publication);
         args.putString(SELECTED_CHAPTER_POSITION, selectedChapterHref);
         args.putString(BOOK_TITLE, bookTitle);
+        args.putString(CFI, cfi);
         tableOfContentFragment.setArguments(args);
+
+
+
         return tableOfContentFragment;
     }
 
@@ -90,6 +98,9 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
         });
         configRecyclerViews();
         initAdapter();
+        if (getActivity() instanceof FolioActivityCallback){
+
+        }
     }
 
     public void configRecyclerViews() {
@@ -148,7 +159,7 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
 
     public void onLoadTOC(ArrayList<TOCLinkWrapper> tocLinkWrapperList) {
         mTOCAdapter = new TOCAdapter(getActivity(), tocLinkWrapperList,
-                getArguments().getString(SELECTED_CHAPTER_POSITION), mConfig);
+                getArguments().getString(SELECTED_CHAPTER_POSITION), mConfig,getArguments().getString(CFI));
         mTOCAdapter.setCallback(this);
         mTableOfContentsRecyclerView.setAdapter(mTOCAdapter);
     }
@@ -162,12 +173,9 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
     @Override
     public void onTocClicked(int position) {
         TOCLinkWrapper tocLinkWrapper = (TOCLinkWrapper) mTOCAdapter.getItemAt(position);
-        Intent intent = new Intent();
-        intent.putExtra(SELECTED_CHAPTER_POSITION, tocLinkWrapper.getTocLink().getHref());
-        intent.putExtra(BOOK_TITLE, tocLinkWrapper.getTocLink().getTitle());
-        intent.putExtra(TYPE, CHAPTER_SELECTED);
-        getActivity().setResult(Activity.RESULT_OK, intent);
-        getActivity().finish();
+
+        activityCallback.goToChapter(tocLinkWrapper.getTocLink().getHref(),cfi);
+
     }
 
     @Override
@@ -176,5 +184,9 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
         if (tocLinkWrapper.getChildren() != null && tocLinkWrapper.getChildren().size() > 0) {
             mTOCAdapter.toggleGroup(position);
         }
+    }
+
+    public void setActivityCallback(FolioActivityCallback activityCallback) {
+        this.activityCallback = activityCallback;
     }
 }

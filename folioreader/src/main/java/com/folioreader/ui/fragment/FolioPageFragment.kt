@@ -395,7 +395,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                 Log.v(LOG_TAG, "-> onPageSelected -> $position")
                 //获取当前页位置，判断是否有标签
                 currentPageHasBookmark = false
-                getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK)
+                getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK)
 
             }
 
@@ -661,35 +661,45 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     }
 
     @JavascriptInterface
-    fun storeLastReadCfi(actionType: String,cfi: String,title: String) {
+    fun storeLastReadCfi(actionTypes: String,cfi: String,title: String) {
 
         synchronized(this) {
-            Log.v(LOG_TAG, "-> storeLastReadCfi -> actionType:$actionType cfi:$cfi title:$title");
+            Log.v(LOG_TAG, "-> storeLastReadCfi -> actionType:$actionTypes cfi:$cfi title:$title");
             var href = spineItem.href
             if (href == null) href = ""
             val created = Date().time
             val locations = Locations()
             locations.cfi = cfi
             lastReadLocator = ReadLocator(mBookId!!, href, created,title, locations,null)
+            var actionList = actionTypes!!.split("|")
             //书签操作
-            if(actionType == FolioReader.ACTION_BOOKMARK){
+            if(actionList.contains(FolioReader.ACTION_BOOKMARK)){
                 val intent = Intent(FolioReader.ACTION_SAVE_READ_LOCATOR)
                 intent.putExtra(FolioReader.EXTRA_READ_LOCATOR, lastReadLocator as Parcelable?)
                 if(currentPageHasBookmark){//删除书签
-                    intent.putExtra(FolioReader.EXTRA_BOOKMARK_TYPE, FolioReader.EXTRA_BOOKMARK_DELETE)
+                    intent.putExtra(FolioReader.ACTION_TYPE, FolioReader.EXTRA_BOOKMARK_DELETE)
                     currentPageHasBookmark = false
                 }else{//添加书签
-                    intent.putExtra(FolioReader.EXTRA_BOOKMARK_TYPE, FolioReader.EXTRA_BOOKMARK_ADD)
+                    intent.putExtra(FolioReader.ACTION_TYPE, FolioReader.EXTRA_BOOKMARK_ADD)
                     currentPageHasBookmark = true
                 }
                 intent.putExtra(FolioReader.EXTRA_BOOK_ID, mBookId)
                 LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
-            }else if(actionType == FolioReader.ACTION_CHECK_BOOKMARK){//检测是否有书签
+            }
+            if(actionList.contains(FolioReader.ACTION_CHECK_BOOKMARK)){//检测是否有书签
                 val bookmarkId = BookmarkTable.getBookmarkIdByCfi(href+cfi,mBookId,context!!)
                 Log.v(LOG_TAG,"check bookmark--->bookmarkId:$bookmarkId")
                 if(bookmarkId != -1){
                     currentPageHasBookmark = true
                 }
+            }
+            if(actionList.contains(FolioReader.ACTION_READ_MARK)){
+                //阅读记录
+                val intent = Intent(FolioReader.ACTION_SAVE_READ_LOCATOR)
+                intent.putExtra(FolioReader.EXTRA_READ_LOCATOR, lastReadLocator as Parcelable?)
+                intent.putExtra(FolioReader.ACTION_TYPE, FolioReader.ACTION_READ_MARK)
+                intent.putExtra(FolioReader.EXTRA_BOOK_ID, mBookId)
+                LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
             }
 
 

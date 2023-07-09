@@ -36,17 +36,9 @@ public class TableOfContentActivity extends AppCompatActivity {
         publication = (Publication) getIntent().getSerializableExtra(Constants.PUBLICATION);
         mConfig = AppUtil.getSavedConfig(this);
         EventBus.getDefault().register(this);
-        loadContentFragment();
     }
 
-    private void loadContentFragment() {
-        TableOfContentFragment contentFrameLayout = TableOfContentFragment.newInstance(publication,
-                getIntent().getStringExtra(Constants.CHAPTER_SELECTED),
-                getIntent().getStringExtra(Constants.BOOK_TITLE));
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.parent, contentFrameLayout);
-        ft.commit();
-    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent message) {

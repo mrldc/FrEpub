@@ -31,12 +31,14 @@ public class TOCAdapter extends MultiLevelExpIndListAdapter {
     private final Context mContext;
     private String selectedHref;
     private Config mConfig;
+    private String cfi;
 
-    public TOCAdapter(Context context, ArrayList<TOCLinkWrapper> tocLinkWrappers, String selectedHref, Config config) {
+    public TOCAdapter(Context context, ArrayList<TOCLinkWrapper> tocLinkWrappers, String selectedHref, Config config,String cfi) {
         super(tocLinkWrappers);
         mContext = context;
         this.selectedHref = selectedHref;
         this.mConfig = config;
+        this.cfi = cfi;
     }
 
     public void setCallback(TOCCallback callback) {

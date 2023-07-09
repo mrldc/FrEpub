@@ -6,6 +6,8 @@ import com.folioreader.Config;
 import com.folioreader.model.DisplayUnit;
 import com.folioreader.model.locators.ReadLocator;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.ref.WeakReference;
 
 public interface FolioActivityCallback {
@@ -14,6 +16,7 @@ public interface FolioActivityCallback {
 
     ReadLocator getEntryReadLocator();
 
+    boolean goToChapter(@Nullable String href, @Nullable String cfi);
     boolean goToChapter(String href);
 
     Config.Direction getDirection();

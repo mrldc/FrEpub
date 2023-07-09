@@ -9,6 +9,7 @@ public class Constants {
     public static final String PUBLICATION = "PUBLICATION";
     public static final String SELECTED_CHAPTER_POSITION = "selected_chapter_position";
     public static final String TYPE = "type";
+    public static final String CFI = "cfi";
     public static final String CHAPTER_SELECTED = "chapter_selected";
     public static final String HIGHLIGHT_SELECTED = "highlight_selected";
     public static final String BOOKMARK_SELECTED = "bookmark_selected";

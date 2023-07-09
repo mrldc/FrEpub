@@ -53,13 +53,15 @@ public class FolioReader {
     //书签操作
     public static final String ACTION_BOOKMARK = "com.folioreader.action.BOOKMARK";
     public static final String ACTION_CHECK_BOOKMARK = "com.folioreader.action.CHECK_BOOKMARK";
+    //记录阅读位置
+    public static final String ACTION_READ_MARK = "com.folioreader.action.READ_MARK";
     public static final String ACTION_TYPE = "com.folioreader.action.TYPE";
 
 
     private Context context;
-    private Config config;
-    private boolean overrideConfig;
-    private int portNumber = Constants.DEFAULT_PORT_NUMBER;
+    public Config config;
+    public boolean overrideConfig;
+    public int portNumber = Constants.DEFAULT_PORT_NUMBER;
     private OnHighlightListener onHighlightListener;
     private ReadLocatorListener readLocatorListener;
     private OnClosedListener onClosedListener;
@@ -99,7 +101,7 @@ public class FolioReader {
             ReadLocator readLocator =
                     (ReadLocator) intent.getSerializableExtra(FolioReader.EXTRA_READ_LOCATOR);
             String bookId = (String) intent.getSerializableExtra(FolioReader.EXTRA_BOOK_ID);
-            String markType =  (String) intent.getSerializableExtra(FolioReader.EXTRA_BOOKMARK_TYPE);
+            String markType =  (String) intent.getSerializableExtra(FolioReader.ACTION_TYPE);
             if (readLocatorListener != null)
                 readLocatorListener.saveReadLocator(readLocator,bookId,markType);
         }
@@ -145,8 +147,8 @@ public class FolioReader {
     }
 
     public FolioReader openBook(String assetOrSdcardPath) {
-        Intent intent = getIntentFromUrl(assetOrSdcardPath, 0);
-        context.startActivity(intent);
+       /* Intent intent = getIntentFromUrl(assetOrSdcardPath, 0);
+        context.startActivity(intent);*/
         return singleton;
     }
 
