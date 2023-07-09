@@ -33,6 +33,15 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
+            android:name="com.folioreader.ui.activity.ContentTestActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name="com.folioreader.ui.activity.TableOfContentActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name="com.folioreader.ui.activity.SearchActivity"
             android:exported="true"
             android:launchMode="singleTop">

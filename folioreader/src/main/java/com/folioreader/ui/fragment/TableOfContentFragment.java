@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -17,10 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.folioreader.Config;
 import com.folioreader.R;
+import com.folioreader.event.MessageEvent;
 import com.folioreader.model.TOCLinkWrapper;
 import com.folioreader.ui.adapter.TOCAdapter;
 import com.folioreader.util.AppUtil;
 
+import org.greenrobot.eventbus.EventBus;
 import org.readium.r2.shared.Link;
 import org.readium.r2.shared.Publication;
 
@@ -37,6 +40,7 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
     private TOCAdapter mTOCAdapter;
     private RecyclerView mTableOfContentsRecyclerView;
     private TextView errorView;
+    private ImageView deleteView;
     private Config mConfig;
     private String mBookTitle;
     private Publication publication;
@@ -77,7 +81,13 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
         super.onViewCreated(view, savedInstanceState);
         mTableOfContentsRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_menu);
         errorView = (TextView) view.findViewById(R.id.tv_error);
-
+        deleteView = (ImageView) view.findViewById(R.id.iv_item_delete);
+        deleteView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new MessageEvent("接收到TwoActivity发送过来的事件啦"));
+            }
+        });
         configRecyclerViews();
         initAdapter();
     }

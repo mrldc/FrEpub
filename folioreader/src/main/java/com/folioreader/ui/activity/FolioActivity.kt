@@ -18,7 +18,6 @@ package com.folioreader.ui.activity
 import android.Manifest
 import android.app.Activity
 import android.app.ActivityManager
-import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -36,7 +35,10 @@ import android.os.Parcelable
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
@@ -54,14 +56,13 @@ import com.folioreader.R
 import com.folioreader.model.DisplayUnit
 import com.folioreader.model.HighlightImpl
 import com.folioreader.model.event.MediaOverlayPlayPauseEvent
-import com.folioreader.model.event.MediaOverlaySpeedEvent
 import com.folioreader.model.locators.ReadLocator
 import com.folioreader.model.locators.SearchLocator
-import com.folioreader.model.sqlite.BookmarkTable
 import com.folioreader.ui.adapter.FolioPageFragmentAdapter
 import com.folioreader.ui.adapter.SearchAdapter
 import com.folioreader.ui.fragment.FolioPageFragment
 import com.folioreader.ui.fragment.MediaControllerFragment
+import com.folioreader.ui.fragment.TableOfContentFragment
 import com.folioreader.ui.view.ConfigBottomSheetDialogFragment
 import com.folioreader.ui.view.DirectionalViewpager
 import com.folioreader.ui.view.FolioAppBarLayout
@@ -79,7 +80,6 @@ import org.readium.r2.streamer.parser.EpubParser
 import org.readium.r2.streamer.parser.PubBox
 import org.readium.r2.streamer.server.Server
 import java.lang.ref.WeakReference
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.ceil
 
@@ -127,6 +127,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var topActivity: Boolean? = null
     private var taskImportance: Int = 0
     private var ivBack: ImageView? = null
+    private var flMain: FrameLayout? = null
     private var tvLeft: TextView? = null
     private var ll_collect: LinearLayout? = null
     private var rl_comment: RelativeLayout? = null
@@ -333,6 +334,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     }
 
     private fun initTopAndBottom() {
+        flMain = findViewById(R.id.fl_main)
         ivBack = findViewById(R.id.iv_back)
         tvLeft = findViewById(R.id.tv_left)
         ll_collect = findViewById(R.id.ll_collect)
@@ -368,11 +370,11 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         //目录
         iv_directory?.setOnClickListener {
-            startContentHighlightActivity()
+            goToTableOfCOntentActivity()
         }
         //笔记页面
         iv_write?.setOnClickListener {
-            showConfigBottomSheetDialogFragment()
+            startContentHighlightActivity()
         }
         //亮度、背景
         iv_light?.setOnClickListener {
@@ -617,9 +619,46 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     }
 
+    private fun goToTableOfCOntentActivity() {
+
+        val contentFrameLayout = TableOfContentFragment.newInstance(
+            pubBox!!.publication,
+            intent.getStringExtra(CHAPTER_SELECTED),
+            intent.getStringExtra(BOOK_TITLE)
+        )
+        val ft =
+            supportFragmentManager.beginTransaction()
+        ft.replace(R.id.fl_main, contentFrameLayout)
+        ft.commit()
+//        startActivityForResult(intent, RequestCode.CONTENT_HIGHLIGHT.value)
+//        overridePendingTransition(R.anim.slide_in_left, R.anim.disappear)
+
+//        val intent = Intent(this@FolioActivity, TableOfContentActivity::class.java)
+//
+//        intent.putExtra(Constants.PUBLICATION, pubBox!!.publication)
+//        try {
+//            intent.putExtra(CHAPTER_SELECTED, spine!![currentChapterIndex].href)
+//        } catch (e: NullPointerException) {
+//            Log.w(LOG_TAG, "-> ", e)
+//            intent.putExtra(CHAPTER_SELECTED, "")
+//        } catch (e: IndexOutOfBoundsException) {
+//            Log.w(LOG_TAG, "-> ", e)
+//            intent.putExtra(CHAPTER_SELECTED, "")
+//        }
+//
+//        intent.putExtra(FolioReader.EXTRA_BOOK_ID, mBookId)
+//        intent.putExtra(BOOK_TITLE, bookFileName)
+//        startActivityForResult(intent, RequestCode.CONTENT_HIGHLIGHT.value)
+//        overridePendingTransition(R.anim.slide_in_left, R.anim.disappear)
+    }
+
+    /**
+     * 修改为跳转笔记主页
+     */
     private fun startContentHighlightActivity() {
 
-        val intent = Intent(this@FolioActivity, ContentHighlightActivity::class.java)
+//        val intent = Intent(this@FolioActivity, ContentHighlightActivity::class.java)
+        val intent = Intent(this@FolioActivity, ContentTestActivity::class.java)
 
         intent.putExtra(Constants.PUBLICATION, pubBox!!.publication)
         try {

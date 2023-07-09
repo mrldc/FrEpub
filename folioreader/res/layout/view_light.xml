@@ -20,7 +20,7 @@
         android:layout_marginHorizontal="16dp"
         >
         <SeekBar
-            android:id="@+id/view_config_font_size_seek_bar"
+            android:id="@+id/seekbar_light"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:max="4" />
