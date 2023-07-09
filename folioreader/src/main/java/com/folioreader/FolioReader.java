@@ -56,6 +56,7 @@ public class FolioReader {
     //记录阅读位置
     public static final String ACTION_READ_MARK = "com.folioreader.action.READ_MARK";
     public static final String ACTION_TYPE = "com.folioreader.action.TYPE";
+    public static final String BOOK_FILE_URL = "BOOK_FILE_URL";
 
 
     private Context context;

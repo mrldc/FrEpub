@@ -286,17 +286,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             .setOnClosedListener(this)
         // Need to add when vector drawables support library is used.
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-        //配置阅读器
-         config = getSavedConfig(applicationContext)
-        if (config == null) config = Config()
-        config!!.allowedDirection = Config.AllowedDirection.ONLY_HORIZONTAL
-        config!!.isShowTextSelection = true
-        /*folioReader.setConfig(config, true)
-                        .openBook(R.raw.four);*/
-        val path: String = applicationContext.getExternalFilesDir(
-            Environment.DIRECTORY_DOCUMENTS
-        ).toString() + "/10005.epub"
-        folioReader!!.setConfig(config, true)
+
 
         handler = Handler()
 
@@ -323,7 +313,23 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             searchQuery =
                 savedInstanceState.getCharSequence(SearchActivity.BUNDLE_SAVE_SEARCH_QUERY)
         }
-
+        //配置阅读器
+        config = getSavedConfig(applicationContext)
+        if (config == null) config = Config()
+        config!!.allowedDirection = Config.AllowedDirection.ONLY_HORIZONTAL
+        config!!.isShowTextSelection = true
+        /*folioReader.setConfig(config, true)
+                        .openBook(R.raw.four);*/
+        //电子书文件地址
+        var path  = intent.getStringExtra(FolioReader.BOOK_FILE_URL)
+        if(path == null){
+            return
+            /* path= applicationContext.getExternalFilesDir(
+                 Environment.DIRECTORY_DOCUMENTS
+             ).toString() + "/10005.epub"
+            */
+        }
+        folioReader!!.setConfig(config, true)
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
         mEpubSourceType = EpubSourceType.SD_CARD
         if(mEpubFilePath== null){
