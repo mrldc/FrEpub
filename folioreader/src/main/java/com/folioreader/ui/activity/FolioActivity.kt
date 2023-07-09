@@ -37,9 +37,7 @@ import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -56,6 +54,7 @@ import com.folioreader.R
 import com.folioreader.model.DisplayUnit
 import com.folioreader.model.HighlightImpl
 import com.folioreader.model.event.MediaOverlayPlayPauseEvent
+import com.folioreader.model.event.MediaOverlaySpeedEvent
 import com.folioreader.model.locators.ReadLocator
 import com.folioreader.model.locators.SearchLocator
 import com.folioreader.model.sqlite.BookmarkTable
@@ -127,6 +126,18 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var density: Float = 0.toFloat()
     private var topActivity: Boolean? = null
     private var taskImportance: Int = 0
+    private var ivBack: ImageView? = null
+    private var tvLeft: TextView? = null
+    private var ll_collect: LinearLayout? = null
+    private var rl_comment: RelativeLayout? = null
+    private var tv_listen_book: TextView? = null
+    private var tv_video: TextView? = null
+    private var iv_directory: ImageView? = null
+    private var iv_write: ImageView? = null
+    private var iv_light: ImageView? = null
+    private var iv_font: ImageView? = null
+    private var rl_top: RelativeLayout? = null
+    private var rl_bottom: LinearLayout? = null
 
     // page count
     private lateinit var pageTrackerViewModel: PageTrackerViewModel
@@ -290,7 +301,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             mEpubFilePath = intent.extras!!.getString(INTENT_EPUB_SOURCE_PATH)
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        initActionBar()
+//        initActionBar()
+        initTopAndBottom()
         initMediaController()
 
         val pageCountTextView = findViewById<TextView>(R.id.pageCount)
@@ -317,6 +329,58 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             }
         } else {
             setupBook()
+        }
+    }
+
+    private fun initTopAndBottom() {
+        ivBack = findViewById(R.id.iv_back)
+        tvLeft = findViewById(R.id.tv_left)
+        ll_collect = findViewById(R.id.ll_collect)
+        tv_listen_book = findViewById(R.id.tv_listen_book)
+        tv_video = findViewById(R.id.tv_video)
+        rl_comment = findViewById(R.id.rl_comment)
+        iv_directory = findViewById(R.id.iv_directory)
+        iv_write = findViewById(R.id.iv_write)
+        iv_light = findViewById(R.id.iv_light)
+        iv_font = findViewById(R.id.iv_font)
+        rl_top = findViewById(R.id.rl_top)
+        rl_bottom = findViewById(R.id.rl_bottom)
+        //返回
+        ivBack?.setOnClickListener {
+            topActivity = true
+            finish()
+        }
+        //收藏
+        ll_collect?.setOnClickListener {
+
+        }
+        //去听书
+        tv_listen_book?.setOnClickListener {
+
+        }
+        //看视频
+        tv_video?.setOnClickListener {
+
+        }
+        //写笔记输入界面
+        rl_comment?.setOnClickListener {
+            Toast.makeText(this, "写笔记输入界面", Toast.LENGTH_LONG).show()
+        }
+        //目录
+        iv_directory?.setOnClickListener {
+            startContentHighlightActivity()
+        }
+        //笔记页面
+        iv_write?.setOnClickListener {
+            showConfigBottomSheetDialogFragment()
+        }
+        //亮度、背景
+        iv_light?.setOnClickListener {
+            showConfigBottomSheetDialogFragment()
+        }
+        //字体
+        iv_font?.setOnClickListener {
+            showConfigBottomSheetDialogFragment()
         }
     }
 
@@ -838,14 +902,21 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         distractionFreeMode = visibility != View.SYSTEM_UI_FLAG_VISIBLE
         Log.v(LOG_TAG, "-> distractionFreeMode = $distractionFreeMode")
-
-        if (actionBar != null) {
-            if (distractionFreeMode) {
-                actionBar!!.hide()
-            } else {
-                actionBar!!.show()
-            }
+        if (distractionFreeMode) {
+            rl_top!!.visibility == View.GONE
+            rl_bottom!!.visibility == View.GONE
+        } else {
+            rl_top!!.visibility == View.VISIBLE
+            rl_bottom!!.visibility == View.VISIBLE
         }
+
+//        if (actionBar != null) {
+//            if (distractionFreeMode) {
+//                actionBar!!.hide()
+//            } else {
+//                actionBar!!.show()
+//            }
+//        }
     }
 
     override fun toggleSystemUI() {
@@ -866,7 +937,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            if (appBarLayout != null) appBarLayout!!.setTopMargin(statusBarHeight)
+//            if (appBarLayout != null) appBarLayout!!.setTopMargin(statusBarHeight)
             onSystemUiVisibilityChange(View.SYSTEM_UI_FLAG_VISIBLE)
         }
     }
