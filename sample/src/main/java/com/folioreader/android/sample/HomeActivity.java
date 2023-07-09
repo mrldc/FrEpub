@@ -15,7 +15,8 @@
  */
 package com.folioreader.android.sample;
 
-import android.content.Context;
+import static com.folioreader.Constants.DATE_FORMAT;
+
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -36,6 +37,7 @@ import com.folioreader.Config;
 import com.folioreader.FolioReader;
 import com.folioreader.model.HighLight;
 import com.folioreader.model.locators.ReadLocator;
+import com.folioreader.model.sqlite.BookmarkTable;
 import com.folioreader.ui.base.OnSaveHighlight;
 import com.folioreader.util.AppUtil;
 import com.folioreader.util.OnHighlightListener;
@@ -44,13 +46,14 @@ import com.folioreader.util.ReadLocatorListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.Permission;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity
         implements OnHighlightListener, ReadLocatorListener, FolioReader.OnClosedListener {
@@ -81,7 +84,7 @@ public class HomeActivity extends AppCompatActivity
                 if (config == null)
                     config = new Config();
                 config.setAllowedDirection(Config.AllowedDirection.VERTICAL_AND_HORIZONTAL);
-
+                config.setShowTextSelection(true);
                 /*folioReader.setConfig(config, true)
                         .openBook(R.raw.four);*/
                 String path  =  compatActivity.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)+"/10005.epub";
@@ -147,8 +150,37 @@ public class HomeActivity extends AppCompatActivity
     }
 
     @Override
-    public void saveReadLocator(ReadLocator readLocator) {
-        Log.i(LOG_TAG, "-> saveReadLocator -> " + readLocator.toJson());
+    public void saveReadLocator(ReadLocator readLocator, String mBookId, String markType) {
+        Log.i(LOG_TAG, "-> saveReadLocator -> " + readLocator.toJson()+" markType:"+markType);
+        //收到获取阅读位置信息
+        SimpleDateFormat simpleDateFormat =new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+        String cfi = readLocator.getHref()+readLocator.getLocations().getCfi();
+        if(FolioReader.EXTRA_BOOKMARK_ADD.equals(markType)){//添加标签
+            boolean insertResult =new BookmarkTable(this).insertBookmark(
+                    mBookId,
+                    simpleDateFormat.format(new Date()),
+                    readLocator.getTitle(),
+                    readLocator.toJson().toString(),
+                    cfi
+            );
+            if(insertResult){
+                Toast.makeText(
+                        this, "已添加到书签", Toast.LENGTH_SHORT
+                ).show();
+            }
+
+        }else if(FolioReader.EXTRA_BOOKMARK_DELETE.equals(markType)){//删除标签
+            int bookmarkId =  BookmarkTable.getBookmarkIdByCfi(cfi,mBookId,this);
+            if(bookmarkId != -1){
+                boolean deleteResult = BookmarkTable.deleteBookmarkById(bookmarkId,this);
+                if(deleteResult){
+                    Toast.makeText(
+                            this, "已删除书签", Toast.LENGTH_SHORT
+                    ).show();
+                }
+            }
+        }
+
     }
 
     /*

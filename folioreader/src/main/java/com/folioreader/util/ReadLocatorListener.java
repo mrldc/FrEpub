@@ -7,5 +7,5 @@ import com.folioreader.model.locators.ReadLocator;
  */
 public interface ReadLocatorListener {
 
-    void saveReadLocator(ReadLocator readLocator);
+    void saveReadLocator(ReadLocator readLocator, String bookId, String markType);
 }

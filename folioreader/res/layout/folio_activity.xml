@@ -16,7 +16,23 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <TextView
+            android:id="@+id/pageCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="60dp"
+            android:background="@drawable/rounded"
+            android:elevation="10dp"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="6dp"
+            android:textColor="#80FFFFFF"
+            tools:text="1" />
+    </com.folioreader.ui.view.DirectionalViewpager>
 
     <com.folioreader.ui.view.FolioAppBarLayout
         android:id="@+id/appBarLayout"
@@ -35,22 +51,5 @@
             app:contentInsetStartWithNavigation="0dp" />
 
     </com.folioreader.ui.view.FolioAppBarLayout>
-
-    <TextView
-        android:id="@+id/pageCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginBottom="60dp"
-        android:background="@drawable/rounded"
-        android:elevation="10dp"
-        android:paddingStart="12dp"
-        android:paddingTop="6dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="6dp"
-        android:textColor="#80FFFFFF"
-        app:layout_constraintBottom_toBottomOf="@+id/folioPageViewPager"
-        app:layout_constraintEnd_toEndOf="@+id/folioPageViewPager"
-        tools:text="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

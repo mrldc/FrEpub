@@ -172,6 +172,10 @@ html .highlight_underline {
     text-decoration: none;
     border-bottom: 2px solid #F02814;
 }
+html .highlight_underline_dotted {
+    text-decoration: none;
+    border-bottom: 2px dotted #F02814;
+}
 
 html .highlight_yellow, html .highlight_green, html .highlight_blue, html .highlight_pink, span.epub-media-overlay-playing {
     border-radius: 3px;

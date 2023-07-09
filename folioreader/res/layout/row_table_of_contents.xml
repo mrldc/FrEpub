@@ -8,14 +8,29 @@
 
     <ImageView
         android:id="@+id/children"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp" />
+        android:layout_width="14dp"
+        android:layout_height="8dp"
+        android:layout_gravity="center_vertical"
+        android:src="@mipmap/ic_directory_item_right" />
 
     <com.folioreader.util.StyleableTextView
         android:id="@+id/section_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:gravity="center_vertical"
         app:folio_font="SanFranciscoText-Regular.otf" />
+
+    <TextView
+        android:id="@+id/tv_page_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:layout_gravity="center_vertical"
+        android:textSize="20sp"
+        android:textColor="#333333"
+        android:visibility="gone"
+        android:text="页码" />
 </LinearLayout>

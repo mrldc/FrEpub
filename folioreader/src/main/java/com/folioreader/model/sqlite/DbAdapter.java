@@ -83,7 +83,9 @@ public class DbAdapter {
     public static Cursor getHighlightsForPageId(String query, String pageId) {
         return mDatabase.rawQuery(query, null);
     }
-
+    public static Cursor getHighlightsBySql(String query) {
+        return mDatabase.rawQuery(query, null);
+    }
     public static int getIdForQuery(String query) {
         Cursor c = mDatabase.rawQuery(query, null);
 

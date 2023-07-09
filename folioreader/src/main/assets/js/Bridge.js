@@ -250,6 +250,10 @@ $(function () {
                 tagNames: ["span", "a"]
             }));
 
+            this.highlighter.addClassApplier(rangy.createClassApplier("highlight_underline_dotted", {
+                ignoreWhiteSpace: true,
+                tagNames: ["span", "a"]
+            }));
         },
 
         base64encode: function (str) {
@@ -307,7 +311,7 @@ $(function () {
         unHighlightSelection: function () {
             try {
                 this.highlighter.unhighlightSelection();
-                Highlight.onReceiveHighlights(this.getHighlights());
+              //  Highlight.onReceiveHighlights(this.getHighlights());
             } catch (err) {
             }
         },
@@ -321,6 +325,7 @@ $(function () {
 
         setHighlights: function (serializedHighlight) {
             try {
+                console.log("setHighlights : " ,serializedHighlight);
                 this.highlighter.removeAllHighlights();
                 this.highlighter.deserialize(serializedHighlight);
             } catch (err) {
@@ -347,6 +352,35 @@ $(function () {
         search: function () {
             SSBridge.onSearch(window.getSelection().toString());
             this.clearSelection();
+        },
+        //获取第一句中文
+        getFirstSentence: function () {
+            viewportRect = constructDOMRect(FolioWebView.getViewportRect(DisplayUnit.CSS_PX));
+            var node = getFirstVisibleNode(document.body) || document.body;
+
+            // 获取当前 HTML 页面的内容
+
+            var content = node.nodeValue;
+            // 定义正则表达式，匹配第一句中文
+            var regex = /.*?。/m;
+
+            // 在内容中查找匹配的字符串
+
+            const match = content.match(regex);
+
+            // 如果找到了匹配的字符串，输出它的位置和内容
+
+            if (match) {
+
+                console.log("第一句中文是：" + match[0]);
+
+                console.log("它在内容中的位置是：" + match.index);
+
+            } else {
+
+                console.log("没有找到第一句中文");
+
+            }
         }
     });
 
@@ -555,16 +589,19 @@ function horizontalRecheck() {
         clearInterval(horizontalInterval);
 }
 
-function initHorizontalDirection() {
+function initHorizontalDirection(columnNum) {
 
-    preInitHorizontalDirection();
-    postInitHorizontalDirection();
+    preInitHorizontalDirection(columnNum);
+    postInitHorizontalDirection(columnNum);
 
     horizontalInterval = setInterval(horizontalRecheck, horizontalIntervalPeriod);
 }
 
-function preInitHorizontalDirection() {
-
+function preInitHorizontalDirection(columnNum) {
+    var thisColumnNum = 1;
+    if(columnNum){
+        thisColumnNum = columnNum;
+    }
     //console.log(window);
     //console.log("-> " + document.getElementsByTagName('title')[0].innerText);
     var htmlElement = document.getElementsByTagName('html')[0];
@@ -583,9 +620,10 @@ function preInitHorizontalDirection() {
     var paddingBottom = parseInt(bodyStyle.paddingBottom, 10);
     var paddingLeft = parseInt(bodyStyle.paddingLeft, 10);
     //console.log("-> padding = " + paddingTop + ", " + paddingRight + ", " + paddingBottom + ", " + paddingLeft);
-
+    console.log("-> padding = " + paddingRight + ", " + paddingLeft);
+    console.log("document.documentElement.clientWidth->" ,document.documentElement.clientWidth);
     //document.documentElement.clientWidth is window.innerWidth excluding x scrollbar width
-    var pageWidth = document.documentElement.clientWidth - (paddingLeft + paddingRight);
+    var pageWidth = document.documentElement.clientWidth/thisColumnNum - (paddingLeft + paddingRight);
     //document.documentElement.clientHeight is window.innerHeight excluding y scrollbar height
     var pageHeight = document.documentElement.clientHeight - (paddingTop + paddingBottom);
 
@@ -624,10 +662,12 @@ function postInitHorizontalDirection() {
         scrollWidth += paddingRight;
     }
     var newBodyWidth = scrollWidth - (paddingLeft + paddingRight);
-    window.scrollWidth = scrollWidth;
 
-    htmlElement.style.width = scrollWidth + 'px';
-    bodyElement.style.width = newBodyWidth + 'px';
+
+    window.scrollWidth = scrollWidth ;
+
+    htmlElement.style.width = scrollWidth  + 'px';
+    bodyElement.style.width = newBodyWidth  + 'px';
 
     // pageCount deliberately rounded instead of ceiling to avoid any unexpected error
     var pageCount = Math.round(scrollWidth / clientWidth);
@@ -777,7 +817,7 @@ function getSelectionRect(element) {
         left: rect.left,
         top: rect.top,
         right: rect.right,
-        bottom: rect.bottom
+        bottom: rect.bottom,
     };
 }
 
@@ -788,9 +828,20 @@ function clearSelection() {
 
 // onClick method set for highlights
 function onClickHighlight(element) {
-    console.log("-> onClickHighlight");
+    console.log("-> onClickHighlight",element);
     event.stopPropagation();
     thisHighlight = element;
+
+    var range = document.createRange(); // 创建一个范围对象
+
+      range.selectNodeContents(element); // 设置范围的起始位置和偏移量为span元素的内容
+
+      var selection = window.getSelection(); // 获取当前选中的文本范围
+
+      selection.removeAllRanges(); // 清空所有选中的范围对象
+
+      selection.addRange(range); // 将新的范围加入到选中的文本中
+
     var rectJson = getSelectionRect(element);
     FolioWebView.setSelectionRect(rectJson.left, rectJson.top, rectJson.right, rectJson.bottom);
 }
@@ -820,11 +871,11 @@ function onClickHtml() {
     }
 }
 
-function computeLastReadCfi() {
+function computeLastReadCfi(actionType) {
 
     viewportRect = constructDOMRect(FolioWebView.getViewportRect(DisplayUnit.CSS_PX));
     var node = getFirstVisibleNode(document.body) || document.body;
-
+    console.log("computeLastReadCfi-->",node,Node.TEXT_NODE,node.nodeType)
     var cfi;
     if (node.nodeType === Node.TEXT_NODE) {
         cfi = EPUBcfi.Generator.generateCharacterOffsetCFIComponent(node, 0);
@@ -832,9 +883,31 @@ function computeLastReadCfi() {
         cfi = EPUBcfi.Generator.generateElementCFIComponent(node);
     }
 
-    cfi = EPUBcfi.Generator.generateCompleteCFI("/0!", cfi);
+    cfi = EPUBcfi.Generator.generateCompleteCFI("", cfi);
     viewportRect = null;
-    FolioPageFragment.storeLastReadCfi(cfi);
+
+    // 定义正则表达式，匹配第一句中文
+    var content = "";
+    var regex ='';
+    if (node.nodeType === Node.TEXT_NODE) {
+        content = node.nodeValue;
+        regex = /.*?。/m;
+    }else{
+        content = node.innerHTML;
+        regex = /(?=[>])|[\u4e00-\u9fa5]+.*?。/m;
+    }
+    console.log("computeLastReadCfi-->content",content)
+    // 在内容中查找匹配的字符串
+    const match = content.match(regex);
+    var firstSentence = null;
+    // 如果找到了匹配的字符串，输出它的位置和内容
+    if (match) {
+        firstSentence = match[0];
+    }
+    console.log("computeLastReadCfi-->firstSentence",actionType,cfi,firstSentence)
+
+    firstSentence = firstSentence ? firstSentence : content;
+    FolioPageFragment.storeLastReadCfi(actionType,cfi,firstSentence);
 }
 
 function constructDOMRect(rectJsonString) {

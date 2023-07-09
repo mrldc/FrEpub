@@ -1034,7 +1034,7 @@
             if (getRangeDocument(rangeB) != getRangeDocument(rangeA)) {
                 throw new DOMException("WRONG_DOCUMENT_ERR");
             }
-
+            console.log("rangesIntersect--> ",rangeA,rangeB);
             var startComparison = comparePoints(rangeA.startContainer, rangeA.startOffset, rangeB.endContainer, rangeB.endOffset),
                 endComparison = comparePoints(rangeA.endContainer, rangeA.endOffset, rangeB.startContainer, rangeB.startOffset);
 
@@ -3811,7 +3811,7 @@
             win = null;
         });
     });
-    
+
 
     /*----------------------------------------------------------------------------------------------------------------*/
 

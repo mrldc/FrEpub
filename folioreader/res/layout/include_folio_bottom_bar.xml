@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_bottom"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    >
+    <LinearLayout
+        android:id="@+id/ll_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:layout_gravity="end"
+        android:gravity="center_vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_marginHorizontal="16dp"
+        >
+        <TextView
+            android:id="@+id/tv_listen_book"
+            android:layout_width="70dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="12dp"
+            android:background="@mipmap/ic_bottom_bar_btn_bg"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:textColor="#ffffff"
+            android:text="去听书" />
+
+    <TextView
+        android:id="@+id/tv_video"
+        android:layout_width="70dp"
+        android:layout_height="32dp"
+        android:background="@mipmap/ic_bottom_bar_btn_bg"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:gravity="center"
+        android:textSize="13sp"
+        android:textColor="#ffffff"
+        android:text="看视频" />
+    </LinearLayout>
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        layout="@layout/include_folio_comment"
+        android:layout_below="@+id/ll_top"
+        />
+
+    <LinearLayout
+        android:id="@+id/ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:paddingVertical="26dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        >
+
+        <ImageView
+            android:id="@+id/iv_directory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@mipmap/ic_directory" />
+
+        <ImageView
+            android:id="@+id/iv_write"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@mipmap/ic_write" />
+
+        <ImageView
+            android:id="@+id/iv_light"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@mipmap/ic_light" />
+        <ImageView
+            android:id="@+id/iv_font"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@mipmap/ic_font" />
+    </LinearLayout>
+</LinearLayout>

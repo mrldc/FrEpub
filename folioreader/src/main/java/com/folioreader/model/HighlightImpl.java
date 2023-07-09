@@ -77,6 +77,7 @@ public class HighlightImpl implements Parcelable, HighLight {
         Blue,
         Pink,
         Underline,
+        UnderlineDotted,
         TextColor,
         DottetUnderline,
         Normal;
@@ -100,6 +101,8 @@ public class HighlightImpl implements Parcelable, HighLight {
                     return "mediaOverlayStyle1";
                 case TextColor:
                     return "mediaOverlayStyle2";
+                case UnderlineDotted:
+                    return "highlight_underline_dotted";
                 default:
                     return "mediaOverlayStyle0";
 

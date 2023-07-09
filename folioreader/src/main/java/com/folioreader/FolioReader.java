@@ -45,6 +45,16 @@ public class FolioReader {
     public static final String ACTION_SAVE_READ_LOCATOR = "com.folioreader.action.SAVE_READ_LOCATOR";
     public static final String ACTION_CLOSE_FOLIOREADER = "com.folioreader.action.CLOSE_FOLIOREADER";
     public static final String ACTION_FOLIOREADER_CLOSED = "com.folioreader.action.FOLIOREADER_CLOSED";
+    //添加书签
+    public static final String EXTRA_BOOKMARK_TYPE = "com.folioreader.extra.BOOKMARK_TYPE";
+    public static final String EXTRA_BOOKMARK_ADD = "com.folioreader.extra.BOOKMARK_ADD";
+    //删除书签
+    public static final String EXTRA_BOOKMARK_DELETE = "com.folioreader.extra.BOOKMARK_DELETE";
+    //书签操作
+    public static final String ACTION_BOOKMARK = "com.folioreader.action.BOOKMARK";
+    public static final String ACTION_CHECK_BOOKMARK = "com.folioreader.action.CHECK_BOOKMARK";
+    public static final String ACTION_TYPE = "com.folioreader.action.TYPE";
+
 
     private Context context;
     private Config config;
@@ -88,8 +98,10 @@ public class FolioReader {
 
             ReadLocator readLocator =
                     (ReadLocator) intent.getSerializableExtra(FolioReader.EXTRA_READ_LOCATOR);
+            String bookId = (String) intent.getSerializableExtra(FolioReader.EXTRA_BOOK_ID);
+            String markType =  (String) intent.getSerializableExtra(FolioReader.EXTRA_BOOKMARK_TYPE);
             if (readLocatorListener != null)
-                readLocatorListener.saveReadLocator(readLocator);
+                readLocatorListener.saveReadLocator(readLocator,bookId,markType);
         }
     };
 

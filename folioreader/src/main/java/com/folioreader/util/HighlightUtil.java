@@ -113,7 +113,25 @@ public class HighlightUtil {
         }
         return builder.toString();
     }
-
+    public static String generateRangyStringByRangy(String rangyId) {
+        List<String> rangyList = HighLightTable.getHighlightsForRangy(rangyId);
+        StringBuilder builder = new StringBuilder();
+        if (!rangyList.isEmpty()) {
+            builder.append("type:textContent");
+            for (String rangy : rangyList) {
+                builder.append('|');
+                builder.append(rangy);
+            }
+        }
+        return builder.toString();
+    }
+    public static String generateRangy(String rangyId) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("type:textContent");
+        builder.append('|');
+        builder.append(rangyId);
+        return builder.toString();
+    }
     public static void sendHighlightBroadcastEvent(Context context,
                                                    HighlightImpl highlightImpl,
                                                    HighLight.HighLightAction action) {

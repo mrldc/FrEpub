@@ -295,7 +295,9 @@
             removeHighlights: function(highlights) {
                 for (var i = 0, len = this.highlights.length, highlight; i < len; ++i) {
                     highlight = this.highlights[i];
+                    console.log("removeHighlights -->",highlights,highlight)
                     if (contains(highlights, highlight)) {
+                        console.log("removeHighlights contains-->",highlight)
                         highlight.unapply();
                         this.highlights.splice(i--, 1);
                     }
@@ -309,6 +311,7 @@
             getIntersectingHighlights: function(ranges) {
                 // Test each range against each of the highlighted ranges to see whether they overlap
                 var intersectingHighlights = [], highlights = this.highlights;
+                console.log("getIntersectingHighlights-->ranges",ranges,highlights);
                 forEach(ranges, function(range) {
                     //var selCharRange = converter.rangeToCharacterRange(range);
                     forEach(highlights, function(highlight) {
@@ -503,6 +506,7 @@
             unhighlightSelection: function(selection) {
                 selection = selection || api.getSelection(this.doc);
                 var intersectingHighlights = this.getIntersectingHighlights( selection.getAllRanges() );
+                console.log("unhighlightSelection-->",intersectingHighlights)
                 this.removeHighlights(intersectingHighlights);
                 selection.removeAllRanges();
                 return intersectingHighlights;
@@ -622,6 +626,6 @@
             return new Highlighter(doc, rangeCharacterOffsetConverterType);
         };
     });
-    
+
     return rangy;
 }, this);

@@ -466,7 +466,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 return true
             }
             R.id.itemBookmark -> {
-                val readLocator = currentFragment!!.getLastReadLocator()
+                val readLocator = currentFragment!!.getLastReadLocator(FolioReader.ACTION_BOOKMARK)
                 Log.v(LOG_TAG, "-> onOptionsItemSelected 'if' -> bookmark")
 
                 bookmarkReadLocator = readLocator
@@ -474,7 +474,21 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 val intent = Intent(FolioReader.ACTION_SAVE_READ_LOCATOR)
                 intent.putExtra(FolioReader.EXTRA_READ_LOCATOR, readLocator as Parcelable?)
                 localBroadcastManager.sendBroadcast(intent)
-                val dialog = Dialog(this, R.style.DialogCustomTheme)
+                //保存书签
+                /*val simpleDateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
+                val insertResult = BookmarkTable(this).insertBookmark(
+                    mBookId,
+                    simpleDateFormat.format(Date()),
+                    bookmarkReadLocator!!.title,
+                    bookmarkReadLocator!!.toJson().toString(),
+                    bookmarkReadLocator!!.locations.cfi
+                )
+                if(insertResult){
+                    Toast.makeText(
+                        this, "已添加到书签", Toast.LENGTH_SHORT
+                    ).show()
+                }*/
+                /*val dialog = Dialog(this, R.style.DialogCustomTheme)
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 dialog.setContentView(R.layout.dialog_bookmark)
                 dialog.show()
@@ -492,7 +506,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                         val id = BookmarkTable(this).insertBookmark(
                             mBookId,
                             simpleDateFormat.format(Date()),
-                            name,
+                            bookmarkReadLocator!!.title,
                             bookmarkReadLocator!!.toJson().toString()
                         )
                         Toast.makeText(
@@ -506,7 +520,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                         ).show()
                     }
                     dialog.dismiss()
-                }
+                }*/
 
 
                 return true
@@ -679,7 +693,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         Log.v(LOG_TAG, "-> onDirectionChange")
 
         var folioPageFragment: FolioPageFragment? = currentFragment ?: return
-        entryReadLocator = folioPageFragment!!.getLastReadLocator()
+        entryReadLocator = folioPageFragment!!.getLastReadLocator("")
         val searchLocatorVisible = folioPageFragment.searchLocatorVisible
 
         direction = newDirection

@@ -21,9 +21,9 @@
     <RelativeLayout
         android:id="@+id/bookmark_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="68dp"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:background="@drawable/shape_10_solid_ffffff_bg">
 
         <TextView
             android:id="@+id/tv_bookmark_date"
@@ -32,20 +32,44 @@
             android:text="20 sep 2016"
             android:textColor="@color/black"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
+
+        <ImageView
+            android:id="@+id/iv_item"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:src="@mipmap/ic_bookmark_item" />
+
+        <TextView
+            android:id="@+id/tv_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/iv_item"
+            android:layout_centerVertical="true"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:background="@drawable/shape_4_solid_f8f8f8_bg"
+            android:textSize="16sp"
+            android:textColor="#999999"
+            android:text="P23" />
 
         <com.folioreader.ui.view.UnderlinedTextView
             android:id="@+id/utv_bookmark_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_bookmark_date"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@+id/tv_left"
+            android:layout_centerVertical="true"
             android:ellipsize="end"
             android:maxLines="3"
             android:minLines="1"
-            android:textColor="@color/black"
-            android:textSize="17sp" />
+            android:textColor="#333333"
+            android:textSize="24sp" />
 
     </RelativeLayout>
 </com.daimajia.swipe.SwipeLayout>

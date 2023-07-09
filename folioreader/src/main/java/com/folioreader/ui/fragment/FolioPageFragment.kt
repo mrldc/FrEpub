@@ -34,6 +34,7 @@ import com.folioreader.model.HighlightImpl
 import com.folioreader.model.event.*
 import com.folioreader.model.locators.ReadLocator
 import com.folioreader.model.locators.SearchLocator
+import com.folioreader.model.sqlite.BookmarkTable
 import com.folioreader.model.sqlite.HighLightTable
 import com.folioreader.ui.activity.FolioActivityCallback
 import com.folioreader.ui.base.HtmlTask
@@ -133,6 +134,8 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     private var mConfig: Config? = null
     private var mBookId: String? = null
     var searchLocatorVisible: SearchLocator? = null
+
+    private var currentPageHasBookmark: Boolean = false
 
     private lateinit var chapterUrl: Uri
 
@@ -263,7 +266,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     fun reload(reloadDataEvent: ReloadDataEvent) {
 
         if (isCurrentFragment)
-            getLastReadLocator()
+            getLastReadLocator("")
 
         if (isAdded) {
             mWebview!!.dismissPopupWindow()
@@ -389,6 +392,11 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
             override fun onPageSelected(position: Int) {
                 pageViewModel.setCurrentPage(position + 1)
+                Log.v(LOG_TAG, "-> onPageSelected -> $position")
+                //获取当前页位置，判断是否有标签
+                currentPageHasBookmark = false
+                getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK)
+
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -442,7 +450,10 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             mWebview!!.loadUrl("javascript:alert(getReadingTime())")
 
             if (mActivityCallback!!.direction == Config.Direction.HORIZONTAL)
-                mWebview!!.loadUrl("javascript:initHorizontalDirection()")
+                mWebview!!.loadUrl( String.format(
+                    "javascript:initHorizontalDirection('%s')",
+                    2
+                ))
 
             view.loadUrl(
                 String.format(
@@ -630,15 +641,17 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         //TODO save last media overlay item
 
         if (isCurrentFragment)
-            getLastReadLocator()
+            getLastReadLocator("")
     }
-
-    fun getLastReadLocator(): ReadLocator? {
+    fun getLastReadLocator(){
+        this.getLastReadLocator("")
+    }
+    fun getLastReadLocator(actionType: String): ReadLocator? {
         Log.v(LOG_TAG, "-> getLastReadLocator -> " + spineItem.href!!)
         try {
             synchronized(this) {
-                mWebview!!.loadUrl(getString(R.string.callComputeLastReadCfi))
-                (this as java.lang.Object).wait(5000)
+                mWebview!!.loadUrl(String.format(getString(R.string.callComputeLastReadCfi),actionType))
+                (this as java.lang.Object).wait(500)
             }
         } catch (e: InterruptedException) {
             Log.e(LOG_TAG, "-> ", e)
@@ -648,19 +661,37 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     }
 
     @JavascriptInterface
-    fun storeLastReadCfi(cfi: String) {
+    fun storeLastReadCfi(actionType: String,cfi: String,title: String) {
 
         synchronized(this) {
+            Log.v(LOG_TAG, "-> storeLastReadCfi -> actionType:$actionType cfi:$cfi title:$title");
             var href = spineItem.href
             if (href == null) href = ""
             val created = Date().time
             val locations = Locations()
             locations.cfi = cfi
-            lastReadLocator = ReadLocator(mBookId!!, href, created, locations)
+            lastReadLocator = ReadLocator(mBookId!!, href, created,title, locations,null)
+            //书签操作
+            if(actionType == FolioReader.ACTION_BOOKMARK){
+                val intent = Intent(FolioReader.ACTION_SAVE_READ_LOCATOR)
+                intent.putExtra(FolioReader.EXTRA_READ_LOCATOR, lastReadLocator as Parcelable?)
+                if(currentPageHasBookmark){//删除书签
+                    intent.putExtra(FolioReader.EXTRA_BOOKMARK_TYPE, FolioReader.EXTRA_BOOKMARK_DELETE)
+                    currentPageHasBookmark = false
+                }else{//添加书签
+                    intent.putExtra(FolioReader.EXTRA_BOOKMARK_TYPE, FolioReader.EXTRA_BOOKMARK_ADD)
+                    currentPageHasBookmark = true
+                }
+                intent.putExtra(FolioReader.EXTRA_BOOK_ID, mBookId)
+                LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
+            }else if(actionType == FolioReader.ACTION_CHECK_BOOKMARK){//检测是否有书签
+                val bookmarkId = BookmarkTable.getBookmarkIdByCfi(href+cfi,mBookId,context!!)
+                Log.v(LOG_TAG,"check bookmark--->bookmarkId:$bookmarkId")
+                if(bookmarkId != -1){
+                    currentPageHasBookmark = true
+                }
+            }
 
-            val intent = Intent(FolioReader.ACTION_SAVE_READ_LOCATOR)
-            intent.putExtra(FolioReader.EXTRA_READ_LOCATOR, lastReadLocator as Parcelable?)
-            LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
 
             (this as java.lang.Object).notify()
         }
@@ -683,7 +714,15 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             )
         )
     }
+    //删除下划线
+    fun unhighlightSelection(){
+        mWebview!!.loadUrl(
+            String.format(
+                "javascript:if(typeof ssReader !== \"undefined\"){ssReader.unHighlightSelection();}"
 
+            )
+        )
+    }
     private fun setupScrollBar() {
         UiUtil.setColorIntToDrawable(mConfig!!.currentThemeColor, mScrollSeekbar!!.progressDrawable)
         val thumbDrawable = ContextCompat.getDrawable(activity!!, R.drawable.icons_sroll)
@@ -837,12 +876,13 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
     fun highlight(style: HighlightImpl.HighlightStyle, isAlreadyCreated: Boolean) {
         if (!isAlreadyCreated) {
-            mWebview!!.loadUrl(
+           mWebview!!.loadUrl(
                 String.format(
                     "javascript:if(typeof ssReader !== \"undefined\"){ssReader.highlightSelection('%s');}",
                     HighlightImpl.HighlightStyle.classForStyle(style)
                 )
             )
+
         } else {
             mWebview!!.loadUrl(
                 String.format(
@@ -872,7 +912,10 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             )
         }
     }
+    //获取
+    fun getFirstSentence(html: String?){
 
+    }
     override fun highLightText(fragmentId: String) {
         mWebview!!.loadUrl(String.format(getString(R.string.audio_mark_id), fragmentId))
     }

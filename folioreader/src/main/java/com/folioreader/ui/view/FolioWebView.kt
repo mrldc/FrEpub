@@ -267,7 +267,7 @@ class FolioWebView : WebView {
 
     private fun init() {
         Log.v(LOG_TAG, "-> init")
-
+        setWebContentsDebuggingEnabled(true);
         uiHandler = Handler()
         displayMetrics = resources.displayMetrics
         density = displayMetrics!!.density
@@ -318,13 +318,13 @@ class FolioWebView : WebView {
         }
         viewTextSelection.underlineHighlight.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> underlineHighlight")
-            onHighlightColorItemsClicked(HighlightStyle.Underline, false)
+            onHighlightColorItemsClicked(HighlightStyle.UnderlineDotted, false)
         }
 
         viewTextSelection.deleteHighlight.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> deleteHighlight")
             dismissPopupWindow()
-            loadUrl("javascript:clearSelection()")
+          //  loadUrl("javascript:clearSelection()")
             loadUrl("javascript:deleteThisHighlight()")
         }
 
@@ -392,9 +392,10 @@ class FolioWebView : WebView {
             return
 
         val highlightImpl = HighLightTable.getHighlightForRangy(id)
-        if (HighLightTable.deleteHighlight(id)) {
-            val rangy = HighlightUtil.generateRangyString(parentFragment.pageName)
-            uiHandler.post { parentFragment.loadRangy(rangy) }
+       if (HighLightTable.deleteHighlight(id)) {
+            //删除选中的下划线
+            uiHandler.post { parentFragment.unhighlightSelection() }
+
             if (highlightImpl != null) {
                 HighlightUtil.sendHighlightBroadcastEvent(
                     context, highlightImpl,
@@ -719,7 +720,6 @@ class FolioWebView : WebView {
         currentSelectionRect.right = (right * density).toInt()
         currentSelectionRect.bottom = (bottom * density).toInt()
         Log.d(LOG_TAG, "-> setSelectionRect -> $currentSelectionRect")
-
         computeTextSelectionRect(currentSelectionRect)
         uiHandler.post { showTextSelectionPopup() }
     }

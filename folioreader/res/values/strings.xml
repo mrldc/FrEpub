@@ -19,10 +19,10 @@
     <string name="copied">Copied</string>
     <string name="send_to">Send to</string>
 
-    <string name="copy">Copy</string>
-    <string name="share">Share</string>
-    <string name="define">Define</string>
-    <string name="highlight">Highlight</string>
+    <string name="copy">复制</string>
+    <string name="share">划线</string>
+    <string name="define">笔记</string>
+    <string name="highlight">高亮</string>
 
     <string name="pages_left">%1$d pages left</string>
     <string name="page_left">%1$d page left</string>
@@ -114,7 +114,7 @@
     </plurals>
 
     <!-- JS Calls -->
-    <string name="callComputeLastReadCfi" translatable="false">javascript:computeLastReadCfi()</string>
+    <string name="callComputeLastReadCfi" translatable="false">javascript:computeLastReadCfi(\"%s\")</string>
     <string name="callScrollToCfi" translatable="false">javascript:scrollToCfi(\"%s\")</string>
     <string name="callHighlightSearchLocator" translatable="false">javascript:highlightSearchLocator(\"%s\")</string>
     <string name="callClearSelection" translatable="false">javascript:clearSelection()</string>

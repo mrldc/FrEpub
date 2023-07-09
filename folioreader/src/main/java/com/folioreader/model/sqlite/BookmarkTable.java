@@ -25,6 +25,7 @@ public class BookmarkTable {
     public static final String date = "date";
     public static final String name = "name";
     public static final String readlocator = "readlocator";
+    public static final String cfi = "cfi";
 
     public static SQLiteDatabase Bookmarkdatabase;
 
@@ -38,16 +39,18 @@ public class BookmarkTable {
             + bookID + " TEXT" + ","
             + date + " TEXT" + ","
             + name + " TEXT" + ","
-            + readlocator + " TEXT" + ")";
+            + readlocator + " TEXT" + ","
+            + cfi + " TEXT" + ")";
 
     public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-    public final boolean insertBookmark(String new_bookID, String new_date, String new_name, String new_cfi) {
+    public final boolean insertBookmark(String new_bookID, String new_date, String new_name, String new_locator,String new_cfi) {
         ContentValues values = new ContentValues();
         values.put(bookID, new_bookID);
         values.put(date, new_date);
-        values.put(readlocator, new_cfi);
+        values.put(readlocator, new_locator);
         values.put(name, new_name);
+        values.put(cfi,new_cfi);
 
         return Bookmarkdatabase.insert(TABLE_NAME, null, values) > 0;
 
@@ -66,6 +69,7 @@ public class BookmarkTable {
             name_value.put("name", c.getString(c.getColumnIndex(name)));
             name_value.put("readlocator", c.getString(c.getColumnIndex(readlocator)));
             name_value.put("date", c.getString(c.getColumnIndex(date)));
+            name_value.put("cfi", c.getString(c.getColumnIndex(cfi)));
 
 
             bookmarks.add(name_value);
@@ -89,5 +93,42 @@ public class BookmarkTable {
         c.close();
         return DbAdapter.deleteById(TABLE_NAME, ID, String.valueOf(id));
     }
+    public static final boolean deleteBookmarkByCfi(String arg_cfi,String arg_bookID, Context context){
+        if(Bookmarkdatabase == null){
+            FolioDatabaseHelper dbHelper = new FolioDatabaseHelper(context);
+            Bookmarkdatabase = dbHelper.getWritableDatabase();
+        }
+        String query = "SELECT " + ID + " FROM " + TABLE_NAME + " WHERE " + cfi + " = \"" + arg_cfi + "\""+ " and "+bookID+" = \"" + arg_bookID+"\"";
+        Cursor c = Bookmarkdatabase.rawQuery(query, null);
 
+        int id = -1;
+        while (c.moveToNext()) {
+            id = c.getInt(c.getColumnIndex(BookmarkTable.ID));
+        }
+        c.close();
+        return DbAdapter.deleteById(TABLE_NAME, ID, String.valueOf(id));
+    }
+    public static int getBookmarkIdByCfi(String arg_cfi,String arg_bookID,Context context){
+        if(Bookmarkdatabase == null){
+            FolioDatabaseHelper dbHelper = new FolioDatabaseHelper(context);
+            Bookmarkdatabase = dbHelper.getWritableDatabase();
+        }
+        String query = "SELECT " + ID + " FROM " + TABLE_NAME + " WHERE " + cfi + " = \"" + arg_cfi + "\""+ " and "+bookID+" = \"" + arg_bookID+"\"";
+        Cursor c = Bookmarkdatabase.rawQuery(query, null);
+
+        int id = -1;
+        while (c.moveToNext()) {
+            id = c.getInt(c.getColumnIndex(BookmarkTable.ID));
+        }
+        c.close();
+        return id;
+    }
+    public static boolean deleteBookmarkById(int arg_id,Context context){
+        if(Bookmarkdatabase == null){
+            FolioDatabaseHelper dbHelper = new FolioDatabaseHelper(context);
+            Bookmarkdatabase = dbHelper.getWritableDatabase();
+        }
+
+        return DbAdapter.deleteById(TABLE_NAME, ID, String.valueOf(arg_id));
+    }
 }

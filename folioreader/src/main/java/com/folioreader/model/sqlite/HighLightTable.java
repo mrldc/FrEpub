@@ -125,7 +125,16 @@ public class HighLightTable {
         c.close();
         return rangyList;
     }
-
+    public static List<String> getHighlightsForRangy(String rangy) {
+        String query = "SELECT " + COL_RANGY + " FROM " + TABLE_NAME + " WHERE " + COL_RANGY + " = '" + rangy + "'";
+        Cursor c = DbAdapter.getHighlightsBySql(query);
+        List<String> rangyList = new ArrayList<>();
+        while (c.moveToNext()) {
+            rangyList.add(c.getString(c.getColumnIndex(COL_RANGY)));
+        }
+        c.close();
+        return rangyList;
+    }
     public static boolean updateHighlight(HighlightImpl highlightImpl) {
         return DbAdapter.updateHighLight(getHighlightContentValues(highlightImpl), String.valueOf(highlightImpl.getId()));
     }
