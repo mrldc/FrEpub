@@ -117,7 +117,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var mEpubSourceType: EpubSourceType? = null
     private var mEpubRawId = 0
     private var mediaControllerFragment: MediaControllerFragment? = null
-    private var direction: Config.Direction = Config.Direction.VERTICAL
+    private var direction: Config.Direction = Config.Direction.HORIZONTAL
     private var portNumber: Int = DEFAULT_PORT_NUMBER
     private var streamerUri: Uri? = null
 
@@ -318,20 +318,20 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         if (config == null) config = Config()
         config!!.allowedDirection = Config.AllowedDirection.ONLY_HORIZONTAL
         config!!.isShowTextSelection = true
-        /*folioReader.setConfig(config, true)
-                        .openBook(R.raw.four);*/
+
         //电子书文件地址
         var path  = intent.getStringExtra(FolioReader.BOOK_FILE_URL)
         if(path == null){
-            return
-            /* path= applicationContext.getExternalFilesDir(
+           /*  path= applicationContext.getExternalFilesDir(
                  Environment.DIRECTORY_DOCUMENTS
-             ).toString() + "/10005.epub"
-            */
+             ).toString() + "/10005.epub"*/
+
         }
         folioReader!!.setConfig(config, true)
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
         mEpubSourceType = EpubSourceType.SD_CARD
+        mEpubSourceType = EpubSourceType.RAW
+        mEpubRawId  = R.raw.test
         if(mEpubFilePath== null){
             mEpubFilePath = path
         }
@@ -1422,7 +1422,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 simpleDateFormat.format(Date()),
                 readLocator.title,
                 readLocator.toJson().toString(),
-                cfi
+                cfi,BookmarkTable.MARK_TYPE
             )
             if (insertResult) {
                 Toast.makeText(

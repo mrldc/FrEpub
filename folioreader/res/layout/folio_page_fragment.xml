@@ -11,15 +11,18 @@
         android:id="@+id/webViewLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/highlight_green"
         android:layout_above="@+id/indicatorLayout">
 
         <com.folioreader.ui.view.WebViewPager
             android:id="@+id/webViewPager"
             android:layout_width="match_parent"
+            android:background="@color/red"
             android:layout_height="match_parent" />
 
         <com.folioreader.ui.view.FolioWebView
             android:id="@+id/folioWebView"
+            android:background="@color/highlight_yellow"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

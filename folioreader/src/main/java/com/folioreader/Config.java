@@ -28,11 +28,11 @@ public class Config implements Parcelable {
     public static final String CONFIG_NIGHT_THEME_COLOR_INT = "night_theme_color_int";
     public static final String CONFIG_IS_TTS = "is_tts";
     public static final String CONFIG_ALLOWED_DIRECTION = "allowed_direction";
-    public static final String CONFIG_DIRECTION = "direction";
+    public static final String CONFIG_DIRECTION = "horizontal";
     public static final String CONFIG_REMAINING_INDICATOR = "show_remaining_indicator";
     public static final String CONFIG_TEXT_SELECTION = "text_selection";
     private static final AllowedDirection DEFAULT_ALLOWED_DIRECTION = AllowedDirection.ONLY_VERTICAL;
-    private static final Direction DEFAULT_DIRECTION = Direction.VERTICAL;
+    private static final Direction DEFAULT_DIRECTION = Direction.HORIZONTAL;
     private static final int DEFAULT_THEME_COLOR_INT =
             ContextCompat.getColor(AppContext.get(), R.color.default_theme_accent_color);
 

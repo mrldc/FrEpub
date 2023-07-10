@@ -151,7 +151,7 @@ public class HomeActivity extends AppCompatActivity
 
     //@Override
     public void saveReadLocator(ReadLocator readLocator, String mBookId, String markType) {
-        Log.i(LOG_TAG, "-> saveReadLocator -> " + readLocator.toJson()+" markType:"+markType);
+      /*  Log.i(LOG_TAG, "-> saveReadLocator -> " + readLocator.toJson()+" markType:"+markType);
         //收到获取阅读位置信息
         SimpleDateFormat simpleDateFormat =new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
         String cfi = readLocator.getHref()+readLocator.getLocations().getCfi();
@@ -161,7 +161,7 @@ public class HomeActivity extends AppCompatActivity
                     simpleDateFormat.format(new Date()),
                     readLocator.getTitle(),
                     readLocator.toJson().toString(),
-                    cfi
+                    cfi,BookmarkTable.MARK_TYPE
             );
             if(insertResult){
                 Toast.makeText(
@@ -179,7 +179,7 @@ public class HomeActivity extends AppCompatActivity
                     ).show();
                 }
             }
-        }
+        }*/
 
     }
 

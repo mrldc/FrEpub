@@ -326,6 +326,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         if (isAdded) {
             mHtmlString = html
             setHtml(false)
+
         }
     }
 
@@ -390,6 +391,8 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         val webViewLayout = mRootView!!.findViewById<FrameLayout>(R.id.webViewLayout)
         mWebview = webViewLayout.findViewById(R.id.folioWebView)
         mWebview!!.setParentFragment(this)
+       // mWebview!!.setBackgroundColor(0)
+       // mWebview!!.background.alpha = 0
         webViewPager = webViewLayout.findViewById(R.id.webViewPager)
 
         webViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -400,7 +403,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             override fun onPageSelected(position: Int) {
                 pageViewModel.setCurrentPage(position + 1)
                 Log.v(LOG_TAG, "-> onPageSelected -> $position")
-
+                mWebview!!.loadUrl("javascript:document.body.style.backgroundColor='#00ff00'")
                 //获取当前页位置，判断是否有标签
                 currentPageHasBookmark = false
                 getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK)

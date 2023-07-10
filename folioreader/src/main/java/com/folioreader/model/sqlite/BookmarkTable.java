@@ -26,7 +26,11 @@ public class BookmarkTable {
     public static final String name = "name";
     public static final String readlocator = "readlocator";
     public static final String cfi = "cfi";
+    /**1：书签，2:页笔记**/
+    public static final String type = "type";
 
+    public static final String MARK_TYPE = "1";
+    public static final String NOTE_TYPE = "2";
     public static SQLiteDatabase Bookmarkdatabase;
 
     public BookmarkTable(Context context) {
@@ -40,17 +44,19 @@ public class BookmarkTable {
             + date + " TEXT" + ","
             + name + " TEXT" + ","
             + readlocator + " TEXT" + ","
+            + type + " TEXT" + ","
             + cfi + " TEXT" + ")";
 
     public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-    public final boolean insertBookmark(String new_bookID, String new_date, String new_name, String new_locator,String new_cfi) {
+    public final boolean insertBookmark(String new_bookID, String new_date, String new_name, String new_locator,String new_cfi,String new_type) {
         ContentValues values = new ContentValues();
         values.put(bookID, new_bookID);
         values.put(date, new_date);
         values.put(readlocator, new_locator);
         values.put(name, new_name);
         values.put(cfi,new_cfi);
+        values.put(type,new_type);
 
         return Bookmarkdatabase.insert(TABLE_NAME, null, values) > 0;
 
