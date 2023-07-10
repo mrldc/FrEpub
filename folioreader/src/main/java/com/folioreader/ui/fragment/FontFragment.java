@@ -36,6 +36,62 @@ public class FontFragment extends Fragment {
         Log.i("Bookmark fragment", "onViewCreated: inside onViewCreated ");
         super.onViewCreated(view, savedInstanceState);
         Config config = AppUtil.getSavedConfig(getActivity());
+
+        mRootView.findViewById(R.id.tv_screen_auto).setEnabled(true);
+        mRootView.findViewById(R.id.tv_screen_auto).setSelected(true);
+        mRootView.findViewById(R.id.tv_screen_auto).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRootView.findViewById(R.id.tv_screen_auto).setEnabled(true);
+                mRootView.findViewById(R.id.tv_screen_auto).setSelected(true);
+                mRootView.findViewById(R.id.tv_screen_h).setSelected(false);
+                mRootView.findViewById(R.id.tv_screen_v).setSelected(false);
+            }
+        });
+
+        mRootView.findViewById(R.id.tv_screen_h).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRootView.findViewById(R.id.tv_screen_h).setEnabled(true);
+                mRootView.findViewById(R.id.tv_screen_h).setSelected(true);
+                mRootView.findViewById(R.id.tv_screen_auto).setSelected(false);
+                mRootView.findViewById(R.id.tv_screen_v).setSelected(false);
+            }
+        });
+        mRootView.findViewById(R.id.tv_screen_v).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRootView.findViewById(R.id.tv_screen_v).setEnabled(true);
+                mRootView.findViewById(R.id.tv_screen_v).setSelected(true);
+                mRootView.findViewById(R.id.tv_screen_auto).setSelected(false);
+                mRootView.findViewById(R.id.tv_screen_h).setSelected(false);
+            }
+        });
+
+        mRootView.findViewById(R.id.tv_page_open).setEnabled(true);
+        mRootView.findViewById(R.id.tv_page_open).setSelected(true);
+        mRootView.findViewById(R.id.tv_page_open).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRootView.findViewById(R.id.tv_page_open).setEnabled(true);
+                mRootView.findViewById(R.id.tv_page_open).setSelected(true);
+                mRootView.findViewById(R.id.tv_page_close).setSelected(false);
+            }
+        });
+        mRootView.findViewById(R.id.tv_page_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRootView.findViewById(R.id.tv_page_close).setEnabled(true);
+                mRootView.findViewById(R.id.tv_page_close).setSelected(true);
+                mRootView.findViewById(R.id.tv_page_open).setSelected(false);
+            }
+        });
+        mRootView.findViewById(R.id.rl_font_bottom).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+
     }
 
 }

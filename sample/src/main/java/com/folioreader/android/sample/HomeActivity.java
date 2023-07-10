@@ -139,8 +139,8 @@ public class HomeActivity extends AppCompatActivity
         config.setAllowedDirection(Config.AllowedDirection.VERTICAL_AND_HORIZONTAL);
 
         folioReader.setConfig(config, true)
-//                .openBook(R.raw.accessible_epub_3);
-                .openBook("file://Documents/folioreader/accessible_epub_3/accessible_epub_3.epub");
+                .openBook(R.raw.test);
+//                .openBook("file://Documents/folioreader/accessible_epub_3/accessible_epub_3.epub");
     }
 
     private ReadLocator getLastReadLocator() {

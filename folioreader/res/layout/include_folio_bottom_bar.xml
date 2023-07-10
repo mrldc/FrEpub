@@ -22,27 +22,27 @@
         <ImageView
             android:id="@+id/iv_directory"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_weight="1"
             android:src="@mipmap/ic_directory" />
 
         <ImageView
             android:id="@+id/iv_write"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_weight="1"
             android:src="@mipmap/ic_write" />
 
         <ImageView
             android:id="@+id/iv_light"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_weight="1"
             android:src="@mipmap/ic_light" />
         <ImageView
             android:id="@+id/iv_font"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_weight="1"
             android:src="@mipmap/ic_font" />
     </LinearLayout>

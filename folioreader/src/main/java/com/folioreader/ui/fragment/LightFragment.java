@@ -40,14 +40,39 @@ public class LightFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Config config = AppUtil.getSavedConfig(getActivity());
         seekBar = (SeekBar) mRootView.findViewById(R.id.seekbar_light);
+        // #FFFFFF
+        mRootView.findViewById(R.id.iv_light_1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        // #EDEAE4
+        mRootView.findViewById(R.id.iv_light_2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        //#E9F4E3
+        mRootView.findViewById(R.id.iv_light_3).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        // #E3F4F3
+        mRootView.findViewById(R.id.iv_light_4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
         //设置滚动条
-
         seekBar.setProgress(getCurrentBrightValue());
-
         seekBar.setMax(255);
-
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
             /**
              * 拖动中数值的时候
              * @param fromUser 是否是由用户操作的

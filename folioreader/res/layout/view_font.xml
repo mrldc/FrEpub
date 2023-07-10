@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal"
         android:layout_gravity="end"
         android:gravity="center_vertical"
@@ -24,8 +24,8 @@
 
         <LinearLayout
             android:id="@+id/ll_screen"
-            android:layout_width="690dp"
-            android:layout_height="80dp"
+            android:layout_width="400dp"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:orientation="horizontal"
             android:gravity="center_vertical"
@@ -34,12 +34,12 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="25dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textSize="24sp"
+                android:textSize="14sp"
                 android:textColor="#333333"
                 android:text="屏幕方向"
                  />
@@ -47,39 +47,40 @@
             <TextView
                 android:id="@+id/tv_screen_auto"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="25dp"
                 android:layout_weight="1"
                 android:background="@drawable/font_setting_selector"
                 android:gravity="center"
+                android:clickable="true"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textSize="24sp"
+                android:textSize="14sp"
                 android:textColor="#333333"
                 android:text="自动"
                 />
             <TextView
                 android:id="@+id/tv_screen_h"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="25dp"
                 android:layout_weight="1"
                 android:background="@drawable/font_setting_selector"
                 android:gravity="center"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textSize="24sp"
+                android:textSize="14sp"
                 android:textColor="#333333"
                 android:text="横屏"
                 />
             <TextView
                 android:id="@+id/tv_screen_v"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="25dp"
                 android:layout_weight="1"
                 android:background="@drawable/font_setting_selector"
                 android:gravity="center"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textSize="24sp"
+                android:textSize="14sp"
                 android:textColor="#333333"
                 android:text="横屏"
                 />
@@ -94,8 +95,8 @@
             />
         <LinearLayout
             android:id="@+id/ll_page"
-            android:layout_width="520dp"
-            android:layout_height="80dp"
+            android:layout_width="320dp"
+            android:layout_height="40dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:background="@drawable/shape_34_solid_f8f8f8_bg"
@@ -103,39 +104,40 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="25dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textSize="24sp"
+                android:textSize="14sp"
                 android:textColor="#333333"
                 android:text="横屏双页"
                 />
 
             <TextView
-                android:id="@+id/tv_page_close"
+                android:id="@+id/tv_page_open"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="25dp"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:clickable="true"
                 android:background="@drawable/font_setting_selector"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textSize="24sp"
+                android:textSize="14sp"
                 android:textColor="#333333"
                 android:text="开"
                 />
             <TextView
-                android:id="@+id/tv_page_open"
+                android:id="@+id/tv_page_close"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
+                android:layout_height="25dp"
                 android:layout_weight="1"
                 android:background="@drawable/font_setting_selector"
                 android:gravity="center"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textSize="24sp"
+                android:textSize="14sp"
                 android:textColor="#333333"
                 android:text="关"
                 />
@@ -143,34 +145,155 @@
         </LinearLayout>
     </LinearLayout>
 
-    <SeekBar
-        android:id="@+id/seekbar_font"
+    <RelativeLayout
+        android:id="@+id/ll_font"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:max="4" />
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:layout_gravity="end"
+        android:gravity="center_vertical"
+        android:layout_marginHorizontal="8dp"
+        >
+
+        <SeekBar
+            android:id="@+id/seekbar_font"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:max="100"
+            android:progress="20"
+            style="@style/CustomSeekbarStyle"
+            />
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="16dp"
+            android:src="@mipmap/ic_font" />
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="24dp"
+            android:src="@mipmap/ic_font" />
+    </RelativeLayout>
+
+
+
+
 
     <LinearLayout
-        android:id="@+id/ll_space"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_marginTop="16dp"
         >
-        <SeekBar
-            android:id="@+id/seekbar_margins"
+        <RelativeLayout
+            android:id="@+id/ll_margins"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="60dp"
-            android:max="4" />
-        <SeekBar
-            android:id="@+id/seekbar_space"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal"
+            android:layout_gravity="end"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="8dp"
+            >
+
+            <SeekBar
+                android:id="@+id/seekbar_margins"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:progress="20"
+                style="@style/CustomSeekbarStyle"
+                android:max="100" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:gravity="center"
+                android:textSize="10sp"
+                android:textColor="#333333"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="16dp"
+                android:text="小" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:gravity="center"
+                android:textSize="10sp"
+                android:textColor="#333333"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="end"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="24dp"
+                android:text="大" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/ll_space"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_marginStart="16dp"
-            android:layout_height="60dp"
-            android:max="4" />
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal"
+            android:layout_gravity="end"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="8dp"
+            >
+
+            <SeekBar
+                android:id="@+id/seekbar_space"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:progress="20"
+                style="@style/CustomSeekbarStyle"
+                android:max="100" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:gravity="center"
+                android:textSize="10sp"
+                android:textColor="#333333"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="16dp"
+                android:text="紧" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:gravity="center"
+                android:textSize="10sp"
+                android:textColor="#333333"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="end"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="24dp"
+                android:text="松" />
+        </RelativeLayout>
 
     </LinearLayout>
 
@@ -182,12 +305,14 @@
         android:gravity="center_vertical"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
+        android:layout_marginHorizontal="16dp"
+
         >
         <RelativeLayout
             android:id="@+id/rl_font_bottom"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="60dp"
+            android:layout_height="34dp"
             android:orientation="horizontal"
             android:background="@drawable/shape_34_solid_f8f8f8_bg"
             >
@@ -200,13 +325,13 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:layout_marginStart="20dp"
-                android:textSize="24sp"
+                android:textSize="13sp"
                 android:textColor="#333333"
                 android:text="系统字体" />
             <ImageView
                 android:id="@+id/iv_right"
-                android:layout_width="10dp"
-                android:layout_height="16dp"
+                android:layout_width="6dp"
+                android:layout_height="10dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="16dp"
@@ -217,6 +342,7 @@
 
 
         <RelativeLayout
+            android:visibility="invisible"
             android:id="@+id/rl_page_way"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -234,7 +360,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:layout_marginStart="20dp"
-                android:textSize="24sp"
+                android:textSize="14sp"
                 android:textColor="#333333"
                 android:text="翻页方式" />
             <ImageView
