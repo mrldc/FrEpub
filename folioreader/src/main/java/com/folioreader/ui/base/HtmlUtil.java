@@ -113,11 +113,13 @@ public final class HtmlUtil {
         }
 
         String styles = "font-family: '" + fontName + "';";
-
+        styles +="background-color: "+config.getBackgroundColor()+";";
         htmlContent = htmlContent.replace("<html",
                 "<html class=\"" + classes + "\"" +
                         " style=\"" + styles + "\"" +
                         " onclick=\"onClickHtml()\"");
+
+
         return htmlContent;
     }
 }

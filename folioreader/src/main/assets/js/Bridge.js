@@ -121,7 +121,9 @@ function setMediaOverlayStyle(style) {
     document.documentElement.classList.remove("mediaOverlayStyle0", "mediaOverlayStyle1", "mediaOverlayStyle2")
     document.documentElement.classList.add(style)
 }
-
+function changeBackground(color) {
+    $('html').css('background-color', color);
+}
 function setMediaOverlayStyleColors(color, colorHighlight) {
     var stylesheet = document.styleSheets[document.styleSheets.length - 1];
 //    stylesheet.insertRule(".mediaOverlayStyle0 span.epub-media-overlay-playing { background: "+colorHighlight+" !important }")

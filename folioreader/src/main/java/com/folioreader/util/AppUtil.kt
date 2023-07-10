@@ -101,6 +101,7 @@ class AppUtil {
                 obj.put(Config.CONFIG_DIRECTION, config.direction.toString())
                 obj.put(Config.CONFIG_REMAINING_INDICATOR, config.isShowRemainingIndicator)
                 obj.put(Config.CONFIG_TEXT_SELECTION, config.isShowTextSelection)
+                obj.put(Config.BACKGROUND_COLOR, config.backgroundColor)
                 SharedPreferenceUtil.putSharedPreferencesString(
                     context, Config.INTENT_CONFIG,
                     obj.toString()

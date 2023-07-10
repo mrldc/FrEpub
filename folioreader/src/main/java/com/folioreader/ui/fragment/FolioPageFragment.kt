@@ -403,7 +403,6 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             override fun onPageSelected(position: Int) {
                 pageViewModel.setCurrentPage(position + 1)
                 Log.v(LOG_TAG, "-> onPageSelected -> $position")
-                mWebview!!.loadUrl("javascript:document.body.style.backgroundColor='#00ff00'")
                 //获取当前页位置，判断是否有标签
                 currentPageHasBookmark = false
                 getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK)
@@ -926,7 +925,15 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             mWebview!!.loadUrl("javascript:rewindCurrentIndex()")
         }
     }
+    //设置背景颜色
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun setHtmlBackground(event:ChangeBackgroundEvent){
+        var color = event.color
+        mConfig!!.backgroundColor = color
+        AppUtil.saveConfig(activity, mConfig!!)
+        mWebview!!.loadUrl(String.format("javascript:changeBackground('%s')",color))
 
+    }
     @JavascriptInterface
     fun onReceiveHighlights(html: String?) {
         if (html != null) {

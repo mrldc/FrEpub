@@ -30,6 +30,10 @@
     <color name="highlight_blue">#ADD8FF</color>
     <color name="highlight_pink">#FFB0CA</color>
     <color name="background"> #E3E0D5</color>
+    <color name="background02">#D0D1CE</color>
+    <color name="background03">#E0F6C6</color>
+    <color name="background04">#B6D9DD</color>
+
 
 
 

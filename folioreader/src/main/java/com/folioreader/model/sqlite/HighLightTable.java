@@ -1,5 +1,6 @@
 package com.folioreader.model.sqlite;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.text.TextUtils;
@@ -8,6 +9,7 @@ import android.util.Log;
 import com.folioreader.Constants;
 import com.folioreader.model.HighLight;
 import com.folioreader.model.HighlightImpl;
+import com.folioreader.model.MarkVo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,6 +65,7 @@ public class HighLightTable {
     }
 
 
+    @SuppressLint("Range")
     public static ArrayList<HighlightImpl> getAllHighlights(String bookId) {
         ArrayList<HighlightImpl> highlights = new ArrayList<>();
         Cursor highlightCursor = DbAdapter.getHighLightsForBookId(bookId);
@@ -81,6 +84,7 @@ public class HighLightTable {
         return highlights;
     }
 
+    @SuppressLint("Range")
     public static HighlightImpl getHighlightId(int id) {
         Cursor highlightCursor = DbAdapter.getHighlightsForId(id);
         HighlightImpl highlightImpl = new HighlightImpl();
@@ -115,6 +119,7 @@ public class HighLightTable {
         return DbAdapter.deleteById(TABLE_NAME, ID, String.valueOf(highlightId));
     }
 
+    @SuppressLint("Range")
     public static List<String> getHighlightsForPageId(String pageId) {
         String query = "SELECT " + COL_RANGY + " FROM " + TABLE_NAME + " WHERE " + COL_PAGE_ID + " = \"" + pageId + "\"";
         Cursor c = DbAdapter.getHighlightsForPageId(query, pageId);
@@ -125,6 +130,7 @@ public class HighLightTable {
         c.close();
         return rangyList;
     }
+    @SuppressLint("Range")
     public static List<String> getHighlightsForRangy(String rangy) {
         String query = "SELECT " + COL_RANGY + " FROM " + TABLE_NAME + " WHERE " + COL_RANGY + " = '" + rangy + "'";
         Cursor c = DbAdapter.getHighlightsBySql(query);
@@ -202,6 +208,37 @@ public class HighLightTable {
         if (id == -1) {
             DbAdapter.saveHighLight(getHighlightContentValues(highLight));
         }
+    }
+
+    @SuppressLint("Range")
+    public static List<MarkVo> getAllNotes(String mBookId) {
+        StringBuilder sb = new StringBuilder();
+        //查询书签与页笔记
+        sb.append("select * from (");
+        sb.append("select _id as id,bookID as bookId, name as content, '' as note, type as kind,'' as highLightType,cfi,'' as rangy,readlocator as href,date from bookmark_table");
+        sb.append(" where bookID='").append(mBookId).append("' ");
+        sb.append(" union all ");
+        sb.append(" select _id as id,bookId,content,note,case when type='mark' then '4' else '3'end as kind,type as highLightType, '' as cfi ,rangy,pageId as href, date  from highlight_table ");
+        sb.append(" where bookId='").append(mBookId).append("' ");
+        sb.append(") t order by t.date");
+        Cursor cursor = DbAdapter.getHighlightsBySql(sb.toString());
+        List<MarkVo> markVoList = new ArrayList<>();
+        while (cursor.moveToNext()){
+            MarkVo markVo = new MarkVo();
+            markVo.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            markVo.setBookId(cursor.getString(cursor.getColumnIndex("bookId")));
+            markVo.setContent(cursor.getString(cursor.getColumnIndex("content")));
+            markVo.setNote(cursor.getString(cursor.getColumnIndex("note")));
+            markVo.setKind(cursor.getString(cursor.getColumnIndex("kind")));
+            markVo.setHighlightType(cursor.getString(cursor.getColumnIndex("highLightType")));
+            markVo.setCfi(cursor.getString(cursor.getColumnIndex("cfi")));
+            markVo.setRangy(cursor.getString(cursor.getColumnIndex("rangy")));
+            markVo.setHref(cursor.getString(cursor.getColumnIndex("href")));
+            markVo.setDate(cursor.getString(cursor.getColumnIndex("date")));
+            markVoList.add(markVo);
+        }
+        cursor.close();
+        return markVoList;
     }
 }
 

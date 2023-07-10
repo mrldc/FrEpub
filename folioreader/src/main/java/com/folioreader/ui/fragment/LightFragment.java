@@ -1,5 +1,6 @@
 package com.folioreader.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -18,7 +19,10 @@ import com.folioreader.Config;
 import com.folioreader.Constants;
 import com.folioreader.FolioReader;
 import com.folioreader.R;
+import com.folioreader.model.event.ChangeBackgroundEvent;
 import com.folioreader.util.AppUtil;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * 设置亮度fragment主页面
@@ -42,29 +46,34 @@ public class LightFragment extends Fragment {
         seekBar = (SeekBar) mRootView.findViewById(R.id.seekbar_light);
         // #FFFFFF
         mRootView.findViewById(R.id.iv_light_1).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
-
+                EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background)));
             }
         });
         // #EDEAE4
         mRootView.findViewById(R.id.iv_light_2).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
-
+                EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background02)));
             }
         });
         //#E9F4E3
         mRootView.findViewById(R.id.iv_light_3).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
-
+                EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background03)));
             }
         });
         // #E3F4F3
         mRootView.findViewById(R.id.iv_light_4).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
+                EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background04)));
 
             }
         });

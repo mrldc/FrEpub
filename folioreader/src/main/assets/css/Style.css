@@ -39,7 +39,7 @@ html {
 
 body {
     margin: 0 !important;
-    padding: 100px 20px !important;
+    padding: 20px 20px !important;
 	padding-bottom: 24px !important;
     overflow: !important;
 }
@@ -202,12 +202,12 @@ html .highlight_yellow, html .highlight_green, html .highlight_blue, html .highl
  */
 
 html {
-    background-color: #FFFFFF !important;
+
 }
 
-body {
+/*body {
     background-color: transparent !important;
-}
+}*/
 
 html.nightMode {
     background-color: #131313 !important;

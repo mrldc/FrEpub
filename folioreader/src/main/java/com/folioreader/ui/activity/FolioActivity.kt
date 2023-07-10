@@ -322,15 +322,15 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         //电子书文件地址
         var path  = intent.getStringExtra(FolioReader.BOOK_FILE_URL)
         if(path == null){
-           /*  path= applicationContext.getExternalFilesDir(
+             path= applicationContext.getExternalFilesDir(
                  Environment.DIRECTORY_DOCUMENTS
-             ).toString() + "/10005.epub"*/
+             ).toString() + "/10005.epub"
 
         }
         folioReader!!.setConfig(config, true)
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
         mEpubSourceType = EpubSourceType.SD_CARD
-        mEpubSourceType = EpubSourceType.RAW
+       mEpubSourceType = EpubSourceType.RAW
         mEpubRawId  = R.raw.test
         if(mEpubFilePath== null){
             mEpubFilePath = path
@@ -382,6 +382,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rl_top = findViewById(R.id.rl_top)
         rl_bottom = findViewById(R.id.rl_bottom)
         rl_edit = findViewById(R.id.rl_edit)
+
+        tvLeft!!.text = bookFileName
         //返回
         ivBack?.setOnClickListener {
             topActivity = true
@@ -689,9 +691,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private fun gaToHighlightFragment(){
         val bookId = mBookId
         val bookTitle = bookFileName
-        val highlightFragment = HighlightFragment.newInstance(bookId, bookTitle)
+        val noteFragment = NoteFragment.newInstance(bookId, bookTitle)
         val ft = supportFragmentManager.beginTransaction()
-        ft.replace(R.id.fl_main, highlightFragment)
+        ft.replace(R.id.fl_main, noteFragment)
         ft.commit()
     }
     /**
@@ -1033,10 +1035,10 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         if (Build.VERSION.SDK_INT >= 16) {
             val decorView = window.decorView
-            decorView.systemUiVisibility =
-                (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+            decorView.systemUiVisibility =View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+               // (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
         } else {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+          //  window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
 //            if (appBarLayout != null) appBarLayout!!.setTopMargin(statusBarHeight)
             onSystemUiVisibilityChange(View.SYSTEM_UI_FLAG_VISIBLE)
         }

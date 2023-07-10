@@ -31,12 +31,15 @@ public class Config implements Parcelable {
     public static final String CONFIG_DIRECTION = "horizontal";
     public static final String CONFIG_REMAINING_INDICATOR = "show_remaining_indicator";
     public static final String CONFIG_TEXT_SELECTION = "text_selection";
+    public static final String BACKGROUND_COLOR = "background_color";
     private static final AllowedDirection DEFAULT_ALLOWED_DIRECTION = AllowedDirection.ONLY_VERTICAL;
     private static final Direction DEFAULT_DIRECTION = Direction.HORIZONTAL;
     private static final int DEFAULT_THEME_COLOR_INT =
             ContextCompat.getColor(AppContext.get(), R.color.default_theme_accent_color);
 
     private String font = "Roboto";
+
+    private String backgroundColor = "#E6E6DA";
     private int fontSize = 2;
     private boolean nightMode;
     @ColorInt
@@ -92,6 +95,7 @@ public class Config implements Parcelable {
         bundle.putString(CONFIG_ALLOWED_DIRECTION, allowedDirection.toString());
         bundle.putString(CONFIG_DIRECTION, direction.toString());
         bundle.putBoolean(CONFIG_REMAINING_INDICATOR, showRemainingIndicator);
+        bundle.putString(BACKGROUND_COLOR, backgroundColor);
         dest.writeBundle(bundle);
     }
 
@@ -104,6 +108,7 @@ public class Config implements Parcelable {
                 setDefaults();
             } else {
                 font = getBundleItem(bundle, CONFIG_FONT, "Roboto");
+                backgroundColor = getBundleItem(bundle, BACKGROUND_COLOR,"#E6E6DA");
                 fontSize = getBundleItem(bundle, CONFIG_FONT_SIZE, 2);
                 nightMode = getBundleItem(bundle, CONFIG_IS_NIGHT_MODE, false);
                 themeColor = getBundleItem(bundle, CONFIG_THEME_COLOR_INT, DEFAULT_THEME_COLOR_INT);
@@ -137,6 +142,7 @@ public class Config implements Parcelable {
         direction = DEFAULT_DIRECTION;
         showRemainingIndicator = false;
         showTextSelection = true;
+        backgroundColor = "#E6E6DA";
     }
 
     @SuppressWarnings("unchecked")
@@ -171,6 +177,7 @@ public class Config implements Parcelable {
                 getJsonItem(obj, CONFIG_DIRECTION, DEFAULT_DIRECTION.toString())
         );
         showRemainingIndicator = getJsonItem(obj, CONFIG_REMAINING_INDICATOR, false);
+        backgroundColor = getJsonItem(obj, BACKGROUND_COLOR, "");
     }
 
     @SuppressWarnings("unchecked")
@@ -238,6 +245,14 @@ public class Config implements Parcelable {
     public Config setNightMode(boolean nightMode) {
         this.nightMode = nightMode;
         return this;
+    }
+
+    public String getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 
     @ColorInt
@@ -419,6 +434,7 @@ public class Config implements Parcelable {
                 ", direction=" + direction +
                 ", remainingIndicator=" + showRemainingIndicator +
                 ", showTextSelection=" + showTextSelection +
+                ", backgroundColor=" + backgroundColor +
                 '}';
     }
 }
