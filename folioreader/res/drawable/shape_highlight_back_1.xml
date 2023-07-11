@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <size
+        android:width="49dp"
+        android:height="49dp"
+
+        />
+
+    <solid android:color="@color/night_title_text_color" />
+
+</shape>

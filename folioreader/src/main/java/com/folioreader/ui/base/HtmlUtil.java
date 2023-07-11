@@ -66,24 +66,52 @@ public final class HtmlUtil {
         // Inject CSS & user font style
         String toInject = "\n" + cssPath + "\n" + jsPath + "\n";
 
-        File userFontFile = FontFinder.getFontFile(fontName);
-        if (userFontFile != null) {
+        if (fontName != null) {
+            String filePath = "file:///android_asset/fonts/"+fontName;
             System.out.println("Injected user font into CSS");
-            System.out.println("  - path: " + userFontFile.getAbsolutePath());
+            System.out.println("  - path: " + filePath);
             System.out.println("  - family: '" + fontName + "'");
             toInject += "<style>\n";
             toInject += "@font-face {\n";
             toInject += "  font-family: '" + fontName + "';\n";
-            toInject += "  src: url('file://" + userFontFile.getAbsolutePath() + "');\n";
+            toInject += "  src: url('" + filePath + "');\n";
             toInject += "}\n";
             toInject += ".custom-font, .custom-font p, .custom-font div, .custom-font span, .custom-font h1, .custom-font strong {\n";
             toInject += "  font-family: '" + fontName + "', sans-serif;\n";
             toInject += "}\n";
             toInject += "\n</style>";
         }
+        //修改
+        //行距
+        String textSpace = " 1em ";
+        switch (config.getTextSpace()) {
+            case 0:
+                textSpace = " 1em ";
+                break;
+            case 1:
+                textSpace = " 1.5em ";
+                break;
+            case 2:
+                textSpace = " 2em ";
+                break;
+            case 3:
+                textSpace = " 2.5em ";
+                break;
+            case 4:
+                textSpace = " 3em ";
+                break;
+            default:
+                break;
+        }
+
+        toInject += "<style>\n";
+        toInject += "p,body {\n";
+        toInject += " line-height: " + textSpace + " !important;\n";
+        toInject += "}\n";
+        toInject += "\n</style>";
+
 
         toInject += "</head>";
-
         htmlContent = htmlContent.replace("</head>", toInject);
 
         String classes = "custom-font";
@@ -91,7 +119,6 @@ public final class HtmlUtil {
         if (config.isNightMode()) {
             classes += " nightMode";
         }
-
         switch (config.getFontSize()) {
             case 0:
                 classes += " textSizeOne";
@@ -118,11 +145,29 @@ public final class HtmlUtil {
                 "<html class=\"" + classes + "\"" +
                         " style=\"" + styles + "\"" +
                         " onclick=\"onClickHtml()\"");
-        String bodyStyles = "padding: "+ config.getBodyPadding()+";";
-         bodyStyles += "padding: "+ config.getBodyPadding()+";";
-         bodyStyles += "line-height: "+ config.getTextSpace()+";";
+        String padding = "10px";
+        switch (config.getBodyPadding()) {
+            case 0:
+                padding = " 10px ";
+                break;
+            case 1:
+                padding = " 20px ";
+                break;
+            case 2:
+                padding = " 30px ";
+                break;
+            case 3:
+                padding = " 40px ";
+                break;
+            case 4:
+                padding = " 50px ";
+                break;
+            default:
+                break;
+        }
+        String bodyStyles = "padding: "+ padding +";";
         htmlContent = htmlContent.replace("<body",
-                        "<html style=\"" + bodyStyles + "\"");
+                        "<body style=\"" + bodyStyles + "\"");
 
         return htmlContent;
     }

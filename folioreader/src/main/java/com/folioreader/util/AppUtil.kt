@@ -102,6 +102,11 @@ class AppUtil {
                 obj.put(Config.CONFIG_REMAINING_INDICATOR, config.isShowRemainingIndicator)
                 obj.put(Config.CONFIG_TEXT_SELECTION, config.isShowTextSelection)
                 obj.put(Config.BACKGROUND_COLOR, config.backgroundColor)
+                obj.put(Config.TEXT_SPACE, config.textSpace)
+                obj.put(Config.BODY_PADDING, config.bodyPadding)
+                obj.put(Config.COLUMN_COUNT, config.columnCount)
+                obj.put(Config.ENABLE_HORIZONTAL_COLUMN, config.enableHorizontalColumn)
+                obj.put(Config.SCREEN_ORIENTATION, config.screenOrientation)
                 SharedPreferenceUtil.putSharedPreferencesString(
                     context, Config.INTENT_CONFIG,
                     obj.toString()

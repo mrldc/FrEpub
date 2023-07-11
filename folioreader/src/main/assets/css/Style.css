@@ -39,8 +39,6 @@ html {
 
 body {
     margin: 0 !important;
-    padding: 20px 20px !important;
-	padding-bottom: 24px !important;
     overflow: !important;
 }
 
@@ -81,7 +79,6 @@ a { -webkit-touch-callout: none; } /* Disable link callback */
 img { -webkit-user-select: none; }
 p {
     margin: 1.3em 0 1.5em 0;
-    line-height: 1.40em !important;
     text-indent: 1.25em;
 }
 b, strong, th {font-weight: bolder !important;}
@@ -278,15 +275,15 @@ font-family: "lora", serif !important;
 font-family: "raleway", sans-serif !important;
 }
 
-.textSizeOne *{ font-size: 13px ; }
+.textSizeOne *{ font-size: 12px ; }
 .textSizeOnePlus *{ font-size: 14px ; }
-.textSizeTwo * { font-size: 15px ; }
+.textSizeTwo * { font-size: 16px ; }
 .textSizeTwoPlus * { font-size: 16px ; }
-.textSizeThree * { font-size: 17px ; }
+.textSizeThree * { font-size: 20px ; }
 .textSizeThreePlus * { font-size: 18px ; }
-.textSizeFour * { font-size: 19px ; }
+.textSizeFour * { font-size: 24px ; }
 .textSizeFourPlus * { font-size: 20px ; }
-.textSizeFive * { font-size: 21px ; }
+.textSizeFive * { font-size: 28px ; }
 .textSizeFivePlus * { font-size: 22px ; }
 
 h1 {
@@ -318,10 +315,7 @@ word-break: break-word !important;
 -webkit-hyphens: auto !important;
 hyphens: auto !important;
 }
-p, span, div {
-font-size: 1em !important;
-line-height: 1.5 !important;
-}
+
 @media only screen and (min-device-width: 600px) {
     div {
         font-size: 1rem;

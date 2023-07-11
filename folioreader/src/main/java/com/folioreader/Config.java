@@ -34,6 +34,10 @@ public class Config implements Parcelable {
     public static final String BACKGROUND_COLOR = "background_color";
     public static final String BODY_PADDING = "BODY_PADDING";
     public static final String TEXT_SPACE = "TEXT_SPACE";
+    public static final String COLUMN_COUNT = "COLUMN_COUNT";
+    public static final String ENABLE_HORIZONTAL_COLUMN = "ENABLE_HORIZONTAL_COLUMN";
+    //屏幕方向
+    public static final String SCREEN_ORIENTATION = "SCREEN_ORIENTATION";
     private static final AllowedDirection DEFAULT_ALLOWED_DIRECTION = AllowedDirection.ONLY_VERTICAL;
     private static final Direction DEFAULT_DIRECTION = Direction.HORIZONTAL;
     private static final int DEFAULT_THEME_COLOR_INT =
@@ -43,8 +47,12 @@ public class Config implements Parcelable {
 
     private String backgroundColor = "#E6E6DA";
     private int bodyPadding = 10;
-    private int textSpace = 5;
+    private int textSpace = 1;
     private int fontSize = 2;
+    //列数
+    private int columnCount = 2;
+    private boolean enableHorizontalColumn = true;
+    private int screenOrientation = 0;
     private boolean nightMode;
     @ColorInt
     private int themeColor = DEFAULT_THEME_COLOR_INT;
@@ -102,6 +110,9 @@ public class Config implements Parcelable {
         bundle.putString(BACKGROUND_COLOR, backgroundColor);
         bundle.putInt(BODY_PADDING, bodyPadding);
         bundle.putInt(TEXT_SPACE, textSpace);
+        bundle.putInt(COLUMN_COUNT, columnCount);
+        bundle.putBoolean(ENABLE_HORIZONTAL_COLUMN, enableHorizontalColumn);
+        bundle.putInt(SCREEN_ORIENTATION, screenOrientation);
         dest.writeBundle(bundle);
     }
 
@@ -117,6 +128,9 @@ public class Config implements Parcelable {
                 backgroundColor = getBundleItem(bundle, BACKGROUND_COLOR,"#E6E6DA");
                 bodyPadding = getBundleItem(bundle, BODY_PADDING,10);
                 textSpace = getBundleItem(bundle, TEXT_SPACE,5);
+                columnCount = getBundleItem(bundle, COLUMN_COUNT,2);
+                enableHorizontalColumn = getBundleItem(bundle, ENABLE_HORIZONTAL_COLUMN,true);
+                screenOrientation = getBundleItem(bundle, SCREEN_ORIENTATION,0);
                 fontSize = getBundleItem(bundle, CONFIG_FONT_SIZE, 2);
                 nightMode = getBundleItem(bundle, CONFIG_IS_NIGHT_MODE, false);
                 themeColor = getBundleItem(bundle, CONFIG_THEME_COLOR_INT, DEFAULT_THEME_COLOR_INT);
@@ -153,6 +167,9 @@ public class Config implements Parcelable {
         backgroundColor = "#E6E6DA";
         bodyPadding = 10;
         textSpace = 5;
+        columnCount = 2;
+        enableHorizontalColumn = true;
+        screenOrientation = 0;
     }
 
     @SuppressWarnings("unchecked")
@@ -190,6 +207,9 @@ public class Config implements Parcelable {
         backgroundColor = getJsonItem(obj, BACKGROUND_COLOR, "");
         bodyPadding = getJsonItem(obj, BODY_PADDING, 10);
         textSpace = getJsonItem(obj, TEXT_SPACE, 5);
+        columnCount = getJsonItem(obj, COLUMN_COUNT, 2);
+        enableHorizontalColumn = getJsonItem(obj, ENABLE_HORIZONTAL_COLUMN, true);
+        screenOrientation = getJsonItem(obj, SCREEN_ORIENTATION, 0);
     }
 
     @SuppressWarnings("unchecked")
@@ -351,6 +371,30 @@ public class Config implements Parcelable {
         this.textSpace = textSpace;
     }
 
+    public int getColumnCount() {
+        return columnCount;
+    }
+
+    public boolean getEnableHorizontalColumn() {
+        return enableHorizontalColumn;
+    }
+
+    public void setEnableHorizontalColumn(boolean enableHorizontalColumn) {
+        this.enableHorizontalColumn = enableHorizontalColumn;
+    }
+
+    public int getScreenOrientation() {
+        return screenOrientation;
+    }
+
+    public void setScreenOrientation(int screenOrientation) {
+        this.screenOrientation = screenOrientation;
+    }
+
+    public void setColumnCount(int columnCount) {
+        this.columnCount = columnCount;
+    }
+
     public boolean isShowTextSelection() {
         return showTextSelection;
     }
@@ -465,6 +509,9 @@ public class Config implements Parcelable {
                 ", backgroundColor=" + backgroundColor +
                 ", bodyPadding=" + bodyPadding +
                 ", textSpace=" + textSpace +
+                ", columnCount=" + columnCount +
+                ", screenOrientation=" + screenOrientation +
+                ", enableHorizontalColumn=" + enableHorizontalColumn +
                 '}';
     }
 }

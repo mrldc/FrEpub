@@ -16,14 +16,13 @@ import java.io.File
 
 class FontAdapter(
     private val config: Config,
-    context: Context,
+     context: Context,
     private val userFonts: Map<String, File> = FontFinder.getUserFonts(),
     private val systemFonts: Map<String, File> = FontFinder.getSystemFonts(),
     val fontKeyList: List<String> =
         ArrayList<String>(userFonts.keys.toTypedArray().sorted()) +
                 ArrayList<String>(systemFonts.keys.toTypedArray().sorted())
 ) : ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, fontKeyList) {
-
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = createTextView(position)
 

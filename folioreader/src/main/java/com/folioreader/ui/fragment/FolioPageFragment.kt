@@ -271,7 +271,6 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun reload(reloadDataEvent: ReloadDataEvent) {
-
         if (isCurrentFragment)
             getLastReadLocator("")
 
@@ -466,10 +465,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             mWebview!!.loadUrl("javascript:alert(getReadingTime())")
 
             if (mActivityCallback!!.direction == Config.Direction.HORIZONTAL)
-                mWebview!!.loadUrl( String.format(
-                    "javascript:initHorizontalDirection('%s')",
-                    2
-                ))
+               initHorizontalDirection()
 
             view.loadUrl(
                 String.format(
@@ -1038,9 +1034,20 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         Log.v(LOG_TAG,"onConfigurationChanged")
+        initHorizontalDirection()
+        reload(ReloadDataEvent())
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun bookPageChange(bookPageEvent: BookPageEvent){
+        initHorizontalDirection()
+        reload(ReloadDataEvent())
+    }
+    fun initHorizontalDirection(){
+        mConfig = AppUtil.getSavedConfig(activity);
         mWebview!!.loadUrl( String.format(
             "javascript:initHorizontalDirection('%s')",
-            2
+            mConfig!!.columnCount
         ))
+
     }
 }
