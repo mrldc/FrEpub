@@ -12,6 +12,7 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.folioreader.R
 import com.folioreader.ui.fragment.FolioPageFragment
+import com.folioreader.util.AppUtil
 
 class WebViewPager : ViewPager {
 
@@ -135,14 +136,14 @@ class WebViewPager : ViewPager {
         }
 
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            //Log.d(LOG_TAG, "-> onSingleTapUp");
+            Log.d(LOG_TAG, "-> onSingleTapUp");
             lastGestureType = LastGestureType.OnSingleTapUp
             return false
         }
 
         override fun onLongPress(e: MotionEvent) {
             super.onLongPress(e)
-            //Log.d(LOG_TAG, "-> onLongPress -> " + e);
+            Log.d(LOG_TAG, "-> onLongPress -> " + e);
             lastGestureType = LastGestureType.OnLongPress
         }
 
@@ -152,7 +153,7 @@ class WebViewPager : ViewPager {
             distanceX: Float,
             distanceY: Float
         ): Boolean {
-            //Log.v(LOG_TAG, "-> onScroll -> e1 = " + e1 + ", e2 = " + e2 + ", distanceX = " + distanceX + ", distanceY = " + distanceY);
+            Log.v(LOG_TAG, "-> onScroll -> e1 = " + e1 + ", e2 = " + e2 + ", distanceX = " + distanceX + ", distanceY = " + distanceY);
             lastGestureType = LastGestureType.OnScroll
             return false
         }
@@ -163,14 +164,14 @@ class WebViewPager : ViewPager {
             velocityX: Float,
             velocityY: Float
         ): Boolean {
-            //Log.d(LOG_TAG, "-> onFling -> e1 = " + e1 + ", e2 = " + e2 + ", velocityX = " + velocityX + ", velocityY = " + velocityY);
+            Log.d(LOG_TAG, "-> onFling -> e1 = " + e1 + ", e2 = " + e2 + ", velocityX = " + velocityX + ", velocityY = " + velocityY);
             lastGestureType = LastGestureType.OnFling
             return false
         }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        //Log.d(LOG_TAG, "-> onTouchEvent -> " + AppUtil.actionToString(event.getAction()));
+        Log.d(LOG_TAG, "-> onTouchEvent -> " );
 
         if (event == null)
             return false
