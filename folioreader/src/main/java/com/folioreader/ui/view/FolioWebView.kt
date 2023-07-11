@@ -311,19 +311,19 @@ class FolioWebView : WebView {
 
         viewTextSelection.iv_pink.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> yellowHighlight")
-            onHighlightColorItemsClicked(HighlightStyle.Yellow, false)
+            onHighlightColorItemsClicked(HighlightStyle.highlight_01, false)
         }
         viewTextSelection.iv_green.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> greenHighlight")
-            onHighlightColorItemsClicked(HighlightStyle.Green, false)
+            onHighlightColorItemsClicked(HighlightStyle.highlight_02, false)
         }
         viewTextSelection.iv_blue.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> blueHighlight")
-            onHighlightColorItemsClicked(HighlightStyle.Blue, false)
+            onHighlightColorItemsClicked(HighlightStyle.highlight_03, false)
         }
         viewTextSelection.iv_right_white.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> pinkHighlight")
-            onHighlightColorItemsClicked(HighlightStyle.Pink, false)
+            onHighlightColorItemsClicked(HighlightStyle.highlight_04, false)
         }
       /*  viewTextSelection.underlineHighlight.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> underlineHighlight")
@@ -351,7 +351,9 @@ class FolioWebView : WebView {
         }
         viewTextSelection.tv_dv_line.setOnClickListener {
             dismissPopupWindow()
-            loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
+            if(tv_dv_line.text =="删除划线"){
+                loadUrl("javascript:deleteThisHighlight()")
+            }
         }
         viewTextSelection.tv_write.setOnClickListener {
             dismissPopupWindow()

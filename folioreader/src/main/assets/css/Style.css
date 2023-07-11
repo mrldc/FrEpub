@@ -182,7 +182,15 @@ html .highlight_yellow, html .highlight_green, html .highlight_blue, html .highl
     padding: 0 2px;
     margin: 0 -2px;
 }
-
+html .highlight_01 {background:#DD4F0F}
+html .highlight_02 {background:#6DD53C}
+html .highlight_03 {background:#3CA4DE}
+html .highlight_04 {background:#DA50CE}
+html .highlight_01, html .highlight_02, html .highlight_03, html .highlight_04 {
+    border-radius: 3px;
+    padding: 0 2px;
+    margin: 0 -2px;
+}
 /* default media overlay style */
 .mediaOverlayStyle0 span.epub-media-overlay-playing {
     background: #ccc

@@ -29,10 +29,18 @@
     <color name="highlight_green">#C0ED72</color>
     <color name="highlight_blue">#ADD8FF</color>
     <color name="highlight_pink">#FFB0CA</color>
-    <color name="background"> #E3E0D5</color>
-    <color name="background02">#D0D1CE</color>
-    <color name="background03">#E0F6C6</color>
-    <color name="background04">#B6D9DD</color>
+
+    <color name="highlight_01">#DD4F0F</color>
+    <color name="highlight_02">#6DD53C</color>
+    <color name="highlight_03">#3CA4DE</color>
+    <color name="highlight_04">#DA50CE</color>
+
+    <color name="background">#FFFFFF</color>
+    <color name="background02">#EDEAE4</color>
+    <color name="background03">#E6EFDB</color>
+    <color name="background04">#E2F3F1</color>
+
+
 
 
 
