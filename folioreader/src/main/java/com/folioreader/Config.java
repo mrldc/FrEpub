@@ -115,7 +115,7 @@ public class Config implements Parcelable {
             } else {
                 font = getBundleItem(bundle, CONFIG_FONT, "Roboto");
                 backgroundColor = getBundleItem(bundle, BACKGROUND_COLOR,"#E6E6DA");
-                bodyPadding = getBundleItem(bundle, BACKGROUND_COLOR,10);
+                bodyPadding = getBundleItem(bundle, BODY_PADDING,10);
                 textSpace = getBundleItem(bundle, TEXT_SPACE,5);
                 fontSize = getBundleItem(bundle, CONFIG_FONT_SIZE, 2);
                 nightMode = getBundleItem(bundle, CONFIG_IS_NIGHT_MODE, false);
@@ -188,7 +188,7 @@ public class Config implements Parcelable {
         );
         showRemainingIndicator = getJsonItem(obj, CONFIG_REMAINING_INDICATOR, false);
         backgroundColor = getJsonItem(obj, BACKGROUND_COLOR, "");
-        bodyPadding = getJsonItem(obj, BACKGROUND_COLOR, 10);
+        bodyPadding = getJsonItem(obj, BODY_PADDING, 10);
         textSpace = getJsonItem(obj, TEXT_SPACE, 5);
     }
 
