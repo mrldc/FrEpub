@@ -122,7 +122,7 @@ public final class HtmlUtil {
          bodyStyles += "padding: "+ config.getBodyPadding()+";";
          bodyStyles += "line-height: "+ config.getTextSpace()+";";
         htmlContent = htmlContent.replace("<body",
-                        "<html style=\"" + styles + "\"");
+                        "<html style=\"" + bodyStyles + "\"");
 
         return htmlContent;
     }
