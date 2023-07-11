@@ -90,12 +90,12 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
         mTableOfContentsRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_menu);
         errorView = (TextView) view.findViewById(R.id.tv_error);
         deleteView = (ImageView) view.findViewById(R.id.iv_item_delete);
-        deleteView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EventBus.getDefault().post(new MessageEvent("接收到TwoActivity发送过来的事件啦"));
-            }
-        });
+//        deleteView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                EventBus.getDefault().post(new MessageEvent("接收到TwoActivity发送过来的事件啦"));
+//            }
+//        });
         configRecyclerViews();
         initAdapter();
         if (getActivity() instanceof FolioActivityCallback){

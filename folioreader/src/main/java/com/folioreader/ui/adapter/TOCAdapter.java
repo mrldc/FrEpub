@@ -66,15 +66,15 @@ public class TOCAdapter extends MultiLevelExpIndListAdapter {
 
         if (mConfig.isNightMode()) {
             if (tocLinkWrapper.isGroup()) {
-                viewHolder.children.setImageResource(R.drawable.ic_plus_white_24dp);
+                viewHolder.children.setImageResource(R.mipmap.chamber_ic_right_arrows);
             } else {
-                viewHolder.children.setImageResource(R.drawable.ic_minus_white_24dp);
+                viewHolder.children.setImageResource(R.mipmap.ic_directory_item_down);
             }
         } else {
             if (tocLinkWrapper.isGroup()) {
-                viewHolder.children.setImageResource(R.drawable.ic_plus_black_24dp);
+                viewHolder.children.setImageResource(R.mipmap.chamber_ic_right_arrows);
             } else {
-                viewHolder.children.setImageResource(R.drawable.ic_minus_black_24dp);
+                viewHolder.children.setImageResource(R.mipmap.ic_directory_item_down);
             }
         }
 
@@ -118,7 +118,7 @@ public class TOCAdapter extends MultiLevelExpIndListAdapter {
                     R.color.black));
         }
         if (tocLinkWrapper.getTocLink().getHref().equals(selectedHref)) {
-            viewHolder.sectionTitle.setTextColor(ContextCompat.getColor(mContext, R.color.redO));
+            viewHolder.sectionTitle.setTextColor(ContextCompat.getColor(mContext, R.color.red_DD4F0F));
         }
     }
 

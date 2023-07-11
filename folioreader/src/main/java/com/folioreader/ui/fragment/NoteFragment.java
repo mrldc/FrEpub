@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -69,17 +70,74 @@ public class NoteFragment extends Fragment implements NoteAdapter.NoteAdapterCal
         RecyclerView highlightsView = (RecyclerView) mRootView.findViewById(R.id.rv_highlights);
         Config config = AppUtil.getSavedConfig(getActivity());
         mBookId = getArguments().getString(FolioReader.EXTRA_BOOK_ID);
-
+        initTopUi();
         if (config.isNightMode()) {
             mRootView.findViewById(R.id.rv_highlights).
                     setBackgroundColor(ContextCompat.getColor(getActivity(),
                             R.color.black));
         }
         highlightsView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        highlightsView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+//        highlightsView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
         adapter = new NoteAdapter(getActivity(), HighLightTable.getAllNotes(mBookId), this, config);
         highlightsView.setAdapter(adapter);
+    }
+
+    /**
+     * 初始化头部按钮
+     */
+    private void initTopUi() {
+        mRootView.findViewById(R.id.tv_all).setEnabled(true);
+        mRootView.findViewById(R.id.tv_all).setSelected(true);
+        //全部
+        mRootView.findViewById(R.id.tv_all).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                statuTop(true, false, false, false);
+            }
+        });
+        //划线
+        mRootView.findViewById(R.id.tv_line).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                statuTop(false, true, false, false);
+            }
+        });
+        //笔记
+        mRootView.findViewById(R.id.tv_note).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                statuTop(false, false, true, false);
+            }
+        });
+        //书签
+        mRootView.findViewById(R.id.tv_bookmark).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                statuTop(false, false, false, true);
+            }
+        });
+    }
+
+    /**
+     * 头部状态
+     */
+    private void statuTop(Boolean all, Boolean line, Boolean note, Boolean bookmark) {
+        int textColor = ContextCompat.getColor(getContext(), R.color.red_DD4F0F);
+        int textColorNormal = ContextCompat.getColor(getContext(), R.color.black_333333);
+        TextView tv_all = (TextView)mRootView.findViewById(R.id.tv_all);
+        TextView tv_line = (TextView)mRootView.findViewById(R.id.tv_line);
+        TextView tv_note = (TextView)mRootView.findViewById(R.id.tv_note);
+        TextView tv_bookmark = (TextView)mRootView.findViewById(R.id.tv_bookmark);
+        tv_all.setSelected(all);
+        tv_line.setSelected(line);
+        tv_note.setSelected(note);
+        tv_bookmark.setSelected(bookmark);
+        tv_all.setTextColor(all ? textColor : textColorNormal);
+        tv_line.setTextColor(line ? textColor : textColorNormal);
+        tv_note.setTextColor(note ? textColor : textColorNormal);
+        tv_bookmark.setTextColor(bookmark ? textColor : textColorNormal);
+
     }
 
     @Override

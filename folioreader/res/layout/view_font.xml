@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:layout_gravity="bottom"
-    android:background="#ffffff"
+    android:background="@drawable/shape_20_top_left_right_solid_ffffff"
     >
 
     <LinearLayout

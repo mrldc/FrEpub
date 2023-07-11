@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_bottom"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="16dp"
+    android:background="@drawable/shape_10_solid_ffffff_bg">
     <LinearLayout
         android:id="@+id/swipe_linear_layout"
         android:layout_width="160dp"
-        android:layout_height="0dp">
+        android:layout_height="1dp"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/iv_edit_note"
@@ -28,11 +34,10 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/container"
+        android:id="@+id/bookmark_container"
         android:layout_width="match_parent"
-        android:layout_height="68dp"
-        android:orientation="vertical"
-        android:background="@drawable/shape_10_solid_ffffff_bg">
+        android:layout_height="48dp"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_highlight_date"
@@ -47,50 +52,69 @@
 
         <ImageView
             android:id="@+id/iv_item"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:src="@mipmap/ic_highline_item" />
+            android:src="@mipmap/ic_write_item" />
 
-      <!--  <TextView
-            android:id="@+id/tv_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/iv_item"
-            android:layout_centerVertical="true"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:background="@drawable/shape_4_solid_f8f8f8_bg"
-            android:textSize="16sp"
-            android:textColor="#999999"
-            android:text="P23" />-->
-
+        <!--        <TextView-->
+        <!--            android:id="@+id/tv_left"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_toEndOf="@+id/iv_item"-->
+        <!--            android:layout_centerVertical="true"-->
+        <!--            android:maxLines="1"-->
+        <!--            android:singleLine="true"-->
+        <!--            android:background="@drawable/shape_4_solid_f8f8f8_bg"-->
+        <!--            android:textSize="16sp"-->
+        <!--            android:textColor="#999999"-->
+        <!--            android:text="P23" />-->
         <com.folioreader.ui.view.UnderlinedTextView
             android:id="@+id/utv_highlight_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_toEndOf="@+id/iv_item"
             android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/iv_item"
             android:ellipsize="end"
-            android:maxLines="3"
-            android:minLines="1"
+            android:maxLines="1"
+            android:singleLine="true"
             android:textColor="#333333"
-            android:textSize="24sp" />
+            android:textSize="18sp"
+            />
+    </RelativeLayout>
 
-
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/rl_highlight_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="6dp"
+        tools:visibility="visible"
+        >
+        <View
+            android:id="@+id/view"
+            android:layout_width="1dp"
+            android:layout_height="16dp"
+            android:background="#999999"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="42dp"
+            />
 
         <TextView
-            android:id="@+id/tv_note"
+            android:id="@+id/tv_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/utv_highlight_content"
-            android:ellipsize="end"
-            android:text=""
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:visibility="gone"/>
+            android:layout_toEndOf="@+id/view"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textSize="17sp"
+            android:textColor="#999999"
+            android:text="此前各书均有序，或自序，或他序，四书此次汇集重刊，她又逐一修订一过，但尚缺一篇总序，她希望这篇总序由我来执笔，以冠群书。" />
     </RelativeLayout>
-</com.daimajia.swipe.SwipeLayout>
+
+</LinearLayout>

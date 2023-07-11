@@ -53,6 +53,7 @@ import com.folioreader.Constants.*
 import com.folioreader.FolioReader
 import com.folioreader.FolioReader.OnClosedListener
 import com.folioreader.R
+import com.folioreader.event.MessageEvent
 import com.folioreader.model.DisplayUnit
 import com.folioreader.model.HighLight
 import com.folioreader.model.HighlightImpl
@@ -74,6 +75,8 @@ import com.folioreader.util.AppUtil.Companion.getSavedConfig
 import com.folioreader.viewmodels.PageTrackerViewModel
 import com.folioreader.viewmodels.PageTrackerViewModelFactory
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.readium.r2.shared.Link
 import org.readium.r2.shared.Publication
 import org.readium.r2.streamer.parser.CbzParser
@@ -272,11 +275,22 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     }
 
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    fun onMessageEvent(event: MessageEvent) {
+//        //TODO 接收事件后Do something
+//        rl_top!!.visibility = View.GONE
+//        rl_bottom!!.visibility = View.GONE
+//        rl_edit!!.visibility = View.GONE
+//        flMain!!.visibility = View.GONE
+//    }
+
     override fun onStop() {
         super.onStop()
         Log.v(LOG_TAG, "-> onStop")
         topActivity = false
     }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -407,7 +421,11 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         //目录
         iv_directory?.setOnClickListener {
-
+//            iv_directory!!.setImageResource(R.mipmap.ic_directory_select)
+//            iv_write!!.setImageResource(R.mipmap.ic_note_select)
+//            iv_light!!.setImageResource(R.mipmap.ic_day_night_select)
+//            iv_font!!.setImageResource(R.mipmap.ic_font_select)
+            statusIcon(true, false, false, false)
             goToTableOfCOntentActivity()
             flMain!!.visibility = View.VISIBLE
             rl_edit!!.visibility = View.GONE
@@ -415,12 +433,16 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         //笔记页面
         iv_write?.setOnClickListener {
            // startContentHighlightActivity()
+//            iv_write!!.setImageResource(R.mipmap.ic_note_select)
+            statusIcon(false, true, false, false)
             gaToHighlightFragment()
             flMain!!.visibility = View.VISIBLE
             rl_edit!!.visibility = View.GONE
         }
         //亮度、背景
         iv_light?.setOnClickListener {
+//            iv_light!!.setImageResource(R.mipmap.ic_day_night_select)
+            statusIcon(false, false, true, false)
             val ft: FragmentTransaction =
                 supportFragmentManager.beginTransaction()
             ft.replace(R.id.fl_main, LightFragment())
@@ -430,6 +452,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         //字体
         iv_font?.setOnClickListener {
+//            iv_font!!.setImageResource(R.mipmap.ic_font_select)
+            statusIcon(false, false, false, true)
             val ft: FragmentTransaction =
                 supportFragmentManager.beginTransaction()
             ft.replace(R.id.fl_main, FontFragment())
@@ -438,6 +462,13 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             rl_edit!!.visibility = View.GONE
 //            showConfigBottomSheetDialogFragment()
         }
+    }
+
+    private fun statusIcon(directory : Boolean, write : Boolean, light : Boolean, font : Boolean) {
+        iv_directory!!.setImageResource( if (directory) R.mipmap.ic_directory_select else R.mipmap.ic_directory)
+        iv_write!!.setImageResource(if (write) R.mipmap.ic_note_select else R.mipmap.ic_write )
+        iv_light!!.setImageResource( if (light) R.mipmap.ic_day_night_select else R.mipmap.ic_light )
+        iv_font!!.setImageResource(if (font) R.mipmap.ic_font_select else R.mipmap.ic_font)
     }
 
     private fun initActionBar() {
@@ -1006,6 +1037,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             rl_bottom!!.visibility = View.GONE
             rl_edit!!.visibility = View.GONE
             flMain!!.visibility = View.GONE
+            statusIcon(false, false, false, false)
         } else {
             rl_top!!.visibility = View.VISIBLE
             rl_bottom!!.visibility = View.VISIBLE
@@ -1183,6 +1215,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             FolioReader.get().retrofit = null
             FolioReader.get().r2StreamerApi = null
         }
+        EventBus.getDefault().unregister(this)
     }
 
     override fun getCurrentChapterIndex(): Int {
