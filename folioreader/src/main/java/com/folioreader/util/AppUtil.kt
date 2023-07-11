@@ -87,8 +87,8 @@ class AppUtil {
             val simpleDateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
             return simpleDateFormat.format(hightlightDate)
         }
-
-        fun saveConfig(context: Context?, config: Config) {
+        @JvmStatic
+         fun saveConfig(context: Context?, config: Config) {
             val obj = JSONObject()
             try {
                 obj.put(Config.CONFIG_FONT, config.font)

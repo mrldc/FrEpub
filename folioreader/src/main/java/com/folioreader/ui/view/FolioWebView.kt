@@ -118,6 +118,7 @@ class FolioWebView : WebView {
     private var calculatedProgress = 0.0
 
     private var lastScrollType: LastScrollType? = null
+    private  var highlightId: String? = null
 
     val contentHeightVal: Int
         get() = floor((this.contentHeight * this.scale).toDouble()).toInt()
@@ -353,6 +354,8 @@ class FolioWebView : WebView {
             dismissPopupWindow()
             if(tv_dv_line.text =="删除划线"){
                 loadUrl("javascript:deleteThisHighlight()")
+                HighLightTable.deleteHighlight(highlightId)
+                highlightId = null
             }
         }
         viewTextSelection.tv_write.setOnClickListener {
@@ -548,7 +551,7 @@ class FolioWebView : WebView {
                 val rectJson = JSONObject(value)
                 setSelectionRect(
                     rectJson.getInt("left"), rectJson.getInt("top"),
-                    rectJson.getInt("right"), rectJson.getInt("bottom")
+                    rectJson.getInt("right"), rectJson.getInt("bottom"),null
                 )
             }
             return false
@@ -731,7 +734,7 @@ class FolioWebView : WebView {
     }
 
     @JavascriptInterface
-    fun setSelectionRect(left: Int, top: Int, right: Int, bottom: Int) {
+    fun setSelectionRect(left: Int, top: Int, right: Int, bottom: Int,id: String?) {
 
         val currentSelectionRect = Rect()
         currentSelectionRect.left = (left * density).toInt()
@@ -740,7 +743,7 @@ class FolioWebView : WebView {
         currentSelectionRect.bottom = (bottom * density).toInt()
         Log.d(LOG_TAG, "-> setSelectionRect -> $currentSelectionRect")
         computeTextSelectionRect(currentSelectionRect)
-        uiHandler.post { showTextSelectionPopup() }
+        uiHandler.post { showTextSelectionPopup(id) }
     }
 
     private fun computeTextSelectionRect(currentSelectionRect: Rect) {
@@ -838,7 +841,7 @@ class FolioWebView : WebView {
         }
     }
 
-    private fun showTextSelectionPopup() {
+    private fun showTextSelectionPopup(id: String?) {
         val config = AppUtil.getSavedConfig(context)!!
         if(config.isShowTextSelection) {
             Log.v(LOG_TAG, "-> showTextSelectionPopup")
@@ -865,6 +868,11 @@ class FolioWebView : WebView {
                         this@FolioWebView, Gravity.NO_GRAVITY,
                         popupRect.left, popupRect.top
                     )
+                    if(id != null){
+                        //选择的高亮部分
+                        tv_dv_line.text ="删除划线"
+                        highlightId = id
+                    }
                 } else {
                     Log.i(LOG_TAG, "-> Still scrolling, don't show Popup")
                     oldScrollX = currentScrollX

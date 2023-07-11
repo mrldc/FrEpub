@@ -845,7 +845,7 @@ function onClickHighlight(element) {
       selection.addRange(range); // 将新的范围加入到选中的文本中
 
     var rectJson = getSelectionRect(element);
-    FolioWebView.setSelectionRect(rectJson.left, rectJson.top, rectJson.right, rectJson.bottom);
+    FolioWebView.setSelectionRect(rectJson.left, rectJson.top, rectJson.right, rectJson.bottom,element.getAttribute("id"));
 }
 
 function deleteThisHighlight() {
