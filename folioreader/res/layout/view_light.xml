@@ -60,11 +60,10 @@
 
         <View
             android:id="@+id/iv_light_1"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            android:layout_width="30dp"
+            android:layout_height="34dp"
             android:layout_margin="5dp"
-            android:background="@drawable/shape_highlight_gray"
-             />
+            android:background="@drawable/shape_highlight_1" />
         <View
             android:id="@+id/iv_light_2"
             android:layout_width="38dp"

@@ -32,6 +32,8 @@ public class Config implements Parcelable {
     public static final String CONFIG_REMAINING_INDICATOR = "show_remaining_indicator";
     public static final String CONFIG_TEXT_SELECTION = "text_selection";
     public static final String BACKGROUND_COLOR = "background_color";
+    public static final String BODY_PADDING = "BODY_PADDING";
+    public static final String TEXT_SPACE = "TEXT_SPACE";
     private static final AllowedDirection DEFAULT_ALLOWED_DIRECTION = AllowedDirection.ONLY_VERTICAL;
     private static final Direction DEFAULT_DIRECTION = Direction.HORIZONTAL;
     private static final int DEFAULT_THEME_COLOR_INT =
@@ -40,6 +42,8 @@ public class Config implements Parcelable {
     private String font = "Roboto";
 
     private String backgroundColor = "#E6E6DA";
+    private int bodyPadding = 10;
+    private int textSpace = 5;
     private int fontSize = 2;
     private boolean nightMode;
     @ColorInt
@@ -96,6 +100,8 @@ public class Config implements Parcelable {
         bundle.putString(CONFIG_DIRECTION, direction.toString());
         bundle.putBoolean(CONFIG_REMAINING_INDICATOR, showRemainingIndicator);
         bundle.putString(BACKGROUND_COLOR, backgroundColor);
+        bundle.putInt(BODY_PADDING, bodyPadding);
+        bundle.putInt(TEXT_SPACE, textSpace);
         dest.writeBundle(bundle);
     }
 
@@ -109,6 +115,8 @@ public class Config implements Parcelable {
             } else {
                 font = getBundleItem(bundle, CONFIG_FONT, "Roboto");
                 backgroundColor = getBundleItem(bundle, BACKGROUND_COLOR,"#E6E6DA");
+                bodyPadding = getBundleItem(bundle, BACKGROUND_COLOR,10);
+                textSpace = getBundleItem(bundle, TEXT_SPACE,5);
                 fontSize = getBundleItem(bundle, CONFIG_FONT_SIZE, 2);
                 nightMode = getBundleItem(bundle, CONFIG_IS_NIGHT_MODE, false);
                 themeColor = getBundleItem(bundle, CONFIG_THEME_COLOR_INT, DEFAULT_THEME_COLOR_INT);
@@ -143,6 +151,8 @@ public class Config implements Parcelable {
         showRemainingIndicator = false;
         showTextSelection = true;
         backgroundColor = "#E6E6DA";
+        bodyPadding = 10;
+        textSpace = 5;
     }
 
     @SuppressWarnings("unchecked")
@@ -178,6 +188,8 @@ public class Config implements Parcelable {
         );
         showRemainingIndicator = getJsonItem(obj, CONFIG_REMAINING_INDICATOR, false);
         backgroundColor = getJsonItem(obj, BACKGROUND_COLOR, "");
+        bodyPadding = getJsonItem(obj, BACKGROUND_COLOR, 10);
+        textSpace = getJsonItem(obj, TEXT_SPACE, 5);
     }
 
     @SuppressWarnings("unchecked")
@@ -323,6 +335,22 @@ public class Config implements Parcelable {
         return this;
     }
 
+    public int getBodyPadding() {
+        return bodyPadding;
+    }
+
+    public void setBodyPadding(int bodyPadding) {
+        this.bodyPadding = bodyPadding;
+    }
+
+    public int getTextSpace() {
+        return textSpace;
+    }
+
+    public void setTextSpace(int textSpace) {
+        this.textSpace = textSpace;
+    }
+
     public boolean isShowTextSelection() {
         return showTextSelection;
     }
@@ -435,6 +463,8 @@ public class Config implements Parcelable {
                 ", remainingIndicator=" + showRemainingIndicator +
                 ", showTextSelection=" + showTextSelection +
                 ", backgroundColor=" + backgroundColor +
+                ", bodyPadding=" + bodyPadding +
+                ", textSpace=" + textSpace +
                 '}';
     }
 }

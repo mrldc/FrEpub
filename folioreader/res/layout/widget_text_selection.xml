@@ -23,7 +23,7 @@
 
             <LinearLayout
                 android:id="@+id/firstSectionLayout"
-                android:layout_width="420dp"
+                android:layout_width="440dp"
                 android:layout_height="100dp"
                 android:background="@drawable/shape_20_solid_cc000000_bg"
                 android:orientation="horizontal"
@@ -91,19 +91,24 @@
                     android:background="@android:color/transparent"
                     android:orientation="horizontal">
 
-                    <LinearLayout
+                    <FrameLayout
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:background="@drawable/shape_20_solid_cc000000_bg"
                         android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/deleteHighlight"
+                        >
+                        <View
+                            android:layout_gravity="center"
                             style="@style/ImageViewTextSelectorMarker"
                             android:background="@drawable/shape_10_solid_dd4f0f_bg"
+                            >
+                        </View>
+                        <ImageView
+                            android:layout_gravity="center"
+                            android:id="@+id/deleteHighlight"
+                            style="@style/ImageViewTextSelectorMarker"
                             app:srcCompat="@mipmap/ic_selection_font_a" />
-                    </LinearLayout>
+                    </FrameLayout>
 
                     <LinearLayout
                         android:layout_width="60dp"
@@ -140,32 +145,88 @@
                         android:background="@drawable/shape_20_solid_cc000000_bg"
                         android:gravity="center"
                         android:orientation="horizontal">
-
-                        <ImageView
+                        <FrameLayout
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/shape_20_solid_cc000000_bg"
+                            android:gravity="center"
                             android:id="@+id/iv_right_white"
-                            style="@style/ImageViewTextSelectorMarker"
-                            android:layout_marginStart="7dp"
-                            android:background="@drawable/shape_10_solid_dd4f0f_bg"
-                            app:srcCompat="@mipmap/ic_selection_right_white" />
-
-                        <ImageView
+                            >
+                            <View
+                                android:layout_gravity="center"
+                                style="@style/ImageViewTextSelectorMarker"
+                                android:background="@drawable/shape_10_solid_dd4f0f_bg"
+                                >
+                            </View>
+                            <ImageView
+                                android:visibility="invisible"
+                                android:layout_gravity="center"
+                                android:id="@+id/iv_select_01"
+                                style="@style/ImageViewTextSelectorMarker"
+                                app:srcCompat="@mipmap/ic_selection_right_white" />
+                        </FrameLayout>
+                        <FrameLayout
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/shape_20_solid_cc000000_bg"
+                            android:gravity="center"
                             android:id="@+id/iv_green"
-                            style="@style/ImageViewTextSelectorMarker"
-                            android:layout_marginStart="5dp"
-                            android:background="@drawable/shape_10_solid_6dd53c_bg" />
-
-                        <ImageView
+                            >
+                            <View
+                                android:layout_gravity="center"
+                                style="@style/ImageViewTextSelectorMarker"
+                                android:background="@drawable/shape_10_solid_6dd53c_bg"
+                                >
+                            </View>
+                            <ImageView
+                                android:visibility="invisible"
+                                android:layout_gravity="center"
+                                android:id="@+id/iv_select_02"
+                                style="@style/ImageViewTextSelectorMarker"
+                                app:srcCompat="@mipmap/ic_selection_right_white" />
+                        </FrameLayout>
+                        <FrameLayout
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/shape_20_solid_cc000000_bg"
+                            android:gravity="center"
                             android:id="@+id/iv_blue"
-                            style="@style/ImageViewTextSelectorMarker"
-                            android:layout_marginStart="5dp"
-                            android:background="@drawable/shape_10_solid_3ca4de_bg" />
+                            >
+                            <View
+                                android:layout_gravity="center"
+                                style="@style/ImageViewTextSelectorMarker"
+                                android:background="@drawable/shape_10_solid_3ca4de_bg"
+                                >
+                            </View>
+                            <ImageView
+                                android:visibility="invisible"
+                                android:layout_gravity="center"
+                                android:id="@+id/iv_select_03"
+                                style="@style/ImageViewTextSelectorMarker"
+                                app:srcCompat="@mipmap/ic_selection_right_white" />
+                        </FrameLayout>
 
-                        <ImageView
+                        <FrameLayout
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/shape_20_solid_cc000000_bg"
+                            android:gravity="center"
                             android:id="@+id/iv_pink"
-                            style="@style/ImageViewTextSelectorMarker"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginEnd="7dp"
-                            android:background="@drawable/shape_10_solid_da50ce_bg" />
+                            >
+                            <View
+                                android:layout_gravity="center"
+                                style="@style/ImageViewTextSelectorMarker"
+                                android:background="@drawable/shape_10_solid_da50ce_bg"
+                                >
+                            </View>
+                            <ImageView
+                                android:visibility="invisible"
+                                android:layout_gravity="center"
+                                android:id="@+id/iv_select_04"
+                                style="@style/ImageViewTextSelectorMarker"
+                                app:srcCompat="@mipmap/ic_selection_right_white" />
+                        </FrameLayout>
+
                     </LinearLayout>
                 </LinearLayout>
 

@@ -118,7 +118,11 @@ public final class HtmlUtil {
                 "<html class=\"" + classes + "\"" +
                         " style=\"" + styles + "\"" +
                         " onclick=\"onClickHtml()\"");
-
+        String bodyStyles = "padding: "+ config.getBodyPadding()+";";
+         bodyStyles += "padding: "+ config.getBodyPadding()+";";
+         bodyStyles += "line-height: "+ config.getTextSpace()+";";
+        htmlContent = htmlContent.replace("<body",
+                        "<html style=\"" + bodyStyles + "\"");
 
         return htmlContent;
     }
