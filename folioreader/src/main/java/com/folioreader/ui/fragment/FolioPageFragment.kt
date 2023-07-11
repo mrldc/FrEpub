@@ -495,8 +495,11 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                     mWebview!!.loadUrl(callHighlightSearchLocator)
 
                 } else if (isCurrentFragment) {
-                    val cfi = lastReadLocator!!.locations.cfi
-                    mWebview!!.loadUrl(String.format(getString(R.string.callScrollToCfi), cfi))
+                    if(lastReadLocator != null){
+                        val cfi = lastReadLocator!!.locations!!.cfi!!
+                        mWebview!!.loadUrl(String.format(getString(R.string.callScrollToCfi), cfi))
+                    }
+
 
                 } else {
                     if (spineIndex == mActivityCallback!!.currentChapterIndex - 1) {

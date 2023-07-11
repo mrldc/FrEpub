@@ -599,7 +599,7 @@ class FolioWebView : WebView {
                 val rectJson = JSONObject(value)
                 setSelectionRect(
                     rectJson.getInt("left"), rectJson.getInt("top"),
-                    rectJson.getInt("right"), rectJson.getInt("bottom")
+                    rectJson.getInt("right"), rectJson.getInt("bottom"),null
                 )
             }
         }
