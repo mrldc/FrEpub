@@ -22,6 +22,7 @@ import java.util.UUID;
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class HighLightTable {
     public static final String TABLE_NAME = "highlight_table";
+    public static final String MARK_TYPE = "mark";
 
     public static final String ID = "_id";
     public static final String COL_BOOK_ID = "bookId";
@@ -209,6 +210,7 @@ public class HighLightTable {
             DbAdapter.saveHighLight(getHighlightContentValues(highLight));
         }
     }
+        //获取全部
 
     @SuppressLint("Range")
     public static List<MarkVo> getAllNotes(String mBookId) {
@@ -220,6 +222,98 @@ public class HighLightTable {
         sb.append(" union all ");
         sb.append(" select _id as id,bookId,content,note,case when type='mark' then '4' else '3'end as kind,type as highLightType, null as cfi ,rangy,pageId as href, date,page_number as pageNumber  from highlight_table ");
         sb.append(" where bookId='").append(mBookId).append("' ");
+        sb.append(") t order by t.date");
+        Cursor cursor = DbAdapter.getHighlightsBySql(sb.toString());
+        List<MarkVo> markVoList = new ArrayList<>();
+        while (cursor.moveToNext()){
+            MarkVo markVo = new MarkVo();
+            markVo.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            markVo.setBookId(cursor.getString(cursor.getColumnIndex("bookId")));
+            markVo.setContent(cursor.getString(cursor.getColumnIndex("content")));
+            markVo.setNote(cursor.getString(cursor.getColumnIndex("note")));
+            markVo.setKind(cursor.getString(cursor.getColumnIndex("kind")));
+            markVo.setHighlightType(cursor.getString(cursor.getColumnIndex("highLightType")));
+            markVo.setCfi(cursor.getString(cursor.getColumnIndex("cfi")));
+            markVo.setRangy(cursor.getString(cursor.getColumnIndex("rangy")));
+            markVo.setHref(cursor.getString(cursor.getColumnIndex("href")));
+            markVo.setDate(cursor.getString(cursor.getColumnIndex("date")));
+            markVo.setPageNumber(cursor.getInt(cursor.getColumnIndex("pageNumber")));
+            markVoList.add(markVo);
+        }
+        cursor.close();
+        return markVoList;
+    }
+    //获取书签
+    @SuppressLint("Range")
+    public static List<MarkVo> getAllBookMark(String mBookId) {
+        StringBuilder sb = new StringBuilder();
+        //查询书签与页笔记
+        sb.append("select * from (");
+        sb.append("select _id as id,bookID as bookId,  content,  note, type as kind,null as highLightType,cfi,null as rangy,readlocator as href,date, page_number as pageNumber from bookmark_table");
+        sb.append(" where bookID='").append(mBookId).append("' ").append(" and ").append(" type = '1'");
+        sb.append(") t order by t.date");
+        Cursor cursor = DbAdapter.getHighlightsBySql(sb.toString());
+        List<MarkVo> markVoList = new ArrayList<>();
+        while (cursor.moveToNext()){
+            MarkVo markVo = new MarkVo();
+            markVo.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            markVo.setBookId(cursor.getString(cursor.getColumnIndex("bookId")));
+            markVo.setContent(cursor.getString(cursor.getColumnIndex("content")));
+            markVo.setNote(cursor.getString(cursor.getColumnIndex("note")));
+            markVo.setKind(cursor.getString(cursor.getColumnIndex("kind")));
+            markVo.setHighlightType(cursor.getString(cursor.getColumnIndex("highLightType")));
+            markVo.setCfi(cursor.getString(cursor.getColumnIndex("cfi")));
+            markVo.setRangy(cursor.getString(cursor.getColumnIndex("rangy")));
+            markVo.setHref(cursor.getString(cursor.getColumnIndex("href")));
+            markVo.setDate(cursor.getString(cursor.getColumnIndex("date")));
+            markVo.setPageNumber(cursor.getInt(cursor.getColumnIndex("pageNumber")));
+            markVoList.add(markVo);
+        }
+        cursor.close();
+        return markVoList;
+    }
+    //获取笔记
+
+    @SuppressLint("Range")
+    public static List<MarkVo> getAllNoteList(String mBookId) {
+        StringBuilder sb = new StringBuilder();
+        //查询书签与页笔记
+        sb.append("select * from (");
+        sb.append("select _id as id,bookID as bookId,  content,  note, type as kind,null as highLightType,cfi,null as rangy,readlocator as href,date, page_number as pageNumber from bookmark_table");
+        sb.append(" where bookID='").append(mBookId).append("' ").append(" and ").append(" type = '2'");
+        sb.append(" union all ");
+        sb.append(" select _id as id,bookId,content,note,case when type='mark' then '4' else '3'end as kind,type as highLightType, null as cfi ,rangy,pageId as href, date,page_number as pageNumber  from highlight_table ");
+        sb.append(" where bookId='").append(mBookId).append("' ").append(" and ").append(" type = '").append(MARK_TYPE).append("'");
+        sb.append(") t order by t.date");
+        Cursor cursor = DbAdapter.getHighlightsBySql(sb.toString());
+        List<MarkVo> markVoList = new ArrayList<>();
+        while (cursor.moveToNext()){
+            MarkVo markVo = new MarkVo();
+            markVo.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            markVo.setBookId(cursor.getString(cursor.getColumnIndex("bookId")));
+            markVo.setContent(cursor.getString(cursor.getColumnIndex("content")));
+            markVo.setNote(cursor.getString(cursor.getColumnIndex("note")));
+            markVo.setKind(cursor.getString(cursor.getColumnIndex("kind")));
+            markVo.setHighlightType(cursor.getString(cursor.getColumnIndex("highLightType")));
+            markVo.setCfi(cursor.getString(cursor.getColumnIndex("cfi")));
+            markVo.setRangy(cursor.getString(cursor.getColumnIndex("rangy")));
+            markVo.setHref(cursor.getString(cursor.getColumnIndex("href")));
+            markVo.setDate(cursor.getString(cursor.getColumnIndex("date")));
+            markVo.setPageNumber(cursor.getInt(cursor.getColumnIndex("pageNumber")));
+            markVoList.add(markVo);
+        }
+        cursor.close();
+        return markVoList;
+    }
+    //获取全部
+
+    @SuppressLint("Range")
+    public static List<MarkVo> getAllHighlight(String mBookId) {
+        StringBuilder sb = new StringBuilder();
+        //查询书签与页笔记
+        sb.append("select * from (");
+        sb.append(" select _id as id,bookId,content,note,case when type='mark' then '4' else '3'end as kind,type as highLightType, null as cfi ,rangy,pageId as href, date,page_number as pageNumber  from highlight_table ");
+        sb.append(" where bookId='").append(mBookId).append("' ").append(" and ").append(" type != '").append(MARK_TYPE).append("'");;
         sb.append(") t order by t.date");
         Cursor cursor = DbAdapter.getHighlightsBySql(sb.toString());
         List<MarkVo> markVoList = new ArrayList<>();

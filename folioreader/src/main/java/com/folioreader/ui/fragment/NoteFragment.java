@@ -1,5 +1,6 @@
 package com.folioreader.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -43,7 +44,7 @@ public class NoteFragment extends Fragment implements NoteAdapter.NoteAdapterCal
     private View mRootView;
     private NoteAdapter adapter;
     private String mBookId;
-
+    RecyclerView highlightsView;
 
     public static NoteFragment newInstance(String bookId, String epubTitle) {
         NoteFragment highlightFragment = new NoteFragment();
@@ -69,7 +70,7 @@ public class NoteFragment extends Fragment implements NoteAdapter.NoteAdapterCal
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RecyclerView highlightsView = (RecyclerView) mRootView.findViewById(R.id.rv_highlights);
+        highlightsView = (RecyclerView) mRootView.findViewById(R.id.rv_highlights);
         Config config = AppUtil.getSavedConfig(getActivity());
         mBookId = getArguments().getString(FolioReader.EXTRA_BOOK_ID);
         initTopUi();
@@ -93,30 +94,55 @@ public class NoteFragment extends Fragment implements NoteAdapter.NoteAdapterCal
         mRootView.findViewById(R.id.tv_all).setSelected(true);
         //全部
         mRootView.findViewById(R.id.tv_all).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View view) {
                 statuTop(true, false, false, false);
+                adapter.setData(HighLightTable.getAllNotes(mBookId));
+                if(highlightsView.getChildCount() > 0){
+                    highlightsView.removeAllViews();
+                }
+                adapter.notifyDataSetChanged();
             }
         });
         //划线
         mRootView.findViewById(R.id.tv_line).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View view) {
                 statuTop(false, true, false, false);
+                adapter.setData(HighLightTable.getAllHighlight(mBookId));
+                if(highlightsView.getChildCount() > 0){
+                    highlightsView.removeAllViews();
+                }
+                adapter.notifyDataSetChanged();
             }
         });
         //笔记
         mRootView.findViewById(R.id.tv_note).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View view) {
                 statuTop(false, false, true, false);
+
+                adapter.setData(HighLightTable.getAllNoteList(mBookId));
+                if(highlightsView.getChildCount() > 0){
+                    highlightsView.removeAllViews();
+                }
+                adapter.notifyDataSetChanged();
             }
         });
         //书签
         mRootView.findViewById(R.id.tv_bookmark).setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onClick(View view) {
                 statuTop(false, false, false, true);
+                adapter.setData(HighLightTable.getAllBookMark(mBookId));
+                if(highlightsView.getChildCount() > 0){
+                    highlightsView.removeAllViews();
+                }
+                adapter.notifyDataSetChanged();
             }
         });
     }

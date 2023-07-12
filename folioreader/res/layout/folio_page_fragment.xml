@@ -38,6 +38,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/highlight_yellow" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/rl_mv"
+                >
+                <ImageView
+                    android:id="@+id/iv_bookmark"
+                    android:layout_width="15dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="#3283FF"
+                    android:scaleType="fitXY"
+                    android:layout_alignParentRight="true"
+                    android:visibility="gone"
+                    android:src="@mipmap/ic_bookmark_normal" />
+               <!-- <ImageView
+                    android:id="@+id/iv_bookmark2"
+                    android:layout_width="15dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="#3283FF"
+                    android:scaleType="fitXY"
+                    android:layout_toLeftOf="@id/iv_bookmark"
+                    android:src="@mipmap/ic_bookmark_normal" />-->
+            </RelativeLayout>
 
         </FrameLayout>
 

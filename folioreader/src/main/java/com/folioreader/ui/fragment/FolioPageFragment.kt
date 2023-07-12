@@ -19,6 +19,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.webkit.*
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -70,6 +71,9 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     override fun onResume() {
         super.onResume()
         pageViewModel.setCurrentPage(webViewPager.currentItem + 1)
+
+
+        Log.v(LOG_TAG,"onResume--->"+spineIndex)
     }
 
     companion object {
@@ -149,6 +153,8 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
     private lateinit var chapterUrl: Uri
 
+    private var ivBookmark: ImageView? = null
+
     //    var pageNo: IntArray = activity!!.intent!!.getIntArrayExtra("pageNo")
     val pageName: String
         get() = mBookTitle + "$" + spineItem.href
@@ -197,7 +203,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         mRootView = inflater.inflate(R.layout.folio_page_fragment, container, false)
         mPagesLeftTextView = mRootView!!.findViewById<View>(R.id.pagesLeft) as TextView
         mMinutesLeftTextView = mRootView!!.findViewById<View>(R.id.minutesLeft) as TextView
-
+        ivBookmark =  mRootView!!.findViewById<View>(R.id.iv_bookmark) as ImageView
         mConfig = AppUtil.getSavedConfig(context)
 
         loadingView = mRootView!!.findViewById(R.id.loadingView)
@@ -207,7 +213,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         initWebView()
         updatePagesLeftTextBg()
         //书签添加、删除监听
-        initBookMarkListen()
+      //  initBookMarkListen()
 
         Log.d("FolioPageFragment", "onCreateView: initialised $spineIndex")
 
@@ -218,18 +224,24 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
      * 书签添加、删除监听； 删除时需判断当前有无书签
      */
     private fun initBookMarkListen() {
-        val refreshLayout =  mRootView!!.findViewById<View>(R.id.refreshLayout) as RefreshLayout
+        Log.v(LOG_TAG, "initBookMarkListen-->$currentPageHasBookmark")
+        val refreshLayout  =  mRootView!!.findViewById<View>(R.id.refreshLayout) as RefreshLayout
         //当前页有书签，添加头部为删除书签头部
-//        if(haveBookMark){
-//            refreshLayout.setRefreshHeader(DeleteBookmarkHeaderView(context))
-//        }else{
-//            //当前页有书签，添加头部为添加书签头部
-//            refreshLayout.setRefreshHeader(AddBookmarkHeaderView(context))
-//        }
+        if(currentPageHasBookmark){
+            ivBookmark!!.visibility = View.VISIBLE
+            refreshLayout.setRefreshHeader(DeleteBookmarkHeaderView(context))
+        }else{
+            //当前页有书签，添加头部为添加书签头部
+            refreshLayout.setRefreshHeader(AddBookmarkHeaderView(context))
+            ivBookmark!!.visibility = View.GONE
+        }
 
 //        refreshLayout.setRefreshHeader(AddBookmarkHeaderView(context))
-        refreshLayout.setRefreshHeader(DeleteBookmarkHeaderView(context))
+
         refreshLayout.setOnRefreshListener { refreshlayout ->
+            //进行
+            getLastReadLocator(FolioReader.ACTION_BOOKMARK);
+            initBookMarkListen()
             //书签添加、删除对应操作，通过变量值判断
 //            if(haveBookMark) {
 //                //删除
@@ -245,8 +257,8 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 //                localBroadcastManager.sendBroadcast(intent)
 //            }
 
-            Toast.makeText(context, "刷新", Toast.LENGTH_LONG).show()
-            refreshlayout.finishRefresh(2000 /*,false*/)
+           // Toast.makeText(context, "刷新", Toast.LENGTH_LONG).show()
+            refreshlayout.finishRefresh(10 )
         }
     }
 
@@ -692,6 +704,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         }
     }
 
+
     override fun onStop() {
         super.onStop()
         Log.v(LOG_TAG, "-> onStop -> " + spineItem.href + " -> " + isCurrentFragment)
@@ -706,7 +719,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         this.getLastReadLocator("")
     }
     fun getLastReadLocator(actionType: String): ReadLocator? {
-        Log.v(LOG_TAG, "-> getLastReadLocator -> " + spineItem.href!!)
+        Log.v(LOG_TAG, "-> getLastReadLocator -> " + actionType)
         try {
             synchronized(this) {
                 mWebview!!.loadUrl(String.format(getString(R.string.callComputeLastReadCfi),actionType))
@@ -748,9 +761,9 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             if(actionList.contains(FolioReader.ACTION_CHECK_BOOKMARK)){//检测是否有书签
                 val bookmarkId = BookmarkTable.getBookmarkIdByCfi(href+cfi,mBookId,BookmarkTable.MARK_TYPE,context!!)
                 Log.v(LOG_TAG,"check bookmark--->bookmarkId:$bookmarkId")
-                if(bookmarkId != -1){
-                    currentPageHasBookmark = true
-                }
+                currentPageHasBookmark = bookmarkId != -1
+                uiHandler.post{initBookMarkListen()}
+
             }
             if(actionList.contains(FolioReader.ACTION_READ_MARK)){
                 //阅读记录

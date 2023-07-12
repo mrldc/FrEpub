@@ -59,9 +59,30 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
                 callback.onItemClick(markVos.get(pPosition));
             }
         });
-        holder.content.setText(Html.fromHtml(getItem(position).getContent()));
-        UiUtil.setBackColorToTextView(holder.content,
-                getItem(position).getHighlightType());
+        holder.rlHighlightBottom.setVisibility(View.GONE);
+        MarkVo markVo = getItem(position);
+        if("2".equals(markVo.getKind()) || "4".equals(markVo.getKind())){
+            holder.tvHighlightContent.setText(getItem(position).getContent());
+            holder.rlHighlightBottom.setVisibility(View.VISIBLE);
+            holder.content.setText(Html.fromHtml(getItem(position).getNote()));
+        }else if("3".equals(markVo.getKind())){
+            UiUtil.setBackColorToTextView(holder.content,
+                    getItem(position).getHighlightType());
+            holder.content.setText(Html.fromHtml(getItem(position).getContent()));
+            holder.content.setUnderline(true);
+        }else{
+            holder.content.setText(Html.fromHtml(getItem(position).getContent()));
+        }
+
+        if("1".equals(markVo.getKind())){//书签
+            holder.imageView.setImageResource(R.mipmap.ic_bookmark_item);
+        }else  if("2".equals(markVo.getKind())) {//页笔记
+            holder.imageView.setImageResource(R.mipmap.ic_write_item);
+        }else  if("3".equals(markVo.getKind())) {//高亮
+            holder.imageView.setImageResource(R.mipmap.ic_highline_item);
+        }else  if("4".equals(markVo.getKind())) {//段落笔记
+            holder.imageView.setImageResource(R.mipmap.ic_write_item);
+        }
 
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,10 +120,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
     public int getItemCount() {
         return markVos.size();
     }
+    public void setData(List<MarkVo> markVoList){
+        this.markVos = markVoList;
+    }
 
     static class NoteHolder extends RecyclerView.ViewHolder {
         private UnderlinedTextView content;
-        private ImageView delete, editNote;
+        private ImageView delete, editNote,imageView;
         private TextView date;
         private LinearLayout swipeLinearLayout;
         private RelativeLayout rlHighlightBottom;
@@ -120,6 +144,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
             delete = (ImageView) itemView.findViewById(R.id.iv_delete);
             editNote = (ImageView) itemView.findViewById(R.id.iv_edit_note);
             date = (TextView) itemView.findViewById(R.id.tv_highlight_date);
+            imageView = itemView.findViewById(R.id.iv_item);
         }
     }
 

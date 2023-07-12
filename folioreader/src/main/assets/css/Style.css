@@ -40,6 +40,8 @@ html {
 body {
     margin: 0 !important;
     overflow: !important;
+    padding-top: 35px !important;
+    padding-bottom: 15px !important;
 }
 
 /* Custom padding for tablets */

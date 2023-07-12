@@ -274,10 +274,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             // FolioActivity is topActivity, so need to broadcast ReadLocator.
             finish()
         }
+        handler!!.postDelayed({
+            //读取章节位置信息-校验是否有书签
+            currentFragment!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK)
+        },3000)
+
         //当有阅读记录时，跳转
         if(readBook != null){
             goToChapter(readBook!!.href,readBook!!.cfi)
-
         }
 
     }
@@ -1289,7 +1293,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 currentChapterIndex = position
                 pageTrackerViewModel.setCurrentChapter(position + 1)
 
-
+                //读取章节位置信息
                 mFolioPageFragmentAdapter!!.fragments[position]!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK)
             }
 
@@ -1559,7 +1563,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             if(markVo.cfi != null){
                 val handlerTime = Handler()
                 handlerTime.postDelayed({
-                    folioPageFragment!!.scrollToCFI(bookmarkReadLocator!!.locations.cfi.toString())
+                    folioPageFragment!!.scrollToCFI(markVo.cfi)
                 }, 1000)
             }
         }

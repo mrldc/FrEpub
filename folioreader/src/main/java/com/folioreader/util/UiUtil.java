@@ -120,6 +120,7 @@ public class UiUtil {
     }
 
     public static void setBackColorToTextView(UnderlinedTextView textView, String type) {
+        if(type == null) return;
         Context context = textView.getContext();
         if (type.equals("highlight_yellow")) {
             setUnderLineColor(textView, context, R.color.highlight_yellow, R.color.highlight_yellow);
@@ -131,12 +132,12 @@ public class UiUtil {
             setUnderLineColor(textView, context, R.color.highlight_pink, R.color.highlight_pink);
         } else if (type.equals("highlight_underline")) {
             setUnderLineColor(textView, context, android.R.color.transparent, android.R.color.holo_red_dark);
-            textView.setBackground(context.getDrawable(R.drawable.shape_underline_dotted));
+
         }else if (type.equals("highlight_underline_dotted")) {
             setUnderLineColor(textView, context, android.R.color.transparent, android.R.color.holo_red_dark);
             textView.setUnderlineWidth(2.0f);
-            textView.setPaintFlags(textView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-
+            textView.setDotted(true);
+            textView.invalidate();
         }else if (type.equals("highlight_01")) {
             setUnderLineColor(textView, context, R.color.highlight_01, R.color.highlight_01);
         } else if (type.equals("highlight_02")) {

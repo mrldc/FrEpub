@@ -145,27 +145,28 @@ public final class HtmlUtil {
                 "<html class=\"" + classes + "\"" +
                         " style=\"" + styles + "\"" +
                         " onclick=\"onClickHtml()\"");
-        String padding = "10px";
+        Integer padding = 10;
         switch (config.getBodyPadding()) {
             case 0:
-                padding = " 10px ";
+                padding = 10;
                 break;
             case 1:
-                padding = " 20px ";
+                padding = 20;
                 break;
             case 2:
-                padding = " 30px ";
+                padding = 30;
                 break;
             case 3:
-                padding = " 40px ";
+                padding = 40;
                 break;
             case 4:
-                padding = " 50px ";
+                padding = 50;
                 break;
             default:
                 break;
         }
-        String bodyStyles = "padding: "+ padding +";";
+        String bodyStyles = "padding-left: "+ padding +"px;";
+         bodyStyles += "padding-right: "+ padding +"px;";
         htmlContent = htmlContent.replace("<body",
                         "<body style=\"" + bodyStyles + "\"");
 
