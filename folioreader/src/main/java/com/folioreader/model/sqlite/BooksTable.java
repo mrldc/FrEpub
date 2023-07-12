@@ -29,6 +29,7 @@ public class BooksTable {
     public static final String  TITLE = "title";
     public static final String  AUTHOR = "author";
     public static final String  IDENTIFIER = "identifier";
+
     public static final String  PROGRESSION = "progression";
     public static final String  TYPE = "type";
     public static final String  CFI = "cfi";
@@ -63,6 +64,7 @@ public class BooksTable {
         values.put(PROGRESSION,progression);
         values.put(TYPE,type);
         values.put(CFI,cfi);
+
 
         return database.insert(TABLE_NAME, null, values) > 0;
     }

@@ -58,8 +58,10 @@ import com.folioreader.R
 import com.folioreader.model.DisplayUnit
 import com.folioreader.model.HighLight
 import com.folioreader.model.HighlightImpl
+import com.folioreader.model.MarkVo
 import com.folioreader.model.db.Book
 import com.folioreader.model.event.MediaOverlayPlayPauseEvent
+import com.folioreader.model.event.NoteSelectEvent
 import com.folioreader.model.locators.ReadLocator
 import com.folioreader.model.locators.SearchLocator
 import com.folioreader.model.sqlite.BookmarkTable
@@ -105,6 +107,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var entryReadLocator: ReadLocator? = null
     private var lastReadLocator: ReadLocator? = null
     private var bookmarkReadLocator: ReadLocator? = null
+    private var pageMarkReadLocator: ReadLocator? = null
     private var folioReader: FolioReader? = null
     private var outState: Bundle? = null
     private var savedInstanceState: Bundle? = null
@@ -139,6 +142,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var tvLeft: TextView? = null
     private var ll_collect: LinearLayout? = null
     private var rl_comment: RelativeLayout? = null
+    private var et_page_note: EditText? = null
+    private var tv_page_save: TextView? = null
+
     private var tv_listen_book: TextView? = null
     private var tv_video: TextView? = null
     private var iv_directory: ImageView? = null
@@ -295,8 +301,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-
+        EventBus.getDefault().register(this)
         folioReader = FolioReader.get()
             .setOnHighlightListener(this)
             .setReadLocatorListener(this)
@@ -392,6 +397,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         tv_listen_book = findViewById(R.id.tv_listen_book)
         tv_video = findViewById(R.id.tv_video)
         rl_comment = findViewById(R.id.rl_comment)
+        et_page_note = findViewById(R.id.et_page_note)
+        tv_page_save = findViewById(R.id.tv_page_note_save)
         iv_directory = findViewById(R.id.iv_directory)
         iv_write = findViewById(R.id.iv_write)
         iv_light = findViewById(R.id.iv_light)
@@ -401,6 +408,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rl_edit = findViewById(R.id.rl_edit)
         etContent = findViewById(R.id.et_content)
         tvSave = findViewById(R.id.tv_save)
+
 
         tvLeft!!.text = bookFileName
         //返回
@@ -421,8 +429,21 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         }
         //写笔记输入界面
-        rl_comment?.setOnClickListener {
-            Toast.makeText(this, "写笔记输入界面", Toast.LENGTH_LONG).show()
+        et_page_note?.setOnClickListener {
+            Log.v(LOG_TAG,"点击写笔记输入界面")
+            //获取段落第一句
+            val readLocator = currentFragment!!.getLastReadLocator(FolioReader.ACTION_PAGE_MARK)
+            pageMarkReadLocator = readLocator;
+            Log.v(LOG_TAG,"点击写笔记输入界面:"+readLocator!!.title)
+
+        }
+        tv_page_save?.setOnClickListener{
+            if(pageMarkReadLocator != null && et_page_note!!.text != null ){
+                BookmarkTable(this).insertBookmark(mBookId,pageMarkReadLocator!!.title,et_page_note!!.text.toString(),currentChapterIndex,pageMarkReadLocator!!.toJson().toString(),pageMarkReadLocator!!.locations.cfi,BookmarkTable.NOTE_TYPE)
+                et_page_note!!.text.clear()
+                pageMarkReadLocator = null
+            }
+
         }
         //目录
         iv_directory?.setOnClickListener {
@@ -1195,10 +1216,11 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 }
                 HIGHLIGHT_SELECTED -> {
                     val highlightImpl = data.getParcelableExtra<HighlightImpl>(HIGHLIGHT_ITEM)
-                    currentChapterIndex = highlightImpl!!.pageNumber
+                    val markVo = data.getParcelableExtra<MarkVo>(NoteFragment.NODE_ITEM)
+                    currentChapterIndex = getChapterIndex(HREF,markVo!!.href)
                     mFolioPageViewPager!!.currentItem = currentChapterIndex
                     val folioPageFragment = currentFragment ?: return
-                    folioPageFragment.scrollToHighlightId(highlightImpl.rangy)
+                    folioPageFragment.scrollToHighlightId(markVo.rangy)
                 }
                 BOOKMARK_SELECTED -> {
                     val bookmark =
@@ -1218,6 +1240,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     override fun onDestroy() {
         super.onDestroy()
+        EventBus.getDefault().unregister(this)
 
         if (outState != null) outState!!.putSerializable(
             BUNDLE_READ_LOCATOR_CONFIG_CHANGE,
@@ -1469,13 +1492,13 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             "-> saveReadLocator -> " + readLocator.toJson() + " markType:" + markType
         )
         //收到获取阅读位置信息
-        val simpleDateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
         val cfi = readLocator.href + readLocator.locations.cfi
         if (FolioReader.EXTRA_BOOKMARK_ADD == markType) { //添加标签
             val insertResult = BookmarkTable(this).insertBookmark(
                 mBookId,
-                simpleDateFormat.format(Date()),
                 readLocator.title,
+                null,
+                currentChapterIndex,
                 readLocator.toJson().toString(),
                 cfi,BookmarkTable.MARK_TYPE
             )
@@ -1485,7 +1508,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 ).show()
             }
         } else if (FolioReader.EXTRA_BOOKMARK_DELETE == markType) { //删除标签
-            val bookmarkId = BookmarkTable.getBookmarkIdByCfi(cfi, mBookId, this)
+            val bookmarkId = BookmarkTable.getBookmarkIdByCfi(cfi, mBookId,BookmarkTable.MARK_TYPE, this)
             if (bookmarkId != -1) {
                 val deleteResult = BookmarkTable.deleteBookmarkById(bookmarkId, this)
                 if (deleteResult) {
@@ -1524,5 +1547,24 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun noteSelect(noteSelectEvent: NoteSelectEvent){
+        var markVo = noteSelectEvent.markVo;
+        if(markVo != null){
+            currentChapterIndex = markVo.pageNumber;
+            mFolioPageViewPager!!.currentItem = currentChapterIndex
+            val folioPageFragment = currentFragment ?: return
+            if(markVo.rangy != null){
+                folioPageFragment.scrollToHighlightId(markVo.rangy)
+            }
+            if(markVo.cfi != null){
+                val handlerTime = Handler()
+                handlerTime.postDelayed({
+                    folioPageFragment!!.scrollToCFI(bookmarkReadLocator!!.locations.cfi.toString())
+                }, 1000)
+            }
+        }
+
     }
 }

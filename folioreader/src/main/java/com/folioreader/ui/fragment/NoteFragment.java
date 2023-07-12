@@ -28,6 +28,7 @@ import com.folioreader.dialog.FolioBookMarkDialog;
 import com.folioreader.model.HighLight;
 import com.folioreader.model.HighlightImpl;
 import com.folioreader.model.MarkVo;
+import com.folioreader.model.event.NoteSelectEvent;
 import com.folioreader.model.event.UpdateHighlightEvent;
 import com.folioreader.model.sqlite.HighLightTable;
 import com.folioreader.ui.adapter.HighlightAdapter;
@@ -38,7 +39,7 @@ import com.folioreader.util.HighlightUtil;
 import org.greenrobot.eventbus.EventBus;
 
 public class NoteFragment extends Fragment implements NoteAdapter.NoteAdapterCallback {
-    private static final String NODE_ITEM = "note_item";
+    public static final String NODE_ITEM = "note_item";
     private View mRootView;
     private NoteAdapter adapter;
     private String mBookId;
@@ -143,12 +144,22 @@ public class NoteFragment extends Fragment implements NoteAdapter.NoteAdapterCal
 
     @Override
     public void onItemClick(MarkVo markVo) {
-//        Intent intent = new Intent();
-//        intent.putExtra(NODE_ITEM, markVo);
-//        intent.putExtra(Constants.TYPE, Constants.HIGHLIGHT_SELECTED);
-//        getActivity().setResult(Activity.RESULT_OK, intent);
-//        getActivity().finish();
-        new FolioBookMarkDialog().showDialog();
+
+        EventBus.getDefault().post(new NoteSelectEvent(markVo));
+       /*
+       Intent intent = new Intent();
+        intent.putExtra(NODE_ITEM, markVo);
+       if(markVo.getKind().equals("1")){
+            //书签
+        }else if(markVo.getKind().equals("2")){
+            //页笔记
+        }else if(markVo.getKind().equals("3")){
+            //划线
+            intent.putExtra(Constants.TYPE, Constants.HIGHLIGHT_SELECTED);
+        }else if(markVo.getKind().equals("4")){
+            //段落笔记
+        }
+        getActivity().setResult(Activity.RESULT_OK, intent);*/
     }
 
     @Override

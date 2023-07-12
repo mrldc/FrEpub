@@ -746,7 +746,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                 LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
             }
             if(actionList.contains(FolioReader.ACTION_CHECK_BOOKMARK)){//检测是否有书签
-                val bookmarkId = BookmarkTable.getBookmarkIdByCfi(href+cfi,mBookId,context!!)
+                val bookmarkId = BookmarkTable.getBookmarkIdByCfi(href+cfi,mBookId,BookmarkTable.MARK_TYPE,context!!)
                 Log.v(LOG_TAG,"check bookmark--->bookmarkId:$bookmarkId")
                 if(bookmarkId != -1){
                     currentPageHasBookmark = true

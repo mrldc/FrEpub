@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -130,7 +131,20 @@ public class UiUtil {
             setUnderLineColor(textView, context, R.color.highlight_pink, R.color.highlight_pink);
         } else if (type.equals("highlight_underline")) {
             setUnderLineColor(textView, context, android.R.color.transparent, android.R.color.holo_red_dark);
+            textView.setBackground(context.getDrawable(R.drawable.shape_underline_dotted));
+        }else if (type.equals("highlight_underline_dotted")) {
+            setUnderLineColor(textView, context, android.R.color.transparent, android.R.color.holo_red_dark);
             textView.setUnderlineWidth(2.0f);
+            textView.setPaintFlags(textView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
+        }else if (type.equals("highlight_01")) {
+            setUnderLineColor(textView, context, R.color.highlight_01, R.color.highlight_01);
+        } else if (type.equals("highlight_02")) {
+            setUnderLineColor(textView, context, R.color.highlight_02, R.color.highlight_02);
+        } else if (type.equals("highlight_03")) {
+            setUnderLineColor(textView, context, R.color.highlight_03, R.color.highlight_03);
+        } else if (type.equals("highlight_04")) {
+            setUnderLineColor(textView, context, R.color.highlight_04, R.color.highlight_04);
         }
     }
 

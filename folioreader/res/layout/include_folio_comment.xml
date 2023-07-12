@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="#ffffff"
-
+    android:gravity="center"
     >
     <ImageView
         android:id="@+id/iv_idea"
@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/iv_idea"
-        android:layout_toStartOf="@+id/tv_save"
+        android:layout_toStartOf="@+id/tv_page_note_save"
         android:layout_centerVertical="true"
         android:textSize="17sp"
         android:textColor="#999999"
@@ -31,11 +31,11 @@
         android:visibility="gone"/>
 
     <EditText
-        android:id="@+id/et_content"
+        android:id="@+id/et_page_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/iv_idea"
-        android:layout_toStartOf="@+id/tv_save"
+        android:layout_toStartOf="@+id/tv_page_note_save"
         android:layout_centerVertical="true"
         android:hint="写下这一刻的想法..."
         android:background="@null"
@@ -48,16 +48,17 @@
         />
 
     <TextView
-        android:id="@+id/tv_save"
+        android:id="@+id/tv_page_note_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
+
         android:paddingHorizontal="12dp"
         android:textSize="17sp"
         android:textColor="#dd4f0f"
         android:text="保存"
-        android:visibility="gone"
+        android:visibility="visible"
         />
 
     <View

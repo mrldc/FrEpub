@@ -26,6 +26,8 @@ public class MarkVo implements Parcelable {
     //所在页面地址
     private String href;
     private String date;
+
+    private int pageNumber;
     public MarkVo(){}
     public MarkVo(Parcel in) {
         id = in.readInt();
@@ -38,6 +40,7 @@ public class MarkVo implements Parcelable {
         rangy = in.readString();
         href = in.readString();
         date = in.readString();
+        pageNumber = in.readInt();
     }
 
     public static final Creator<MarkVo> CREATOR = new Creator<MarkVo>() {
@@ -132,6 +135,14 @@ public class MarkVo implements Parcelable {
         this.href = href;
     }
 
+    public int getPageNumber() {
+        return pageNumber;
+    }
+
+    public void setPageNumber(int pageNumber) {
+        this.pageNumber = pageNumber;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -153,5 +164,6 @@ public class MarkVo implements Parcelable {
         dest.writeString(rangy);
         dest.writeString(href);
         dest.writeString(date);
+        dest.writeInt(pageNumber);
     }
 }

@@ -52,16 +52,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
     @Override
     public void onBindViewHolder(final NoteHolder holder, @SuppressLint("RecyclerView") final int position) {
 
-
+        final int pPosition = position;
+        holder.itemLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callback.onItemClick(markVos.get(pPosition));
+            }
+        });
         holder.content.setText(Html.fromHtml(getItem(position).getContent()));
         UiUtil.setBackColorToTextView(holder.content,
                 getItem(position).getHighlightType());
-        holder.llNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callback.onItemClick(getItem(position));
-            }
-        });
+
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,14 +105,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
         private ImageView delete, editNote;
         private TextView date;
         private LinearLayout swipeLinearLayout;
-        private LinearLayout llNote;
         private RelativeLayout rlHighlightBottom;
         private TextView tvHighlightContent;
+
+        private LinearLayout itemLayout;
 
         NoteHolder(View itemView) {
             super(itemView);
             swipeLinearLayout = (LinearLayout) itemView.findViewById(R.id.swipe_linear_layout);
-            llNote = (LinearLayout) itemView.findViewById(R.id.ll_note);
+            itemLayout = (LinearLayout) itemView.findViewById(R.id.rl_note_item);
             rlHighlightBottom = (RelativeLayout) itemView.findViewById(R.id.rl_highlight_bottom);
             tvHighlightContent = (TextView) itemView.findViewById(R.id.tv_content);
             content = (UnderlinedTextView) itemView.findViewById(R.id.utv_highlight_content);
