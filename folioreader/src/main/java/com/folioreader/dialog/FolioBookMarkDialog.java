@@ -37,7 +37,7 @@ public class FolioBookMarkDialog extends CustomDialog {
                         tvBookmarkDelete = v.findViewById(R.id.tv_bookmark_delete);
                         tvCancel = v.findViewById(R.id.tv_cancel);
                         tvEdit = v.findViewById(R.id.tv_edit);
-                        etContent = v.findViewById(R.id.et_content);
+                        etContent = v.findViewById(R.id.et_page_note);
                         v.findViewById(R.id.view_line).setVisibility(View.GONE);
                         tvBookmarkDelete.setOnClickListener(new View.OnClickListener() {
                             @Override

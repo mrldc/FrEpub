@@ -78,6 +78,8 @@ import com.folioreader.util.AppUtil.Companion.getSavedConfig
 import com.folioreader.viewmodels.PageTrackerViewModel
 import com.folioreader.viewmodels.PageTrackerViewModelFactory
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.readium.r2.shared.Link
 import org.readium.r2.shared.Publication
 import org.readium.r2.streamer.parser.CbzParser
@@ -154,8 +156,6 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var rl_top: RelativeLayout? = null
     private var rl_bottom: LinearLayout? = null
     private var rl_edit: LinearLayout? = null
-    private var etContent: EditText? = null
-    private var tvSave: TextView? = null
     //阅读记录
     private var readBook: Book?  =null
 
@@ -406,8 +406,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rl_top = findViewById(R.id.rl_top)
         rl_bottom = findViewById(R.id.rl_bottom)
         rl_edit = findViewById(R.id.rl_edit)
-        etContent = findViewById(R.id.et_content)
-        tvSave = findViewById(R.id.tv_save)
+
 
 
         tvLeft!!.text = bookFileName
@@ -428,9 +427,20 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         tv_video?.setOnClickListener {
 
         }
+//        et_page_note?.addTextChangedListener(object : TextWatcher {
+//            override fun beforeTextChanged(s: CharSequence, i: Int, i1: Int, i2: Int) {
+//                InputMethodUtils.show(et_page_note)
+//                tv_page_save!!.visibility = View.VISIBLE
+//                val content = s.toString().trim { it <= ' ' }
+//            }
+//
+//            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+//            override fun afterTextChanged(editable: Editable) {}
+//        })
         //写笔记输入界面
         et_page_note?.setOnClickListener {
             Log.v(LOG_TAG,"点击写笔记输入界面")
+            InputMethodUtils.show(et_page_note)
             //获取段落第一句
             val readLocator = currentFragment!!.getLastReadLocator(FolioReader.ACTION_PAGE_MARK)
             pageMarkReadLocator = readLocator;
@@ -438,6 +448,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         }
         tv_page_save?.setOnClickListener{
+            InputMethodUtils.close(et_page_note)
             if(pageMarkReadLocator != null && et_page_note!!.text != null ){
                 BookmarkTable(this).insertBookmark(mBookId,pageMarkReadLocator!!.title,et_page_note!!.text.toString(),currentChapterIndex,pageMarkReadLocator!!.toJson().toString(),pageMarkReadLocator!!.locations.cfi,BookmarkTable.NOTE_TYPE)
                 et_page_note!!.text.clear()
@@ -489,20 +500,6 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 //            showConfigBottomSheetDialogFragment()
         }
 
-        etContent?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, i: Int, i1: Int, i2: Int) {
-                InputMethodUtils.show(etContent)
-                tvSave!!.visibility = View.VISIBLE
-                val content = s.toString().trim { it <= ' ' }
-            }
-
-            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-            override fun afterTextChanged(editable: Editable) {}
-        })
-        //保存
-        tvSave?.setOnClickListener(View.OnClickListener {
-            InputMethodUtils.close(etContent)
-        })
     }
 
     private fun statusIcon(directory : Boolean, write : Boolean, light : Boolean, font : Boolean) {
@@ -1451,6 +1448,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             WRITE_EXTERNAL_STORAGE_REQUEST -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 setupBook()

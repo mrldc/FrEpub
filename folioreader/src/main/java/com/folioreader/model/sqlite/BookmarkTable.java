@@ -117,12 +117,12 @@ public class BookmarkTable {
         return DbAdapter.deleteById(TABLE_NAME, ID, String.valueOf(id));
     }
     @SuppressLint("Range")
-    public static final boolean deleteBookmarkByCfi(String arg_cfi, String arg_bookID, Context context){
+    public static final boolean deleteBookmarkByCfi(String arg_cfi, String arg_bookID, String arg_type, Context context){
         if(Bookmarkdatabase == null){
             FolioDatabaseHelper dbHelper = new FolioDatabaseHelper(context);
             Bookmarkdatabase = dbHelper.getWritableDatabase();
         }
-        String query = "SELECT " + ID + " FROM " + TABLE_NAME + " WHERE " + cfi + " = \"" + arg_cfi + "\""+ " and "+bookID+" = \"" + arg_bookID+"\"";
+        String query = "SELECT " + ID + " FROM " + TABLE_NAME + " WHERE " + cfi + " = \"" + arg_cfi + "\""+ " and "+bookID+" = \"" + arg_bookID+"\""+" and "+type+" = \"" + arg_type+"\"";
         Cursor c = Bookmarkdatabase.rawQuery(query, null);
 
         int id = -1;
