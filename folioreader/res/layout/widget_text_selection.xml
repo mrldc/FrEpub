@@ -150,9 +150,9 @@
                             android:layout_height="60dp"
                             android:background="@drawable/shape_20_solid_cc000000_bg"
                             android:gravity="center"
-                            android:id="@+id/iv_right_white"
                             >
                             <View
+                                android:id="@+id/iv_right_white"
                                 android:layout_gravity="center"
                                 style="@style/ImageViewTextSelectorMarker"
                                 android:background="@drawable/shape_10_solid_dd4f0f_bg"
@@ -170,9 +170,10 @@
                             android:layout_height="60dp"
                             android:background="@drawable/shape_20_solid_cc000000_bg"
                             android:gravity="center"
-                            android:id="@+id/iv_green"
+
                             >
                             <View
+                                android:id="@+id/iv_green"
                                 android:layout_gravity="center"
                                 style="@style/ImageViewTextSelectorMarker"
                                 android:background="@drawable/shape_10_solid_6dd53c_bg"
@@ -190,9 +191,10 @@
                             android:layout_height="60dp"
                             android:background="@drawable/shape_20_solid_cc000000_bg"
                             android:gravity="center"
-                            android:id="@+id/iv_blue"
+
                             >
                             <View
+                                android:id="@+id/iv_blue"
                                 android:layout_gravity="center"
                                 style="@style/ImageViewTextSelectorMarker"
                                 android:background="@drawable/shape_10_solid_3ca4de_bg"
@@ -211,9 +213,10 @@
                             android:layout_height="60dp"
                             android:background="@drawable/shape_20_solid_cc000000_bg"
                             android:gravity="center"
-                            android:id="@+id/iv_pink"
+
                             >
                             <View
+                                android:id="@+id/iv_pink"
                                 android:layout_gravity="center"
                                 style="@style/ImageViewTextSelectorMarker"
                                 android:background="@drawable/shape_10_solid_da50ce_bg"

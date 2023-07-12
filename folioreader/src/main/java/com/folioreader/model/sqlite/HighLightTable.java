@@ -215,10 +215,10 @@ public class HighLightTable {
         StringBuilder sb = new StringBuilder();
         //查询书签与页笔记
         sb.append("select * from (");
-        sb.append("select _id as id,bookID as bookId, name as content, '' as note, type as kind,'' as highLightType,cfi,'' as rangy,readlocator as href,date from bookmark_table");
+        sb.append("select _id as id,bookID as bookId,  content,  note, type as kind,null as highLightType,cfi,null as rangy,readlocator as href,date, page_number as pageNumber from bookmark_table");
         sb.append(" where bookID='").append(mBookId).append("' ");
         sb.append(" union all ");
-        sb.append(" select _id as id,bookId,content,note,case when type='mark' then '4' else '3'end as kind,type as highLightType, '' as cfi ,rangy,pageId as href, date  from highlight_table ");
+        sb.append(" select _id as id,bookId,content,note,case when type='mark' then '4' else '3'end as kind,type as highLightType, null as cfi ,rangy,pageId as href, date,page_number as pageNumber  from highlight_table ");
         sb.append(" where bookId='").append(mBookId).append("' ");
         sb.append(") t order by t.date");
         Cursor cursor = DbAdapter.getHighlightsBySql(sb.toString());
@@ -235,6 +235,7 @@ public class HighLightTable {
             markVo.setRangy(cursor.getString(cursor.getColumnIndex("rangy")));
             markVo.setHref(cursor.getString(cursor.getColumnIndex("href")));
             markVo.setDate(cursor.getString(cursor.getColumnIndex("date")));
+            markVo.setPageNumber(cursor.getInt(cursor.getColumnIndex("pageNumber")));
             markVoList.add(markVo);
         }
         cursor.close();

@@ -18,6 +18,7 @@ import android.webkit.ConsoleMessage
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -119,6 +120,7 @@ class FolioWebView : WebView {
 
     private var lastScrollType: LastScrollType? = null
     private  var highlightId: String? = null
+    private var textUnderlineTextView: TextView? = null
 
     val contentHeightVal: Int
         get() = floor((this.contentHeight * this.scale).toDouble()).toInt()
@@ -308,9 +310,11 @@ class FolioWebView : WebView {
         }
         Log.i(LOG_TAG, config.toString())
         viewTextSelection = LayoutInflater.from(ctw).inflate(R.layout.widget_text_selection, null)
+
+        textUnderlineTextView = viewTextSelection.findViewById(R.id.tv_dv_line)
         viewTextSelection.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
-        viewTextSelection.iv_pink.setOnClickListener {
+        viewTextSelection.iv_right_white.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> yellowHighlight")
             onHighlightColorItemsClicked(HighlightStyle.highlight_01, false)
         }
@@ -322,7 +326,7 @@ class FolioWebView : WebView {
             Log.v(LOG_TAG, "-> onClick -> blueHighlight")
             onHighlightColorItemsClicked(HighlightStyle.highlight_03, false)
         }
-        viewTextSelection.iv_right_white.setOnClickListener {
+        viewTextSelection.iv_pink.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> pinkHighlight")
             onHighlightColorItemsClicked(HighlightStyle.highlight_04, false)
         }
@@ -352,9 +356,8 @@ class FolioWebView : WebView {
         }
         viewTextSelection.tv_dv_line.setOnClickListener {
             dismissPopupWindow()
-            if(tv_dv_line.text =="删除划线"){
-                loadUrl("javascript:deleteThisHighlight()")
-                HighLightTable.deleteHighlight(highlightId)
+            if(textUnderlineTextView!!.text =="删除划线"){
+                deleteThisHighlight(highlightId)
                 highlightId = null
             }
         }
@@ -870,7 +873,7 @@ class FolioWebView : WebView {
                     )
                     if(id != null){
                         //选择的高亮部分
-                        tv_dv_line.text ="删除划线"
+                        textUnderlineTextView!!.text ="删除划线"
                         highlightId = id
                     }
                 } else {

@@ -256,6 +256,22 @@ $(function () {
                 ignoreWhiteSpace: true,
                 tagNames: ["span", "a"]
             }));
+             this.highlighter.addClassApplier(rangy.createClassApplier("highlight_01", {
+                            ignoreWhiteSpace: true,
+                            tagNames: ["span", "a"]
+             }));
+             this.highlighter.addClassApplier(rangy.createClassApplier("highlight_02", {
+                            ignoreWhiteSpace: true,
+                            tagNames: ["span", "a"]
+             }));
+             this.highlighter.addClassApplier(rangy.createClassApplier("highlight_03", {
+                                         ignoreWhiteSpace: true,
+                                         tagNames: ["span", "a"]
+             }));
+              this.highlighter.addClassApplier(rangy.createClassApplier("highlight_04", {
+                                                      ignoreWhiteSpace: true,
+                                                      tagNames: ["span", "a"]
+              }));
         },
 
         base64encode: function (str) {
@@ -946,6 +962,10 @@ function getFirstVisibleNode(node) {
             // http://www.idpf.org/epub/linking/cfi/epub-cfi.html#sec-path-child-ref
 
             if (childNodes[i].nodeType === Node.ELEMENT_NODE || childNodes[i].nodeType === Node.TEXT_NODE) {
+                //忽略标题标签
+                if(childNodes[i].nodeName.includes('h')){
+                    continue
+                }
                 var childNode = getFirstVisibleNode(childNodes[i]);
                 if (childNode) {
                     return childNode;

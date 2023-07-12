@@ -94,5 +94,6 @@
         android:textColor="#80FFFFFF"
         app:layout_constraintBottom_toBottomOf="@+id/folioPageViewPager"
         app:layout_constraintEnd_toEndOf="@+id/folioPageViewPager"
+        android:visibility="gone"
         tools:text="1" />
 </androidx.constraintlayout.widget.ConstraintLayout>
