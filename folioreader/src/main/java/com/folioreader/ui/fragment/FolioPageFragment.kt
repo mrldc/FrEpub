@@ -21,6 +21,7 @@ import android.webkit.*
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -38,18 +39,20 @@ import com.folioreader.model.locators.ReadLocator
 import com.folioreader.model.locators.SearchLocator
 import com.folioreader.model.sqlite.BookmarkTable
 import com.folioreader.model.sqlite.HighLightTable
+import com.folioreader.ui.activity.FolioActivity
 import com.folioreader.ui.activity.FolioActivityCallback
 import com.folioreader.ui.base.HtmlTask
 import com.folioreader.ui.base.HtmlTaskCallback
 import com.folioreader.ui.base.HtmlUtil
-import com.folioreader.ui.view.FolioWebView
-import com.folioreader.ui.view.LoadingView
-import com.folioreader.ui.view.VerticalSeekbar
-import com.folioreader.ui.view.WebViewPager
+import com.folioreader.ui.view.*
 import com.folioreader.util.AppUtil
 import com.folioreader.util.HighlightUtil
 import com.folioreader.util.UiUtil
 import com.folioreader.viewmodels.PageTrackerViewModel
+import com.scwang.smart.refresh.footer.ClassicsFooter
+import com.scwang.smart.refresh.header.ClassicsHeader
+import com.scwang.smart.refresh.layout.api.RefreshLayout
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -150,6 +153,8 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     val pageName: String
         get() = mBookTitle + "$" + spineItem.href
 
+    private var bookmarkReadLocator: ReadLocator? = null
+
     private val isCurrentFragment: Boolean
         get() {
             return isAdded && mActivityCallback!!.currentChapterIndex == spineIndex
@@ -201,10 +206,48 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         initAnimations()
         initWebView()
         updatePagesLeftTextBg()
+        //书签添加、删除监听
+        initBookMarkListen()
 
         Log.d("FolioPageFragment", "onCreateView: initialised $spineIndex")
 
         return mRootView
+    }
+
+    /**
+     * 书签添加、删除监听； 删除时需判断当前有无书签
+     */
+    private fun initBookMarkListen() {
+        val refreshLayout =  mRootView!!.findViewById<View>(R.id.refreshLayout) as RefreshLayout
+        //当前页有书签，添加头部为删除书签头部
+//        if(haveBookMark){
+//            refreshLayout.setRefreshHeader(DeleteBookmarkHeaderView(context))
+//        }else{
+//            //当前页有书签，添加头部为添加书签头部
+//            refreshLayout.setRefreshHeader(AddBookmarkHeaderView(context))
+//        }
+
+//        refreshLayout.setRefreshHeader(AddBookmarkHeaderView(context))
+        refreshLayout.setRefreshHeader(DeleteBookmarkHeaderView(context))
+        refreshLayout.setOnRefreshListener { refreshlayout ->
+            //书签添加、删除对应操作，通过变量值判断
+//            if(haveBookMark) {
+//                //删除
+//            }else{
+//                //添加
+//                val readLocator = getLastReadLocator(FolioReader.ACTION_BOOKMARK)
+//                Log.v(FolioActivity.LOG_TAG, "-> onOptionsItemSelected 'if' -> bookmark")
+//
+//                bookmarkReadLocator = readLocator
+//                val localBroadcastManager = LocalBroadcastManager.getInstance(context!!)
+//                val intent = Intent(FolioReader.ACTION_SAVE_READ_LOCATOR)
+//                intent.putExtra(FolioReader.EXTRA_READ_LOCATOR, readLocator as Parcelable?)
+//                localBroadcastManager.sendBroadcast(intent)
+//            }
+
+            Toast.makeText(context, "刷新", Toast.LENGTH_LONG).show()
+            refreshlayout.finishRefresh(2000 /*,false*/)
+        }
     }
 
     /**

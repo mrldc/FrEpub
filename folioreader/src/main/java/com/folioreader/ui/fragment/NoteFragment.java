@@ -24,6 +24,7 @@ import com.folioreader.Config;
 import com.folioreader.Constants;
 import com.folioreader.FolioReader;
 import com.folioreader.R;
+import com.folioreader.dialog.FolioBookMarkDialog;
 import com.folioreader.model.HighLight;
 import com.folioreader.model.HighlightImpl;
 import com.folioreader.model.MarkVo;
@@ -142,11 +143,12 @@ public class NoteFragment extends Fragment implements NoteAdapter.NoteAdapterCal
 
     @Override
     public void onItemClick(MarkVo markVo) {
-        Intent intent = new Intent();
-        intent.putExtra(NODE_ITEM, markVo);
-        intent.putExtra(Constants.TYPE, Constants.HIGHLIGHT_SELECTED);
-        getActivity().setResult(Activity.RESULT_OK, intent);
-        getActivity().finish();
+//        Intent intent = new Intent();
+//        intent.putExtra(NODE_ITEM, markVo);
+//        intent.putExtra(Constants.TYPE, Constants.HIGHLIGHT_SELECTED);
+//        getActivity().setResult(Activity.RESULT_OK, intent);
+//        getActivity().finish();
+        new FolioBookMarkDialog().showDialog();
     }
 
     @Override

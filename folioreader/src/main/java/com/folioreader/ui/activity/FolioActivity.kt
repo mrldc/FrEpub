@@ -30,7 +30,9 @@ import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.*
+import android.text.Editable
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
@@ -53,7 +55,6 @@ import com.folioreader.Constants.*
 import com.folioreader.FolioReader
 import com.folioreader.FolioReader.OnClosedListener
 import com.folioreader.R
-import com.folioreader.event.MessageEvent
 import com.folioreader.model.DisplayUnit
 import com.folioreader.model.HighLight
 import com.folioreader.model.HighlightImpl
@@ -75,8 +76,6 @@ import com.folioreader.util.AppUtil.Companion.getSavedConfig
 import com.folioreader.viewmodels.PageTrackerViewModel
 import com.folioreader.viewmodels.PageTrackerViewModelFactory
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import org.readium.r2.shared.Link
 import org.readium.r2.shared.Publication
 import org.readium.r2.streamer.parser.CbzParser
@@ -149,6 +148,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var rl_top: RelativeLayout? = null
     private var rl_bottom: LinearLayout? = null
     private var rl_edit: LinearLayout? = null
+    private var etContent: EditText? = null
+    private var tvSave: TextView? = null
     //阅读记录
     private var readBook: Book?  =null
 
@@ -294,6 +295,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+
         folioReader = FolioReader.get()
             .setOnHighlightListener(this)
             .setReadLocatorListener(this)
@@ -396,6 +399,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rl_top = findViewById(R.id.rl_top)
         rl_bottom = findViewById(R.id.rl_bottom)
         rl_edit = findViewById(R.id.rl_edit)
+        etContent = findViewById(R.id.et_content)
+        tvSave = findViewById(R.id.tv_save)
 
         tvLeft!!.text = bookFileName
         //返回
@@ -462,6 +467,21 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             rl_edit!!.visibility = View.GONE
 //            showConfigBottomSheetDialogFragment()
         }
+
+        etContent?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, i: Int, i1: Int, i2: Int) {
+                InputMethodUtils.show(etContent)
+                tvSave!!.visibility = View.VISIBLE
+                val content = s.toString().trim { it <= ' ' }
+            }
+
+            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+            override fun afterTextChanged(editable: Editable) {}
+        })
+        //保存
+        tvSave?.setOnClickListener(View.OnClickListener {
+            InputMethodUtils.close(etContent)
+        })
     }
 
     private fun statusIcon(directory : Boolean, write : Boolean, light : Boolean, font : Boolean) {

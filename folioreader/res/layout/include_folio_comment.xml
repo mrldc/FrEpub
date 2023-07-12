@@ -19,19 +19,36 @@
         android:src="@mipmap/ic_bottom_bar_comment" />
 
     <TextView
-        android:id="@+id/tv_left"
+        android:id="@+id/tv_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/iv_idea"
+        android:layout_toStartOf="@+id/tv_save"
         android:layout_centerVertical="true"
-        android:maxLines="1"
-        android:singleLine="true"
         android:textSize="17sp"
         android:textColor="#999999"
-        android:text="写下这一刻的想法..." />
+        android:text="写下这一刻的想法..."
+        android:visibility="gone"/>
+
+    <EditText
+        android:id="@+id/et_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/iv_idea"
+        android:layout_toStartOf="@+id/tv_save"
+        android:layout_centerVertical="true"
+        android:hint="写下这一刻的想法..."
+        android:background="@null"
+        android:textColorHint="#999999"
+        android:inputType="text"
+        android:textSize="17sp"
+        android:textColor="#333333"
+        android:gravity="start"
+        android:maxLines="5"
+        />
 
     <TextView
-        android:id="@+id/tv_right"
+        android:id="@+id/tv_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"

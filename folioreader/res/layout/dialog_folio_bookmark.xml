@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rl_bookmark"
-    android:layout_width="match_parent"
+    android:layout_width="440dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_vertical"
@@ -18,7 +18,7 @@
         android:maxLines="1"
         android:singleLine="true"
         android:gravity="center"
-        android:textSize="28sp"
+        android:textSize="20sp"
         android:textColor="#333333"
         android:text="笔记" />
 
@@ -30,7 +30,7 @@
         android:layout_below="@+id/tv_bookmark_title"
         android:layout_centerHorizontal="true"
         android:background="#F8F8F8"
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:textColor="#999999"
         android:text="笔记笔记笔记笔记笔记笔记笔记笔记" />
 
@@ -38,17 +38,17 @@
         android:id="@+id/include_bookmark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         layout="@layout/include_folio_comment"
         android:layout_below="@+id/et_bookmark_content"
         />
     <LinearLayout
         android:id="@+id/ll_btn"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="40dp"
         android:layout_marginBottom="30dp"
         android:layout_below="@+id/include_bookmark"
         >
@@ -61,7 +61,7 @@
             android:maxLines="1"
             android:singleLine="true"
             android:gravity="center"
-            android:textSize="24sp"
+            android:textSize="14sp"
             android:textColor="#999999"
             android:text="删除笔记" />
         <View
@@ -70,24 +70,25 @@
             android:layout_weight="1"/>
         <TextView
             android:id="@+id/tv_cancel"
-            android:layout_width="180dp"
-            android:layout_height="60dp"
+            android:layout_width="104dp"
+            android:layout_height="36dp"
             android:layout_marginStart="6dp"
             android:layout_marginEnd="12dp"
+            android:layout_gravity="center_vertical"
             android:background="@drawable/shape_30_solid_ffffff_bg"
-            android:layout_gravity="end"
             android:gravity="center"
-            android:textSize="24sp"
+            android:textSize="13sp"
             android:textColor="#333333"
             android:text="关闭" />
 
         <TextView
             android:id="@+id/tv_edit"
-            android:layout_width="180dp"
-            android:layout_height="60dp"
+            android:layout_width="104dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical"
             android:background="@drawable/shape_30_solid_dd4f0f_bg"
             android:gravity="center"
-            android:textSize="24sp"
+            android:textSize="13sp"
             android:textColor="#ffffff"
             android:text="编辑" />
 
