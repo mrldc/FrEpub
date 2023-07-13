@@ -30,11 +30,10 @@ import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.*
-import android.text.Editable
 import android.text.TextUtils
-import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -87,7 +86,6 @@ import org.readium.r2.streamer.parser.EpubParser
 import org.readium.r2.streamer.parser.PubBox
 import org.readium.r2.streamer.server.Server
 import java.lang.ref.WeakReference
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.ceil
 
@@ -145,6 +143,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var ll_collect: LinearLayout? = null
     private var rl_comment: RelativeLayout? = null
     private var et_page_note: EditText? = null
+    private var tv_mark_content: TextView? = null
     private var tv_page_save: TextView? = null
 
     private var tv_listen_book: TextView? = null
@@ -158,7 +157,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var rl_edit: LinearLayout? = null
     //阅读记录
     private var readBook: Book?  =null
-
+    //页笔记编辑页
+    private lateinit var viewNoteEdit: View
     // page count
     private lateinit var pageTrackerViewModel: PageTrackerViewModel
 
@@ -406,7 +406,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rl_top = findViewById(R.id.rl_top)
         rl_bottom = findViewById(R.id.rl_bottom)
         rl_edit = findViewById(R.id.rl_edit)
-
+        tv_mark_content = findViewById(R.id.tv_mark_content)
 
 
         tvLeft!!.text = bookFileName
@@ -417,7 +417,18 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         //收藏
         ll_collect?.setOnClickListener {
-
+            if(pageMarkReadLocator ==  null){
+                val readLocator = currentFragment!!.getLastReadLocator(FolioReader.ACTION_PAGE_MARK)
+                pageMarkReadLocator = readLocator;
+            }
+            Log.v(LOG_TAG, "笔记详情-->")
+            //获取页笔记
+            var markVo = BookmarkTable.getPageNote(mBookId,BookmarkTable.getReadLocatorString(pageMarkReadLocator),this)
+            Log.v(LOG_TAG, "笔记详情$markVo")
+            if(markVo != null){
+                val noteDetailFragment = NoteDetailFragment(markVo.bookId,markVo.id,markVo.note,markVo.content)
+                noteDetailFragment.show(supportFragmentManager,"")
+            }
         }
         //去听书
         tv_listen_book?.setOnClickListener {
@@ -438,21 +449,30 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 //            override fun afterTextChanged(editable: Editable) {}
 //        })
         //写笔记输入界面
-        et_page_note?.setOnClickListener {
-            Log.v(LOG_TAG,"点击写笔记输入界面")
-            InputMethodUtils.show(et_page_note)
-            //获取段落第一句
-            val readLocator = currentFragment!!.getLastReadLocator(FolioReader.ACTION_PAGE_MARK)
-            pageMarkReadLocator = readLocator;
-            Log.v(LOG_TAG,"点击写笔记输入界面:"+readLocator!!.title)
+        et_page_note?.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
+            if(hasFocus){
+                Log.v(LOG_TAG,"点击写笔记输入界面")
+                InputMethodUtils.show(et_page_note)
+                //获取段落第一句
+                if(pageMarkReadLocator == null){
+                    val readLocator = currentFragment!!.getLastReadLocator(FolioReader.ACTION_PAGE_MARK)
+                    pageMarkReadLocator = readLocator;
+                    if(readLocator != null){
+                        tv_mark_content!!.text = readLocator.title
+                    }
+                }
+
+
+
+            }
+
 
         }
         tv_page_save?.setOnClickListener{
             InputMethodUtils.close(et_page_note)
             if(pageMarkReadLocator != null && et_page_note!!.text != null ){
-                BookmarkTable(this).insertBookmark(mBookId,pageMarkReadLocator!!.title,et_page_note!!.text.toString(),currentChapterIndex,pageMarkReadLocator!!.toJson().toString(),pageMarkReadLocator!!.locations.cfi,BookmarkTable.NOTE_TYPE)
+                BookmarkTable(this).insertBookmark(mBookId,pageMarkReadLocator!!.title,et_page_note!!.text.toString(),currentChapterIndex,BookmarkTable.getReadLocatorString(pageMarkReadLocator),pageMarkReadLocator!!.locations.cfi,BookmarkTable.NOTE_TYPE)
                 et_page_note!!.text.clear()
-                pageMarkReadLocator = null
             }
 
         }
@@ -1564,5 +1584,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             }
         }
 
+    }
+
+    fun initNoteEditView(){
+        viewNoteEdit = LayoutInflater.from(this).inflate(R.layout.dialog_folio_bookmark, null)
     }
 }

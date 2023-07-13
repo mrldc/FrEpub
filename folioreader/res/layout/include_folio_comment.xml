@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rl_comment"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:background="#ffffff"
     android:gravity="center"
-    >
+    android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/rl_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#ffffff"
+        android:gravity="center">
+
+
     <ImageView
         android:id="@+id/iv_idea"
         android:layout_width="15dp"
@@ -17,19 +25,6 @@
         android:layout_marginEnd="10dp"
         android:scaleType="fitXY"
         android:src="@mipmap/ic_bottom_bar_comment" />
-
-    <TextView
-        android:id="@+id/tv_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/iv_idea"
-        android:layout_toStartOf="@+id/et_page_note"
-        android:layout_centerVertical="true"
-        android:maxLines="3"
-        android:textSize="17sp"
-        android:textColor="#999999"
-        android:text="写下这一刻的想法..."
-        android:visibility="gone"/>
 
     <EditText
         android:id="@+id/et_page_note"
@@ -68,5 +63,35 @@
         android:layout_height="1dp"
         android:background="#999999"
         android:layout_below="@+id/iv_idea"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:visibility="visible"
+        android:id="@+id/rl_highlight_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="6dp"
+        >
+        <View
+            android:id="@+id/view"
+            android:layout_width="1dp"
+            android:layout_height="16dp"
+            android:background="#999999"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="42dp"
+            />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/tv_mark_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/view"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textSize="17sp"
+            android:textColor="#999999"
+            android:text="此前各书均有序，或自序，或他序，四书此次汇集重刊，她又逐一修订一过，但尚缺一篇总序，她希望这篇总序由我来执笔，以冠群书。" />
+    </RelativeLayout>
+</LinearLayout>

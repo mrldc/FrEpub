@@ -8,7 +8,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.folioreader.Constants;
+import com.folioreader.model.MarkVo;
+import com.folioreader.model.locators.ReadLocator;
+import com.folioreader.ui.activity.FolioActivity;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -74,6 +81,12 @@ public class BookmarkTable {
 
     }
 
+    public static String getReadLocatorString(ReadLocator readLocator){
+        if(readLocator != null){
+            return readLocator.getHref();
+        }
+        return null;
+    }
     @SuppressLint("Range")
     public static final ArrayList<HashMap> getBookmarksForID(String id, Context context) {
         if(Bookmarkdatabase == null){
@@ -160,5 +173,49 @@ public class BookmarkTable {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 Constants.DATE_FORMAT, Locale.getDefault());
         return dateFormat.format(date);
+    }
+    public static boolean updateNote(String note,Integer id,Context context){
+        if(Bookmarkdatabase == null){
+            FolioDatabaseHelper dbHelper = new FolioDatabaseHelper(context);
+            Bookmarkdatabase = dbHelper.getWritableDatabase();
+        }
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(BookmarkTable.note,note);
+        return Bookmarkdatabase.update(TABLE_NAME, contentValues, ID + " = " + id, null) > 0;
+
+    }
+
+    @SuppressLint("Range")
+    public static MarkVo getPageNote(@Nullable String mBookId, @Nullable String readLocatorString, Context context) {
+
+        StringBuilder sb = new StringBuilder();
+        //查询书签与页笔记
+        sb.append("select * from (");
+        sb.append("select _id as id,bookID as bookId,  content,  note, type as kind,null as highLightType,cfi,null as rangy,readlocator as href,date, page_number as pageNumber from bookmark_table");
+        sb.append(" where bookID='").append(mBookId).append("' ").append(" and ").append("readlocator ='").append(readLocatorString).append("'");
+
+        sb.append(") t order by t.date");
+        Cursor cursor = DbAdapter.getHighlightsBySql(sb.toString());
+        List<MarkVo> markVoList = new ArrayList<>();
+        while (cursor.moveToNext()){
+            MarkVo markVo = new MarkVo();
+            markVo.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            markVo.setBookId(cursor.getString(cursor.getColumnIndex("bookId")));
+            markVo.setContent(cursor.getString(cursor.getColumnIndex("content")));
+            markVo.setNote(cursor.getString(cursor.getColumnIndex("note")));
+            markVo.setKind(cursor.getString(cursor.getColumnIndex("kind")));
+            markVo.setHighlightType(cursor.getString(cursor.getColumnIndex("highLightType")));
+            markVo.setCfi(cursor.getString(cursor.getColumnIndex("cfi")));
+            markVo.setRangy(cursor.getString(cursor.getColumnIndex("rangy")));
+            markVo.setHref(cursor.getString(cursor.getColumnIndex("href")));
+            markVo.setDate(cursor.getString(cursor.getColumnIndex("date")));
+            markVo.setPageNumber(cursor.getInt(cursor.getColumnIndex("pageNumber")));
+            markVoList.add(markVo);
+        }
+        cursor.close();
+        if(markVoList.size() > 0){
+            return markVoList.get(0);
+        }
+        return null;
     }
 }
