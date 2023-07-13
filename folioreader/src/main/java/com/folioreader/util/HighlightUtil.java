@@ -38,6 +38,7 @@ public class HighlightUtil {
             String rangy = jObject.getString("rangy");
             String textContent = jObject.getString("content");
             String color = jObject.getString("color");
+            String note = jObject.getString("note");
 
             String rangyHighlightElement = getRangyString(rangy, oldRangy);
 
@@ -48,6 +49,7 @@ public class HighlightUtil {
             highlightImpl.setBookId(bookId);
             highlightImpl.setPageId(pageId);
             highlightImpl.setRangy(rangyHighlightElement);
+            highlightImpl.setNote(note);
             highlightImpl.setDate(Calendar.getInstance().getTime());
             // save highlight to database
             long id = HighLightTable.insertHighlight(highlightImpl);

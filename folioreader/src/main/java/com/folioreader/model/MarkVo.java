@@ -9,6 +9,14 @@ import androidx.annotation.NonNull;
  * 划线、高亮、书签等显示类
  */
 public class MarkVo implements Parcelable {
+    //：书签
+    public static String BookMarkType = "1";
+    //：页笔记
+    public static String PageNoteType = "2";
+    //：划线
+    public static String HighlightType = "3";
+    //：段落笔记
+    public static String HighlightMarkType = "4";
     private int id;
     private String bookId;
     //选中的文字

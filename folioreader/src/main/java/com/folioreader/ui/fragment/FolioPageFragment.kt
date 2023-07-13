@@ -146,7 +146,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
     private var mediaController: MediaController? = null
     private var mConfig: Config? = null
-    private var mBookId: String? = null
+    public var mBookId: String? = null
     var searchLocatorVisible: SearchLocator? = null
 
     private var currentPageHasBookmark: Boolean = false
@@ -610,7 +610,8 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                     loadingView!!.hide()
                 }
             }
-
+            //读取章节位置信息
+            getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK)
         }
 
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
@@ -956,12 +957,12 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         outState.putParcelable(BUNDLE_SEARCH_LOCATOR, searchLocatorVisible)
     }
 
-    fun highlight(style: HighlightImpl.HighlightStyle, isAlreadyCreated: Boolean) {
+    fun highlight(style: HighlightImpl.HighlightStyle,note:String, isAlreadyCreated: Boolean): Boolean {
         if (!isAlreadyCreated) {
            mWebview!!.loadUrl(
                 String.format(
-                    "javascript:if(typeof ssReader !== \"undefined\"){ssReader.highlightSelection('%s');}",
-                    HighlightImpl.HighlightStyle.classForStyle(style)
+                    "javascript:if(typeof ssReader !== \"undefined\"){ssReader.highlightSelection('%s','%s');}",
+                    HighlightImpl.HighlightStyle.classForStyle(style),note
                 )
             )
 
@@ -973,6 +974,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                 )
             )
         }
+        return true
     }
 
     override fun resetCurrentIndex() {

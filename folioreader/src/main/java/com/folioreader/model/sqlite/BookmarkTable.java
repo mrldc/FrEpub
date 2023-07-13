@@ -181,18 +181,22 @@ public class BookmarkTable {
         }
         ContentValues contentValues = new ContentValues();
         contentValues.put(BookmarkTable.note,note);
+        contentValues.put(date, getDateTimeString(new Date()));
         return Bookmarkdatabase.update(TABLE_NAME, contentValues, ID + " = " + id, null) > 0;
 
     }
 
     @SuppressLint("Range")
-    public static MarkVo getPageNote(@Nullable String mBookId, @Nullable String readLocatorString, Context context) {
+    public static MarkVo getPageNote(@Nullable String mBookId, @Nullable String readLocatorString,String arg_cfi) {
 
         StringBuilder sb = new StringBuilder();
         //查询书签与页笔记
         sb.append("select * from (");
         sb.append("select _id as id,bookID as bookId,  content,  note, type as kind,null as highLightType,cfi,null as rangy,readlocator as href,date, page_number as pageNumber from bookmark_table");
-        sb.append(" where bookID='").append(mBookId).append("' ").append(" and ").append("readlocator ='").append(readLocatorString).append("'");
+        sb.append(" where bookID='").append(mBookId).append("' ")
+                .append(" and ").append(readlocator).append(" ='").append(readLocatorString).append("'")
+                .append(" and ").append(cfi).append(" ='").append(arg_cfi).append("'")
+                .append(" and ").append(type).append(" ='").append(NOTE_TYPE).append("'");
 
         sb.append(") t order by t.date");
         Cursor cursor = DbAdapter.getHighlightsBySql(sb.toString());

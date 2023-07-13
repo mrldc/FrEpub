@@ -61,11 +61,16 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
         });
         holder.rlHighlightBottom.setVisibility(View.GONE);
         MarkVo markVo = getItem(position);
-        if("2".equals(markVo.getKind()) || "4".equals(markVo.getKind())){
+        if(MarkVo.PageNoteType.equals(markVo.getKind())){
             holder.tvHighlightContent.setText(getItem(position).getContent());
             holder.rlHighlightBottom.setVisibility(View.VISIBLE);
             holder.content.setText(Html.fromHtml(getItem(position).getNote()));
-        }else if("3".equals(markVo.getKind())){
+        }else if( MarkVo.HighlightMarkType.equals(markVo.getKind())){
+            holder.tvHighlightContent.setText(getItem(position).getContent());
+            holder.rlHighlightBottom.setVisibility(View.VISIBLE);
+            holder.content.setText(Html.fromHtml(getItem(position).getNote()));
+            holder.content.setUnderline(true);
+        }else if(MarkVo.HighlightType.equals(markVo.getKind())){
             UiUtil.setBackColorToTextView(holder.content,
                     getItem(position).getHighlightType());
             holder.content.setText(Html.fromHtml(getItem(position).getContent()));

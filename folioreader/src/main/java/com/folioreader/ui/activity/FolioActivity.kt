@@ -37,6 +37,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.ActionBar
@@ -59,6 +60,7 @@ import com.folioreader.model.HighLight
 import com.folioreader.model.HighlightImpl
 import com.folioreader.model.MarkVo
 import com.folioreader.model.db.Book
+import com.folioreader.model.event.HighlightNoteEvent
 import com.folioreader.model.event.MediaOverlayPlayPauseEvent
 import com.folioreader.model.event.NoteSelectEvent
 import com.folioreader.model.locators.ReadLocator
@@ -89,6 +91,7 @@ import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.ceil
 
+
 class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControllerCallback,
     OnHighlightListener, ReadLocatorListener, OnClosedListener,
     View.OnSystemUiVisibilityChangeListener {
@@ -99,6 +102,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var appBarLayout: FolioAppBarLayout? = null
     private var toolbar: Toolbar? = null
     private var createdMenu: Menu? = null
+    //全屏模式
     private var distractionFreeMode: Boolean = false
     private var handler: Handler? = null
 
@@ -144,6 +148,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var rl_comment: RelativeLayout? = null
     private var et_page_note: EditText? = null
     private var tv_mark_content: TextView? = null
+    private var rl_mark_content: RelativeLayout? = null
     private var tv_page_save: TextView? = null
 
     private var tv_listen_book: TextView? = null
@@ -329,6 +334,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         // getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setConfig(savedInstanceState)
+
         initDistractionFreeMode(savedInstanceState)
 
         setContentView(R.layout.folio_activity)
@@ -411,6 +417,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rl_bottom = findViewById(R.id.rl_bottom)
         rl_edit = findViewById(R.id.rl_edit)
         tv_mark_content = findViewById(R.id.tv_mark_content)
+        rl_mark_content = findViewById(R.id.rl_mark_content)
 
 
         tvLeft!!.text = bookFileName
@@ -425,12 +432,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 val readLocator = currentFragment!!.getLastReadLocator(FolioReader.ACTION_PAGE_MARK)
                 pageMarkReadLocator = readLocator;
             }
-            Log.v(LOG_TAG, "笔记详情-->")
+            Log.v(LOG_TAG, "笔记详情-->"+pageMarkReadLocator!!.href)
             //获取页笔记
-            var markVo = BookmarkTable.getPageNote(mBookId,BookmarkTable.getReadLocatorString(pageMarkReadLocator),this)
+            var markVo = BookmarkTable.getPageNote(mBookId,BookmarkTable.getReadLocatorString(pageMarkReadLocator),pageMarkReadLocator!!.locations.cfi)
             Log.v(LOG_TAG, "笔记详情$markVo")
             if(markVo != null){
-                val noteDetailFragment = NoteDetailFragment(markVo.bookId,markVo.id,markVo.note,markVo.content)
+                val noteDetailFragment = NoteDetailFragment(markVo.bookId,markVo.id,markVo.note,markVo.content,MarkVo.PageNoteType,currentFragment!!)
                 noteDetailFragment.show(supportFragmentManager,"")
             }
         }
@@ -463,6 +470,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                     pageMarkReadLocator = readLocator;
                     if(readLocator != null){
                         tv_mark_content!!.text = readLocator.title
+                        rl_mark_content!!.visibility = View.VISIBLE
                     }
                 }
 
@@ -472,11 +480,30 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
 
         }
+        //保存页笔记
         tv_page_save?.setOnClickListener{
-            InputMethodUtils.close(et_page_note)
+
             if(pageMarkReadLocator != null && et_page_note!!.text != null ){
-                BookmarkTable(this).insertBookmark(mBookId,pageMarkReadLocator!!.title,et_page_note!!.text.toString(),currentChapterIndex,BookmarkTable.getReadLocatorString(pageMarkReadLocator),pageMarkReadLocator!!.locations.cfi,BookmarkTable.NOTE_TYPE)
-                et_page_note!!.text.clear()
+
+                //查看当前页是否存在
+                val markVo = BookmarkTable.getPageNote(mBookId,BookmarkTable.getReadLocatorString(pageMarkReadLocator),pageMarkReadLocator!!.locations.cfi) as MarkVo
+               var saveResult =if(markVo != null){
+                   BookmarkTable(this).insertBookmark(mBookId,pageMarkReadLocator!!.title,et_page_note!!.text.toString(),currentChapterIndex,BookmarkTable.getReadLocatorString(pageMarkReadLocator),pageMarkReadLocator!!.locations.cfi,BookmarkTable.NOTE_TYPE)
+               } else {
+                   BookmarkTable.updateNote(et_page_note!!.text.toString(),markVo.id,this)
+               }
+                if(saveResult ){
+                   et_page_note!!.text.clear()
+                   et_page_note!!.clearFocus()
+                   InputMethodUtils.close(et_page_note)
+                   rl_mark_content!!.visibility = View.GONE
+                   Toast.makeText(this,"保存成功",Toast.LENGTH_SHORT).show()
+
+               }else{
+                   Toast.makeText(this,"保存失败",Toast.LENGTH_SHORT).show()
+               }
+
+
             }
 
         }
@@ -965,14 +992,23 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     }
 
     private fun initDistractionFreeMode(savedInstanceState: Bundle?) {
-        Log.v(LOG_TAG, "-> initDistractionFreeMode")
+        if(Build.VERSION.SDK_INT >= 30){
+            //监听状态栏变化
+            window.decorView.setOnApplyWindowInsetsListener { view:View,insets->
+                distractionFreeMode = !insets.isVisible(WindowInsets.Type.statusBars())
+                systemUiVisibilityChange()
 
-        window.decorView.setOnSystemUiVisibilityChangeListener(this)
+                return@setOnApplyWindowInsetsListener insets
+            }
+        }else{
+            window.decorView.setOnSystemUiVisibilityChangeListener(this)
+        }
+
 
         // Deliberately Hidden and shown to make activity contents lay out behind SystemUI
-        hideSystemUI()
-        showSystemUI()
 
+        showSystemUI()
+        hideSystemUI()
         distractionFreeMode =
             savedInstanceState != null && savedInstanceState.getBoolean(BUNDLE_DISTRACTION_FREE_MODE)
     }
@@ -1089,23 +1125,11 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         return WeakReference(this)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onSystemUiVisibilityChange(visibility: Int) {
         Log.v(LOG_TAG, "-> onSystemUiVisibilityChange -> visibility = $visibility")
-
         distractionFreeMode = visibility != View.SYSTEM_UI_FLAG_VISIBLE
-        Log.v(LOG_TAG, "-> distractionFreeMode = $distractionFreeMode")
-        if (distractionFreeMode) {
-            rl_top!!.visibility = View.GONE
-            rl_bottom!!.visibility = View.GONE
-            rl_edit!!.visibility = View.GONE
-            flMain!!.visibility = View.GONE
-            statusIcon(false, false, false, false)
-        } else {
-            rl_top!!.visibility = View.VISIBLE
-            rl_bottom!!.visibility = View.VISIBLE
-            rl_edit!!.visibility = View.VISIBLE
-        }
-
+        systemUiVisibilityChange()
 //        if (actionBar != null) {
 //            if (distractionFreeMode) {
 //                actionBar!!.hide()
@@ -1114,7 +1138,29 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 //            }
 //        }
     }
+    //显示隐藏应用工具栏
+     fun systemUiVisibilityChange(){
+         Log.v(LOG_TAG, "-> distractionFreeMode = $distractionFreeMode")
+         if (distractionFreeMode) {
+             rl_top!!.visibility = View.GONE
+             rl_bottom!!.visibility = View.GONE
+             rl_edit!!.visibility = View.GONE
+             rl_mark_content!!.visibility = View.GONE
+             tv_mark_content!!.text = ""
+             flMain!!.visibility = View.GONE
+             statusIcon(false, false, false, false)
+         } else {
+             rl_top!!.visibility = View.VISIBLE
+             rl_bottom!!.visibility = View.VISIBLE
+             //状态栏有内容是，笔记页面隐藏
+             if(flMain!!.visibility == View.VISIBLE){
+                 rl_edit!!.visibility = View.GONE
+             }else{
+                 rl_edit!!.visibility = View.VISIBLE
+             }
 
+         }
+     }
     override fun toggleSystemUI() {
 
         if (distractionFreeMode) {
@@ -1122,16 +1168,26 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         } else {
             hideSystemUI()
         }
+        distractionFreeMode = !distractionFreeMode
+        rl_top!!.visibility = View.GONE
+        rl_bottom!!.visibility = View.GONE
+        rl_edit!!.visibility = View.GONE
+        flMain!!.visibility = View.GONE
     }
 
     private fun showSystemUI() {
         Log.v(LOG_TAG, "-> showSystemUI")
-
-        if (Build.VERSION.SDK_INT >= 16) {
+        if(Build.VERSION.SDK_INT >= 30){
+            val windowInsetsController = window.decorView.windowInsetsController
+            windowInsetsController!!.show(WindowInsets.Type.statusBars())
+        }
+        else if (Build.VERSION.SDK_INT >= 16) {
+            Log.v(LOG_TAG, "-> showSystemUI01")
             val decorView = window.decorView
             decorView.systemUiVisibility =View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-               // (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+                (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
         } else {
+            Log.v(LOG_TAG, "-> showSystemUI02")
           //  window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
 //            if (appBarLayout != null) appBarLayout!!.setTopMargin(statusBarHeight)
             onSystemUiVisibilityChange(View.SYSTEM_UI_FLAG_VISIBLE)
@@ -1141,7 +1197,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private fun hideSystemUI() {
         Log.v(LOG_TAG, "-> hideSystemUI")
 
-        if (Build.VERSION.SDK_INT >= 16) {
+        if(Build.VERSION.SDK_INT >= 30){
+            Log.v(LOG_TAG, "-> hideSystemUI01")
+            val windowInsetsController = window.decorView.windowInsetsController
+            windowInsetsController!!.hide(WindowInsets.Type.statusBars())
+        }else if (Build.VERSION.SDK_INT >= 16) {
+            Log.v(LOG_TAG, "-> hideSystemUI02")
             val decorView = window.decorView
             decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
                     // Set the content to appear under the system bars so that the
@@ -1150,6 +1211,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                     // Hide the nav bar and status bar
                     or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN)
         } else {
+            Log.v(LOG_TAG, "-> hideSystemUI03")
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
@@ -1313,8 +1375,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 currentChapterIndex = position
                 pageTrackerViewModel.setCurrentChapter(position + 1)
 
-                //读取章节位置信息
-                mFolioPageFragmentAdapter!!.fragments[position]!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK)
+
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -1586,6 +1647,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                     folioPageFragment!!.scrollToCFI(markVo.cfi)
                 }, 1000)
             }
+            hideSystemUI()
         }
 
     }
@@ -1593,4 +1655,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     fun initNoteEditView(){
         viewNoteEdit = LayoutInflater.from(this).inflate(R.layout.dialog_folio_bookmark, null)
     }
+
+    //写笔记请求
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun writeHighlightNote(highlightNoteEvent: HighlightNoteEvent ){
+        val noteDetailFragment = NoteDetailFragment(null,null,null,highlightNoteEvent.content,MarkVo.HighlightMarkType,currentFragment!!)
+        noteDetailFragment.show(supportFragmentManager,"")
+    }
+
 }

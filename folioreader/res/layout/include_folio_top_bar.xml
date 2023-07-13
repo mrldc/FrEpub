@@ -10,10 +10,9 @@
     tools:visibility="visible">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="50dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginTop="15dp"
         tools:visibility="visible">
     <ImageView
         android:id="@+id/iv_back"

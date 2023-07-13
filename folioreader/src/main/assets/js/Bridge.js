@@ -272,6 +272,10 @@ $(function () {
                                                       ignoreWhiteSpace: true,
                                                       tagNames: ["span", "a"]
               }));
+            this.highlighter.addClassApplier(rangy.createClassApplier("mark", {
+                ignoreWhiteSpace: true,
+                tagNames: ["span", "a"]
+            }));
         },
 
         base64encode: function (str) {
@@ -313,12 +317,12 @@ $(function () {
             $("#" + inputId).trigger("input", ["true"]);
         },
 
-        highlightSelection: function (color) {
+        highlightSelection: function (color,note) {
             try {
 
                 this.highlighter.highlightSelection(color, null);
                 var range = window.getSelection().toString();
-                var params = {content: range, rangy: this.getHighlights(), color: color};
+                var params = {content: range, rangy: this.getHighlights(), color: color,note:note};
                 this.clearSelection();
                 Highlight.onReceiveHighlights(JSON.stringify(params));
             } catch (err) {

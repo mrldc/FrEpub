@@ -273,7 +273,6 @@ public class HighLightTable {
         return markVoList;
     }
     //获取笔记
-
     @SuppressLint("Range")
     public static List<MarkVo> getAllNoteList(String mBookId) {
         StringBuilder sb = new StringBuilder();
@@ -305,8 +304,7 @@ public class HighLightTable {
         cursor.close();
         return markVoList;
     }
-    //获取全部
-
+    //获取全部段落笔记
     @SuppressLint("Range")
     public static List<MarkVo> getAllHighlight(String mBookId) {
         StringBuilder sb = new StringBuilder();
@@ -334,6 +332,41 @@ public class HighLightTable {
         }
         cursor.close();
         return markVoList;
+    }
+    //获取全部段落笔记
+    @SuppressLint("Range")
+    public static MarkVo getOneHighlightNote(String mBookId,String arg_rangy) {
+        StringBuilder sb = new StringBuilder();
+        //查询书签与页笔记
+        sb.append("select * from (");
+        sb.append(" select _id as id,bookId,content,note,case when type='mark' then '4' else '3'end as kind,type as highLightType, null as cfi ,rangy,pageId as href, date,page_number as pageNumber  from highlight_table ");
+        sb.append(" where bookId='").append(mBookId).append("' ")
+                .append(" and ").append(" type = '").append(MARK_TYPE).append("'")
+                .append(" and ").append(COL_RANGY).append(" = '").append(arg_rangy).append("'")
+        ;
+        sb.append(") t order by t.date");
+        Cursor cursor = DbAdapter.getHighlightsBySql(sb.toString());
+        List<MarkVo> markVoList = new ArrayList<>();
+        while (cursor.moveToNext()){
+            MarkVo markVo = new MarkVo();
+            markVo.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            markVo.setBookId(cursor.getString(cursor.getColumnIndex("bookId")));
+            markVo.setContent(cursor.getString(cursor.getColumnIndex("content")));
+            markVo.setNote(cursor.getString(cursor.getColumnIndex("note")));
+            markVo.setKind(cursor.getString(cursor.getColumnIndex("kind")));
+            markVo.setHighlightType(cursor.getString(cursor.getColumnIndex("highLightType")));
+            markVo.setCfi(cursor.getString(cursor.getColumnIndex("cfi")));
+            markVo.setRangy(cursor.getString(cursor.getColumnIndex("rangy")));
+            markVo.setHref(cursor.getString(cursor.getColumnIndex("href")));
+            markVo.setDate(cursor.getString(cursor.getColumnIndex("date")));
+            markVo.setPageNumber(cursor.getInt(cursor.getColumnIndex("pageNumber")));
+            markVoList.add(markVo);
+        }
+        cursor.close();
+        if(markVoList.size() > 0){
+            return markVoList.get(0);
+        }
+        return null;
     }
 }
 

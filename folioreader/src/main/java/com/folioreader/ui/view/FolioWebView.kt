@@ -29,11 +29,14 @@ import com.folioreader.R
 import com.folioreader.model.DisplayUnit
 import com.folioreader.model.HighLight
 import com.folioreader.model.HighlightImpl.HighlightStyle
+import com.folioreader.model.MarkVo
+import com.folioreader.model.event.HighlightNoteEvent
 import com.folioreader.model.sqlite.HighLightTable
 import com.folioreader.ui.activity.FolioActivity
 import com.folioreader.ui.activity.FolioActivityCallback
 import com.folioreader.ui.fragment.DictionaryFragment
 import com.folioreader.ui.fragment.FolioPageFragment
+import com.folioreader.ui.fragment.NoteDetailFragment
 import com.folioreader.util.AppUtil
 import com.folioreader.util.HighlightUtil
 import com.folioreader.util.UiUtil
@@ -48,6 +51,7 @@ import kotlinx.android.synthetic.main.widget_text_selection.view.tv_copy
 import kotlinx.android.synthetic.main.widget_text_selection.view.tv_dv_line
 import kotlinx.android.synthetic.main.widget_text_selection.view.tv_write
 import kotlinx.android.synthetic.main.widget_text_selection.view.underlineHighlight2
+import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
 import org.springframework.util.ReflectionUtils
 import java.lang.ref.WeakReference
@@ -349,7 +353,7 @@ class FolioWebView : WebView {
           //  loadUrl("javascript:clearSelection()")
             loadUrl("javascript:deleteThisHighlight()")
         }*/
-
+        //复制
         viewTextSelection.tv_copy.setOnClickListener {
             dismissPopupWindow()
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
@@ -361,6 +365,7 @@ class FolioWebView : WebView {
                 highlightId = null
             }
         }
+        //写笔记
         viewTextSelection.tv_write.setOnClickListener {
             dismissPopupWindow()
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
@@ -370,7 +375,6 @@ class FolioWebView : WebView {
     @JavascriptInterface
     fun onTextSelectionItemClicked(id: Int, selectedText: String?) {
 
-        uiHandler.post { loadUrl("javascript:clearSelection()") }
 
         when (id) {
             R.id.tv_copy -> {
@@ -378,6 +382,8 @@ class FolioWebView : WebView {
                 UiUtil.copyToClipboard(context, selectedText)
                 Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT)
                     .show()
+                uiHandler.post { loadUrl("javascript:clearSelection()") }
+
             }
             R.id.shareSelection -> {
                 Log.v(LOG_TAG, "-> onTextSelectionItemClicked -> shareSelection -> $selectedText")
@@ -385,7 +391,7 @@ class FolioWebView : WebView {
             }
             R.id.tv_write -> {
                 Log.v(LOG_TAG, "-> onTextSelectionItemClicked -> defineSelection -> $selectedText")
-                uiHandler.post { showDictDialog(selectedText) }
+                EventBus.getDefault().post(HighlightNoteEvent(selectedText))
             }
             else -> {
                 Log.w(LOG_TAG, "-> onTextSelectionItemClicked -> unknown id = $id")
@@ -404,8 +410,9 @@ class FolioWebView : WebView {
         )
     }
 
+
     private fun onHighlightColorItemsClicked(style: HighlightStyle, isAlreadyCreated: Boolean) {
-        parentFragment.highlight(style, isAlreadyCreated)
+        parentFragment.highlight(style, "",isAlreadyCreated)
         dismissPopupWindow()
     }
 
@@ -746,7 +753,20 @@ class FolioWebView : WebView {
         currentSelectionRect.bottom = (bottom * density).toInt()
         Log.d(LOG_TAG, "-> setSelectionRect -> $currentSelectionRect")
         computeTextSelectionRect(currentSelectionRect)
-        uiHandler.post { showTextSelectionPopup(id) }
+
+        uiHandler.post {
+            if(id!!.contains(HighLightTable.MARK_TYPE)){//段落笔记
+                //查询
+              val markVo =  HighLightTable.getOneHighlightNote(parentFragment!!.mBookId,id)
+                if(markVo != null){
+                    val noteDetailFragment = NoteDetailFragment(markVo.bookId,markVo.id,markVo.note,markVo.content,MarkVo.HighlightMarkType,parentFragment!!)
+                    noteDetailFragment.show(parentFragment.activity!!.supportFragmentManager,"")
+                }
+            }else{
+                showTextSelectionPopup(id)
+            }
+
+        }
     }
 
     private fun computeTextSelectionRect(currentSelectionRect: Rect) {

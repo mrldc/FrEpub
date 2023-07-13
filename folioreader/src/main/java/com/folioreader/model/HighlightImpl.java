@@ -84,6 +84,7 @@ public class HighlightImpl implements Parcelable, HighLight {
         highlight_02,
         highlight_03,
         highlight_04,
+        mark,
         Normal;
 
         /**
@@ -115,6 +116,8 @@ public class HighlightImpl implements Parcelable, HighLight {
                     return "highlight_03";
                 case highlight_04:
                     return "highlight_04";
+                case mark:
+                    return "mark";
                 default:
                     return "mediaOverlayStyle0";
 

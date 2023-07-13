@@ -114,7 +114,7 @@
             android:singleLine="true"
             android:textSize="17sp"
             android:textColor="#999999"
-            android:text="此前各书均有序，或自序，或他序，四书此次汇集重刊，她又逐一修订一过，但尚缺一篇总序，她希望这篇总序由我来执笔，以冠群书。" />
+            android:text="" />
     </RelativeLayout>
 
 </LinearLayout>
