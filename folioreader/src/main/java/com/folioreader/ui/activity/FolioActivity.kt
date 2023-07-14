@@ -282,7 +282,10 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         handler!!.postDelayed({
             //读取章节位置信息-校验是否有书签
             Log.v(LOG_TAG,"ACTION_PAGE_MARK-->onResume ")
-            currentFragment!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK +"|" +FolioReader.ACTION_PAGE_MARK)
+            if(currentFragment != null){
+                currentFragment!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK +"|" +FolioReader.ACTION_PAGE_MARK)
+
+            }
         },3000)
 
         //当有阅读记录时，跳转
@@ -366,12 +369,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
         //读取来源配置
         //从文件夹读取文件，开启此配置
-     //   mEpubSourceType = EpubSourceType.SD_CARD
+        mEpubSourceType = EpubSourceType.SD_CARD
         //从assets中读取文件
-        mEpubSourceType = EpubSourceType.RAW
+     //   mEpubSourceType = EpubSourceType.RAW
 
         //assets文件
-        mEpubRawId  = R.raw.test
+       // mEpubRawId  = R.raw.test
         if(mEpubFilePath== null){
             mEpubFilePath = path
         }
@@ -791,12 +794,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     }
 
     private fun goToTableOfCOntentActivity() {
-
+        var cfi = if(readBook == null){""}else readBook!!.cfi
         val tableOfContentFragment = TableOfContentFragment.newInstance(
             pubBox!!.publication,
             spine!![currentChapterIndex].href,
-            readBook!!.title,
-            readBook!!.cfi
+            bookFileName,
+            cfi
         )
         tableOfContentFragment.setActivityCallback(this);
         val ft =
