@@ -352,9 +352,11 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         config!!.allowedDirection = Config.AllowedDirection.ONLY_HORIZONTAL
         config!!.isShowTextSelection = true
 
-        //电子书文件地址
+        //外部传入电子书的路径
         var path  = intent.getStringExtra(FolioReader.BOOK_FILE_URL)
+
         if(path == null){
+            //从共享文件夹读取文件
              path= applicationContext.getExternalFilesDir(
                  Environment.DIRECTORY_DOCUMENTS
              ).toString() + "/test.epub"
@@ -362,9 +364,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         folioReader!!.setConfig(config, true)
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
-        mEpubSourceType = EpubSourceType.SD_CARD
- //      mEpubSourceType = EpubSourceType.RAW
- //       mEpubRawId  = R.raw.test
+        //读取来源配置
+        //从文件夹读取文件，开启此配置
+     //   mEpubSourceType = EpubSourceType.SD_CARD
+        //从assets中读取文件
+        mEpubSourceType = EpubSourceType.RAW
+
+        //assets文件
+        mEpubRawId  = R.raw.test
         if(mEpubFilePath== null){
             mEpubFilePath = path
         }

@@ -19,7 +19,7 @@
         <provider
             android:name=".AppContext"
             android:authorities="${applicationId}.provider.appcontext"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name="com.folioreader.ui.activity.FolioActivity"
