@@ -35,6 +35,7 @@ import com.folioreader.mediaoverlay.MediaController
 import com.folioreader.mediaoverlay.MediaControllerCallbacks
 import com.folioreader.model.HighLight
 import com.folioreader.model.HighlightImpl
+import com.folioreader.model.MarkVo
 import com.folioreader.model.event.*
 import com.folioreader.model.locators.ReadLocator
 import com.folioreader.model.locators.SearchLocator
@@ -74,6 +75,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
 
         Log.v(LOG_TAG,"onResume--->"+spineIndex)
+
     }
 
     companion object {
@@ -120,6 +122,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     private var highlightId: String? = null
 
     private var lastReadLocator: ReadLocator? = null
+    private var pageMarkReadLocator: ReadLocator? = null
     private var outState: Bundle? = null
     private var savedInstanceState: Bundle? = null
 
@@ -154,6 +157,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     private lateinit var chapterUrl: Uri
 
     private var ivBookmark: ImageView? = null
+    private var ivPageNote: ImageView? = null
 
     //    var pageNo: IntArray = activity!!.intent!!.getIntArrayExtra("pageNo")
     val pageName: String
@@ -204,8 +208,25 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         mPagesLeftTextView = mRootView!!.findViewById<View>(R.id.pagesLeft) as TextView
         mMinutesLeftTextView = mRootView!!.findViewById<View>(R.id.minutesLeft) as TextView
         ivBookmark =  mRootView!!.findViewById<View>(R.id.iv_bookmark) as ImageView
+        ivPageNote =  mRootView!!.findViewById<View>(R.id.iv_page_note) as ImageView
         mConfig = AppUtil.getSavedConfig(context)
+        //页笔记点击
+        ivPageNote!!.setOnClickListener{
+            Log.v(LOG_TAG,"ACTION_PAGE_MARK-->页笔记编辑按钮点击")
+            val readLocator = getLastReadLocator(FolioReader.ACTION_PAGE_MARK)
+            if(readLocator != null){
+                Log.v(FolioActivity.LOG_TAG, "笔记详情-->"+readLocator!!.href)
+                //获取页笔记
+                var markVo = BookmarkTable.getPageNote(mBookId,BookmarkTable.getReadLocatorString(readLocator),readLocator!!.locations.cfi)
+                Log.v(FolioActivity.LOG_TAG, "笔记详情$markVo")
+                if(markVo != null){
+                    val noteDetailFragment = NoteDetailFragment(markVo.bookId,markVo.id,markVo.note,markVo.content,
+                        MarkVo.PageNoteType,this)
+                    noteDetailFragment.show(this.activity!!.supportFragmentManager,"")
+                }
+            }
 
+        }
         loadingView = mRootView!!.findViewById(R.id.loadingView)
         setIndicatorVisibility()
         initSeekbar()
@@ -451,23 +472,23 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
         webViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                Log.v(LOG_TAG, "-> onPageSelected ->pagePosition-> $position->chapter->$spineIndex")
                 // pageViewModel.setCurrentPage(position + 1)
             }
 
             override fun onPageSelected(position: Int) {
                 pageViewModel.setCurrentPage(position + 1)
-                Log.v(LOG_TAG, "-> onPageSelected -> $position")
-                //获取当前页位置，判断是否有标签
-                currentPageHasBookmark = false
-                getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK)
+                Log.v(LOG_TAG, "-> onPageSelected ->pagePosition-> $position->chapter->$spineIndex")
 
             }
 
             override fun onPageScrollStateChanged(state: Int) {
-                Log.v(LOG_TAG, "-> onPageScrollStateChanged -> $state")
+                Log.v(LOG_TAG, "-> onPageScrollStateChanged -->state -> $state->chapter->$spineIndex")
                 if(state == SCROLL_STATE_IDLE){
-
-
+                    //获取当前页位置，判断是否有标签
+                    currentPageHasBookmark = false
+                    Log.v(LOG_TAG,"ACTION_PAGE_MARK-->folioPageFragment onPageSelected")
+                    getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK+"|"+ FolioReader.ACTION_PAGE_MARK)
                 }
                 // pageViewModel.setCurrentPage(webViewPager.currentItem + 1)
 
@@ -610,8 +631,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                     loadingView!!.hide()
                 }
             }
-            //读取章节位置信息
-            getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK)
+
         }
 
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
@@ -760,6 +780,22 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                 LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
             }
             if(actionList.contains(FolioReader.ACTION_CHECK_BOOKMARK)){//检测是否有书签
+                val bookmarkId = BookmarkTable.getBookmarkIdByCfi(href+cfi,mBookId,BookmarkTable.MARK_TYPE,context!!)
+                Log.v(LOG_TAG,"check bookmark--->bookmarkId:$bookmarkId")
+                currentPageHasBookmark = bookmarkId != -1
+                uiHandler.post{initBookMarkListen()}
+
+            }
+            if(actionList.contains(FolioReader.ACTION_PAGE_MARK)){//检测是否有页笔记
+                pageMarkReadLocator = lastReadLocator
+                //获取页笔记
+                var markVo = BookmarkTable.getPageNote(mBookId,BookmarkTable.getReadLocatorString(pageMarkReadLocator),pageMarkReadLocator!!.locations.cfi)
+                Log.v(LOG_TAG,"check PAGE_MARK--->href:"+BookmarkTable.getReadLocatorString(pageMarkReadLocator)+"-->cfi:"+pageMarkReadLocator!!.locations.cfi+"-->markVo:$markVo")
+                if(markVo != null){
+                    uiHandler.post{ivPageNote!!.visibility = View.VISIBLE}
+                }else{
+                    uiHandler.post{ivPageNote!!.visibility = View.GONE}
+                }
                 val bookmarkId = BookmarkTable.getBookmarkIdByCfi(href+cfi,mBookId,BookmarkTable.MARK_TYPE,context!!)
                 Log.v(LOG_TAG,"check bookmark--->bookmarkId:$bookmarkId")
                 currentPageHasBookmark = bookmarkId != -1

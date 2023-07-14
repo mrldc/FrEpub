@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply from: '../config/quality/quality.gradle'
-apply plugin: 'com.github.dcendents.android-maven'
+//apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "org.jetbrains.kotlin.kapt"
@@ -75,9 +76,14 @@ android {
     checkstyle {
         ignoreFailures = true
     }
+    kotlinOptions{
+        freeCompilerArgs += [
+                "-Xjvm-default=all",
+        ]
+    }
 }
 
-apply from: '../folioreader/bintray/installv1.gradle'
+//apply from: '../folioreader/bintray/installv1.gradle'
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
@@ -124,8 +130,14 @@ dependencies {
 
     def dialogx_version = "0.0.48"
     implementation "com.github.kongzue.DialogX:DialogX:${dialogx_version}"
+
+    implementation 'io.github.litao0621:nifty-slider:1.4.0'
+
+    // 自定义交互效果 (非必选功能)
+    implementation 'io.github.litao0621:nifty-slider-effect:1.4.0'
 //    implementation 'androidx.room:room-runtime:2.0.0'
 //    kapt "androidx.room:room-compiler:2.0.0"
 
+
 }
-apply from: '../folioreader/bintray/bintrayv1.gradle'
+//apply from: '../folioreader/bintray/bintrayv1.gradle'

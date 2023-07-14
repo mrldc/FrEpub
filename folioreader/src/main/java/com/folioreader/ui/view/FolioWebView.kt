@@ -751,13 +751,13 @@ class FolioWebView : WebView {
         currentSelectionRect.top = (top * density).toInt()
         currentSelectionRect.right = (right * density).toInt()
         currentSelectionRect.bottom = (bottom * density).toInt()
-        Log.d(LOG_TAG, "-> setSelectionRect -> $currentSelectionRect")
+        Log.d(LOG_TAG, "-> setSelectionRect -> $id")
         computeTextSelectionRect(currentSelectionRect)
 
         uiHandler.post {
-            if(id!!.contains(HighLightTable.MARK_TYPE)){//段落笔记
+            if(id != null && id!!.contains(HighLightTable.MARK_TYPE)){//段落笔记
                 //查询
-              val markVo =  HighLightTable.getOneHighlightNote(parentFragment!!.mBookId,id)
+              val markVo: MarkVo =  HighLightTable.getOneHighlightNote(parentFragment!!.mBookId,id)
                 if(markVo != null){
                     val noteDetailFragment = NoteDetailFragment(markVo.bookId,markVo.id,markVo.note,markVo.content,MarkVo.HighlightMarkType,parentFragment!!)
                     noteDetailFragment.show(parentFragment.activity!!.supportFragmentManager,"")

@@ -21,31 +21,22 @@
         android:layout_marginHorizontal="16dp"
         >
 
-        <SeekBar
+        <com.litao.slider.NiftySlider
             android:id="@+id/seekbar_light"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:progress="20"
-            style="@style/CustomSeekbarStyle"
-            android:max="4" />
-        <ImageView
-            android:id="@+id/iv_left"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="16dp"
-            android:src="@mipmap/ic_light_seekbar" />
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="end"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="24dp"
-            android:src="@mipmap/ic_light_seekbar" />
+            android:valueFrom="1"
+            android:valueTo="255"
+            app:trackHeight="30dp"
+            app:thumbRadius="18dp"
+            app:thumbTextSize="12sp"
+            android:hapticFeedbackEnabled="true"
+            app:thumbTextColor="@color/we_read_theme_color"
+            app:thumbColor="@color/we_read_thumb_color"
+            android:stepSize="1"
+            app:thumbWithinTrackBounds="true"
+            app:enableDrawHalo="false" />
+
     </RelativeLayout>
 
     <LinearLayout

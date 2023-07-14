@@ -38,6 +38,7 @@ public class Config implements Parcelable {
     public static final String ENABLE_HORIZONTAL_COLUMN = "ENABLE_HORIZONTAL_COLUMN";
     //屏幕方向
     public static final String SCREEN_ORIENTATION = "SCREEN_ORIENTATION";
+    public static final String LIGHT = "LIGHT";
     private static final AllowedDirection DEFAULT_ALLOWED_DIRECTION = AllowedDirection.ONLY_VERTICAL;
     private static final Direction DEFAULT_DIRECTION = Direction.HORIZONTAL;
     private static final int DEFAULT_THEME_COLOR_INT =
@@ -51,6 +52,8 @@ public class Config implements Parcelable {
     private int fontSize = 2;
     //列数
     private int columnCount = 2;
+    //亮度
+    private int light = 2;
     private boolean enableHorizontalColumn = true;
     private int screenOrientation = 0;
     private boolean nightMode;
@@ -111,6 +114,7 @@ public class Config implements Parcelable {
         bundle.putInt(BODY_PADDING, bodyPadding);
         bundle.putInt(TEXT_SPACE, textSpace);
         bundle.putInt(COLUMN_COUNT, columnCount);
+        bundle.putInt(LIGHT, light);
         bundle.putBoolean(ENABLE_HORIZONTAL_COLUMN, enableHorizontalColumn);
         bundle.putInt(SCREEN_ORIENTATION, screenOrientation);
         dest.writeBundle(bundle);
@@ -129,6 +133,7 @@ public class Config implements Parcelable {
                 bodyPadding = getBundleItem(bundle, BODY_PADDING,10);
                 textSpace = getBundleItem(bundle, TEXT_SPACE,5);
                 columnCount = getBundleItem(bundle, COLUMN_COUNT,2);
+                light = getBundleItem(bundle, COLUMN_COUNT,100);
                 enableHorizontalColumn = getBundleItem(bundle, ENABLE_HORIZONTAL_COLUMN,true);
                 screenOrientation = getBundleItem(bundle, SCREEN_ORIENTATION,0);
                 fontSize = getBundleItem(bundle, CONFIG_FONT_SIZE, 2);
@@ -168,6 +173,7 @@ public class Config implements Parcelable {
         bodyPadding = 10;
         textSpace = 5;
         columnCount = 2;
+        light = 100;
         enableHorizontalColumn = true;
         screenOrientation = 0;
     }
@@ -208,6 +214,7 @@ public class Config implements Parcelable {
         bodyPadding = getJsonItem(obj, BODY_PADDING, 10);
         textSpace = getJsonItem(obj, TEXT_SPACE, 5);
         columnCount = getJsonItem(obj, COLUMN_COUNT, 2);
+        light = getJsonItem(obj, COLUMN_COUNT, 100);
         enableHorizontalColumn = getJsonItem(obj, ENABLE_HORIZONTAL_COLUMN, true);
         screenOrientation = getJsonItem(obj, SCREEN_ORIENTATION, 0);
     }
@@ -375,6 +382,14 @@ public class Config implements Parcelable {
         return columnCount;
     }
 
+    public int getLight() {
+        return light;
+    }
+
+    public void setLight(int light) {
+        this.light = light;
+    }
+
     public boolean getEnableHorizontalColumn() {
         return enableHorizontalColumn;
     }
@@ -510,6 +525,7 @@ public class Config implements Parcelable {
                 ", bodyPadding=" + bodyPadding +
                 ", textSpace=" + textSpace +
                 ", columnCount=" + columnCount +
+                ", light=" + light +
                 ", screenOrientation=" + screenOrientation +
                 ", enableHorizontalColumn=" + enableHorizontalColumn +
                 '}';

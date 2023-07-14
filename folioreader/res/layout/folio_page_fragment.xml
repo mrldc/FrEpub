@@ -44,6 +44,12 @@
                 android:orientation="horizontal"
                 android:id="@+id/rl_mv"
                 >
+                <View
+                    android:id="@+id/v_d"
+                    android:layout_width="1dp"
+                    android:layout_height="1dp"
+                    android:layout_alignParentRight="true"
+                    ></View>
                 <ImageView
                     android:id="@+id/iv_bookmark"
                     android:layout_width="15dp"
@@ -55,16 +61,19 @@
                     android:layout_alignParentRight="true"
                     android:visibility="gone"
                     android:src="@mipmap/ic_bookmark_normal" />
-               <!-- <ImageView
-                    android:id="@+id/iv_bookmark2"
-                    android:layout_width="15dp"
-                    android:layout_height="30dp"
+                <ImageView
+                    android:id="@+id/iv_page_note"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="50dp"
                     android:background="#3283FF"
                     android:scaleType="fitXY"
-                    android:layout_toLeftOf="@id/iv_bookmark"
-                    android:src="@mipmap/ic_bookmark_normal" />-->
+                    android:visibility="gone"
+                    android:layout_toLeftOf="@id/v_d"
+                    android:layout_marginTop="10dp"
+                    android:src="@mipmap/ic_write"
+                    />
             </RelativeLayout>
 
         </FrameLayout>

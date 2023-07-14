@@ -219,7 +219,7 @@ class SearchActivity : AppCompatActivity(), OnItemClickListener {
         Log.v(LOG_TAG, "-> onBackPressed")
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         Log.v(LOG_TAG, "-> onCreateOptionsMenu")
         menuInflater.inflate(R.menu.menu_search, menu!!)
 

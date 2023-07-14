@@ -281,7 +281,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         handler!!.postDelayed({
             //读取章节位置信息-校验是否有书签
-            currentFragment!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK)
+            Log.v(LOG_TAG,"ACTION_PAGE_MARK-->onResume ")
+            currentFragment!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK +"|" +FolioReader.ACTION_PAGE_MARK)
         },3000)
 
         //当有阅读记录时，跳转
@@ -356,14 +357,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         if(path == null){
              path= applicationContext.getExternalFilesDir(
                  Environment.DIRECTORY_DOCUMENTS
-             ).toString() + "/10005.epub"
+             ).toString() + "/test.epub"
 
         }
         folioReader!!.setConfig(config, true)
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
         mEpubSourceType = EpubSourceType.SD_CARD
-       mEpubSourceType = EpubSourceType.RAW
-        mEpubRawId  = R.raw.test
+ //      mEpubSourceType = EpubSourceType.RAW
+ //       mEpubRawId  = R.raw.test
         if(mEpubFilePath== null){
             mEpubFilePath = path
         }
@@ -428,18 +429,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         //收藏
         ll_collect?.setOnClickListener {
-            if(pageMarkReadLocator ==  null){
-                val readLocator = currentFragment!!.getLastReadLocator(FolioReader.ACTION_PAGE_MARK)
-                pageMarkReadLocator = readLocator;
-            }
-            Log.v(LOG_TAG, "笔记详情-->"+pageMarkReadLocator!!.href)
-            //获取页笔记
-            var markVo = BookmarkTable.getPageNote(mBookId,BookmarkTable.getReadLocatorString(pageMarkReadLocator),pageMarkReadLocator!!.locations.cfi)
-            Log.v(LOG_TAG, "笔记详情$markVo")
-            if(markVo != null){
-                val noteDetailFragment = NoteDetailFragment(markVo.bookId,markVo.id,markVo.note,markVo.content,MarkVo.PageNoteType,currentFragment!!)
-                noteDetailFragment.show(supportFragmentManager,"")
-            }
+
         }
         //去听书
         tv_listen_book?.setOnClickListener {
@@ -465,15 +455,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 Log.v(LOG_TAG,"点击写笔记输入界面")
                 InputMethodUtils.show(et_page_note)
                 //获取段落第一句
-                if(pageMarkReadLocator == null){
-                    val readLocator = currentFragment!!.getLastReadLocator(FolioReader.ACTION_PAGE_MARK)
-                    pageMarkReadLocator = readLocator;
-                    if(readLocator != null){
-                        tv_mark_content!!.text = readLocator.title
-                        rl_mark_content!!.visibility = View.VISIBLE
-                    }
-                }
 
+                Log.v(LOG_TAG,"ACTION_PAGE_MARK-->点击写笔记输入界面")
+                val readLocator = currentFragment!!.getLastReadLocator(FolioReader.ACTION_PAGE_MARK)
+                pageMarkReadLocator = readLocator;
+                if(readLocator != null){
+                    tv_mark_content!!.text = readLocator.title
+                    rl_mark_content!!.visibility = View.VISIBLE
+                }
 
 
             }
@@ -486,11 +475,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             if(pageMarkReadLocator != null && et_page_note!!.text != null ){
 
                 //查看当前页是否存在
-                val markVo = BookmarkTable.getPageNote(mBookId,BookmarkTable.getReadLocatorString(pageMarkReadLocator),pageMarkReadLocator!!.locations.cfi) as MarkVo
+                var markVo = BookmarkTable.getPageNote(mBookId,BookmarkTable.getReadLocatorString(pageMarkReadLocator),pageMarkReadLocator!!.locations.cfi) as MarkVo?
                var saveResult =if(markVo != null){
-                   BookmarkTable(this).insertBookmark(mBookId,pageMarkReadLocator!!.title,et_page_note!!.text.toString(),currentChapterIndex,BookmarkTable.getReadLocatorString(pageMarkReadLocator),pageMarkReadLocator!!.locations.cfi,BookmarkTable.NOTE_TYPE)
+                   BookmarkTable.updateNote(et_page_note!!.text.toString(),markVo!!.id,this)
                } else {
-                   BookmarkTable.updateNote(et_page_note!!.text.toString(),markVo.id,this)
+                   BookmarkTable(this).insertBookmark(mBookId,pageMarkReadLocator!!.title,et_page_note!!.text.toString(),currentChapterIndex,BookmarkTable.getReadLocatorString(pageMarkReadLocator),pageMarkReadLocator!!.locations.cfi,BookmarkTable.NOTE_TYPE)
+
                }
                 if(saveResult ){
                    et_page_note!!.text.clear()
@@ -1149,6 +1139,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
              tv_mark_content!!.text = ""
              flMain!!.visibility = View.GONE
              statusIcon(false, false, false, false)
+             InputMethodUtils.close(window.decorView)
          } else {
              rl_top!!.visibility = View.VISIBLE
              rl_bottom!!.visibility = View.VISIBLE
@@ -1374,7 +1365,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 mediaControllerFragment!!.setPlayButtonDrawable()
                 currentChapterIndex = position
                 pageTrackerViewModel.setCurrentChapter(position + 1)
-
+                //读取章节位置信息-校验是否有书签
+                Log.v(LOG_TAG,"ACTION_PAGE_MARK-->onPageSelected ")
+                currentFragment!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK +"|" +FolioReader.ACTION_PAGE_MARK)
 
             }
 

@@ -162,15 +162,28 @@
         android:layout_marginHorizontal="8dp"
         >
 
-        <SeekBar
+
+        <com.litao.slider.NiftySlider
             android:id="@+id/seekbar_font"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:max="100"
-            android:progress="20"
-            style="@style/CustomSeekbarStyle"
-            />
-        <ImageView
+            android:padding="16dp"
+            android:valueFrom="0"
+            android:valueTo="4"
+            app:trackHeight="30dp"
+            app:thumbRadius="18dp"
+            app:thumbTextSize="12sp"
+            app:thumbText="字体"
+            android:hapticFeedbackEnabled="true"
+            app:thumbTextColor="@color/we_read_theme_color"
+            app:thumbColor="@color/we_read_thumb_color"
+            android:stepSize="1"
+            app:thumbWithinTrackBounds="true"
+            app:enableDrawHalo="false"
+
+ />
+
+      <!--  <ImageView
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_centerVertical="true"
@@ -186,7 +199,7 @@
             android:layout_gravity="end"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="24dp"
-            android:src="@mipmap/ic_font" />
+            android:src="@mipmap/ic_font" />-->
     </RelativeLayout>
 
 
@@ -213,41 +226,24 @@
             android:layout_marginHorizontal="8dp"
             >
 
-            <SeekBar
+            <com.litao.slider.NiftySlider
                 android:id="@+id/seekbar_margins"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:progress="20"
-                style="@style/CustomSeekbarStyle"
-                android:max="100" />
+                android:valueFrom="0"
+                android:valueTo="4"
+                app:trackHeight="30dp"
+                app:thumbRadius="18dp"
+                app:thumbTextSize="12sp"
+                app:thumbText="边距"
+                android:hapticFeedbackEnabled="true"
+                app:thumbTextColor="@color/we_read_theme_color"
+                app:thumbColor="@color/we_read_thumb_color"
+                android:stepSize="1"
+                app:thumbWithinTrackBounds="true"
+                app:enableDrawHalo="false" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:gravity="center"
-                android:textSize="10sp"
-                android:textColor="#333333"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="16dp"
-                android:text="小" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:gravity="center"
-                android:textSize="10sp"
-                android:textColor="#333333"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
-                android:layout_gravity="end"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="24dp"
-                android:text="大" />
+
 
         </RelativeLayout>
 
@@ -264,40 +260,23 @@
             android:layout_marginHorizontal="8dp"
             >
 
-            <SeekBar
+            <com.litao.slider.NiftySlider
                 android:id="@+id/seekbar_space"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:progress="20"
-                style="@style/CustomSeekbarStyle"
-                android:max="100" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:gravity="center"
-                android:textSize="10sp"
-                android:textColor="#333333"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="16dp"
-                android:text="紧" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:gravity="center"
-                android:textSize="10sp"
-                android:textColor="#333333"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
-                android:layout_gravity="end"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="24dp"
-                android:text="松" />
+                android:valueFrom="0"
+                android:valueTo="4"
+                app:trackHeight="30dp"
+                app:thumbRadius="18dp"
+                app:thumbTextSize="12sp"
+                app:thumbText="行距"
+                android:hapticFeedbackEnabled="true"
+                app:thumbTextColor="@color/we_read_theme_color"
+                app:thumbColor="@color/we_read_thumb_color"
+                android:stepSize="1"
+                app:thumbWithinTrackBounds="true"
+                app:enableDrawHalo="false"  />
+
         </RelativeLayout>
 
     </LinearLayout>

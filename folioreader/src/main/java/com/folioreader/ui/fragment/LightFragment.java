@@ -2,6 +2,7 @@ package com.folioreader.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -11,7 +12,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -20,7 +23,11 @@ import com.folioreader.Constants;
 import com.folioreader.FolioReader;
 import com.folioreader.R;
 import com.folioreader.model.event.ChangeBackgroundEvent;
+import com.folioreader.model.event.ReloadDataEvent;
 import com.folioreader.util.AppUtil;
+import com.folioreader.util.Utils;
+import com.litao.slider.NiftySlider;
+import com.litao.slider.effect.ITEffect;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,7 +36,7 @@ import org.greenrobot.eventbus.EventBus;
  */
 public class LightFragment extends Fragment {
     private View mRootView;
-    private SeekBar seekBar;
+    private NiftySlider seekBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -43,7 +50,13 @@ public class LightFragment extends Fragment {
         Log.i("Bookmark fragment", "onViewCreated: inside onViewCreated ");
         super.onViewCreated(view, savedInstanceState);
         Config config = AppUtil.getSavedConfig(getActivity());
-        seekBar = (SeekBar) mRootView.findViewById(R.id.seekbar_light);
+        int activeTrackColor =
+                Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_thumb_color), 1f);
+        int inactiveTrackColor =
+                Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color), 0.1f);
+        int iconTintColor =
+                Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color), 0.7f);
+        seekBar = (NiftySlider) mRootView.findViewById(R.id.seekbar_light);
         // #FFFFFF
         mRootView.findViewById(R.id.iv_light_1).setOnClickListener(new View.OnClickListener() {
             @SuppressLint("ResourceType")
@@ -79,41 +92,37 @@ public class LightFragment extends Fragment {
         });
 
         //设置滚动条
-        seekBar.setProgress(getCurrentBrightValue());
-        seekBar.setMax(255);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            /**
-             * 拖动中数值的时候
-             * @param fromUser 是否是由用户操作的
-             */
+
+        seekBar.setValue(config.getLight(),false);
+
+        ITEffect effect = new ITEffect(seekBar);
+        effect.setStartIcon(R.drawable.icon_brightness_down);
+        effect.setEndIcon(R.drawable.icon_brightness_up);
+        effect.setStartIconSize(Utils.dpToPx(10));
+        effect.setEndIconSize(Utils.dpToPx(15));
+        effect.setStartPadding(Utils.dpToPx(12));
+        effect.setEndPadding(Utils.dpToPx(12));
+        effect.setStartTintList(ColorStateList.valueOf(iconTintColor));
+        effect.setEndTintList(ColorStateList.valueOf(iconTintColor));
+        seekBar.setTrackTintList(ColorStateList.valueOf(activeTrackColor));
+        seekBar.setTrackInactiveTintList(ColorStateList.valueOf(inactiveTrackColor));
+
+        seekBar.setEffect(effect);
+
+        seekBar.setOnIntValueChangeListener(new NiftySlider.OnIntValueChangeListener() {
             @Override
-
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+            public void onValueChange(@NonNull NiftySlider niftySlider, int progress, boolean fromUser) {
                 if (progress > 3 && fromUser) {//以免太暗
+                    config.setFontSize(progress);
+                    AppUtil.saveConfig(getActivity(), config);
                     WindowManager.LayoutParams layoutParams = getActivity().getWindow().getAttributes();
                     layoutParams.screenBrightness = (float) progress / 255;//因为这个值是[0, 1]范围的
                     getActivity().getWindow().setAttributes(layoutParams);
                 }
-            }
 
-            /**
-             * 当按下的时候
-             */
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                System.out.println("com.example.screenBrightnessTest.MyActivity.onStartTrackingTouch");
-
-            }
-
-            /**
-             *当松开的时候
-             */
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                System.out.println("com.example.screenBrightnessTest.MyActivity.onStopTrackingTouch");
             }
         });
+
     }
 
 

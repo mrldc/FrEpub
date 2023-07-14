@@ -2,6 +2,7 @@ package com.folioreader.ui.fragment;
 
 import android.content.ContentResolver;
 import android.content.pm.ActivityInfo;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +19,9 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +36,10 @@ import com.folioreader.ui.adapter.FontAdapter;
 import com.folioreader.ui.adapter.FontGridAdapter;
 import com.folioreader.util.AppUtil;
 import com.folioreader.util.FontFinder;
+import com.folioreader.util.Utils;
+import com.folioreader.util.UtilsKtKt;
+import com.litao.slider.NiftySlider;
+import com.litao.slider.effect.ITEffect;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -56,6 +63,8 @@ public class FontFragment extends Fragment implements FontsCallback {
     TextView fontTextView;
     LinearLayout ll_font_select;
     RecyclerView fontsRecyclerView;
+
+    String LOG_TAG = FolioPageFragment.class.getSimpleName();
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -68,6 +77,14 @@ public class FontFragment extends Fragment implements FontsCallback {
         Log.i("Bookmark fragment", "onViewCreated: inside onViewCreated ");
         super.onViewCreated(view, savedInstanceState);
         config = AppUtil.getSavedConfig(getActivity());
+
+        int activeTrackColor =
+                Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_thumb_color), 1f);
+        int inactiveTrackColor =
+                Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color), 0.1f);
+        int iconTintColor =
+                Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color), 0.7f);
+
         mRootView.findViewById(R.id.tv_screen_auto).setEnabled(true);
         mRootView.findViewById(R.id.tv_screen_auto).setSelected(true);
 
@@ -181,97 +198,100 @@ public class FontFragment extends Fragment implements FontsCallback {
             }
         });
         //字体大小
-        SeekBar fontBar = mRootView.findViewById(R.id.seekbar_font);
-        fontBar.setMax(4); // 设置最大值为100
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            fontBar.setMin(0); // 设置最小值为0
-        }
-        fontBar.setProgress(config.getFontSize());
-        fontBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        final NiftySlider fontBar = mRootView.findViewById(R.id.seekbar_font);
+        fontBar.setValue(config.getFontSize(),false);
+        fontBar.setValueFrom(0);
+        fontBar.setValueTo(4);
+        ITEffect effect = new ITEffect(fontBar);
+        effect.setStartIcon(R.drawable.ic_font2);
+        effect.setEndIcon(R.drawable.ic_font2);
+        effect.setStartIconSize(Utils.dpToPx(10));
+        effect.setEndIconSize(Utils.dpToPx(15));
+        effect.setStartPadding(Utils.dpToPx(12));
+        effect.setEndPadding(Utils.dpToPx(12));
+        effect.setStartTintList(ColorStateList.valueOf(iconTintColor));
+        effect.setEndTintList(ColorStateList.valueOf(iconTintColor));
+        fontBar.setTrackTintList(ColorStateList.valueOf(activeTrackColor));
+        fontBar.setTrackInactiveTintList(ColorStateList.valueOf(inactiveTrackColor));
 
+        fontBar.setEffect(effect);
+
+        fontBar.setOnIntValueChangeListener(new NiftySlider.OnIntValueChangeListener() {
             @Override
-
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-                if (fromUser) {
+            public void onValueChange(@NonNull NiftySlider niftySlider, int progress, boolean fromUser) {
+                if(fromUser){
                     config.setFontSize(progress);
                     AppUtil.saveConfig(getActivity(), config);
                     EventBus.getDefault().post(new ReloadDataEvent());
                 }
 
             }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-
         });
+
+
+
         //边距
-        SeekBar paddingBar = mRootView.findViewById(R.id.seekbar_margins);
-        paddingBar.setMax(4); // 设置最大值为100
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            paddingBar.setMin(0); // 设置最小值为0
-        }
-        paddingBar.setProgress(config.getBodyPadding());
-        paddingBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        NiftySlider paddingBar = mRootView.findViewById(R.id.seekbar_margins);
+        paddingBar.setValue(config.getFontSize(),false);
+        paddingBar.setValueFrom(0);
+        paddingBar.setValueTo(4);
+        ITEffect paddingEffect = new ITEffect(paddingBar);
+        paddingEffect.setStartText("小");
+        paddingEffect.setEndText("大");
+        paddingEffect.setStartTextSize(Utils.dpToPx(12));
+        paddingEffect.setEndTextSize(Utils.dpToPx(12));
+        paddingEffect.setStartPadding(Utils.dpToPx(12));
+        paddingEffect.setEndPadding(Utils.dpToPx(12));
+        paddingEffect.setStartTintList(ColorStateList.valueOf(iconTintColor));
+        paddingEffect.setEndTintList(ColorStateList.valueOf(iconTintColor));
+        paddingBar.setTrackTintList(ColorStateList.valueOf(activeTrackColor));
+        paddingBar.setTrackInactiveTintList(ColorStateList.valueOf(inactiveTrackColor));
 
+        paddingBar.setEffect(paddingEffect);
+
+        paddingBar.setOnIntValueChangeListener(new NiftySlider.OnIntValueChangeListener() {
             @Override
-
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-                if (fromUser) {
+            public void onValueChange(@NonNull NiftySlider niftySlider, int progress, boolean fromUser) {
+                if(fromUser){
                     config.setBodyPadding(progress);
                     AppUtil.saveConfig(getActivity(), config);
                     EventBus.getDefault().post(new ReloadDataEvent());
                 }
 
             }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-
         });
+
         //行距
-        SeekBar textSpaceBar = mRootView.findViewById(R.id.seekbar_space);
-        textSpaceBar.setMax(4); // 设置最大值为100
-        textSpaceBar.setProgress(config.getTextSpace());
-        textSpaceBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        NiftySlider textSpaceBar = mRootView.findViewById(R.id.seekbar_space);
+        textSpaceBar.setValue(config.getFontSize(),false);
+        textSpaceBar.setValueFrom(0);
+        textSpaceBar.setValueTo(4);
+        ITEffect textSpaceEffect = new ITEffect(textSpaceBar);
+        textSpaceEffect.setStartText("紧");
+        textSpaceEffect.setEndText("松");
+        textSpaceEffect.setStartTextSize(Utils.dpToPx(12));
+        textSpaceEffect.setEndTextSize(Utils.dpToPx(12));
+        textSpaceEffect.setStartPadding(Utils.dpToPx(12));
+        textSpaceEffect.setEndPadding(Utils.dpToPx(12));
+        textSpaceEffect.setStartTintList(ColorStateList.valueOf(iconTintColor));
+        textSpaceEffect.setEndTintList(ColorStateList.valueOf(iconTintColor));
+        textSpaceBar.setTrackTintList(ColorStateList.valueOf(activeTrackColor));
+        textSpaceBar.setTrackInactiveTintList(ColorStateList.valueOf(inactiveTrackColor));
 
+        textSpaceBar.setEffect(textSpaceEffect);
+
+        textSpaceBar.setOnIntValueChangeListener(new NiftySlider.OnIntValueChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-                if (fromUser) {
+            public void onValueChange(@NonNull NiftySlider niftySlider, int progress, boolean fromUser) {
+                if(fromUser){
                     config.setTextSpace(progress);
                     AppUtil.saveConfig(getActivity(), config);
                     EventBus.getDefault().post(new ReloadDataEvent());
                 }
 
             }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-
         });
+
 
         //字体选择
          ll_font_select = mRootView.findViewById(R.id.ll_font_select);
