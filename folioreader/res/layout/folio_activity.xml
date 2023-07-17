@@ -49,9 +49,22 @@
         layout="@layout/include_folio_edit_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+        <com.litao.slider.NiftySlider
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:padding="2dp"
+            android:valueFrom="0"
+            android:valueTo="123000"
+            android:value="0"
+            app:tipViewVisible="true"
+            app:enableDrawHalo="false"
+            app:trackHeight="1dp">
+
+        </com.litao.slider.NiftySlider>
     <include
         layout="@layout/include_folio_bottom_bar"
         android:layout_width="match_parent"

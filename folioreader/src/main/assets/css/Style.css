@@ -78,7 +78,7 @@ ol ol, ol ul, ul ol, ul ul {
 /* Links */
 a { -webkit-touch-callout: none; } /* Disable link callback */
 * { -webkit-user-select: text; }
-img { -webkit-user-select: none; }
+img { -webkit-user-select: none;max-height: 200px }
 p {
     margin: 1.3em 0 1.5em 0;
     text-indent: 1.25em;
@@ -126,9 +126,14 @@ a, h1, h2, h3, h4, h5, h6 {
     -webkit-hyphens: none !important;
     hyphens: none !important;
 }
-
+img {
+    max-width: 100% !important;
+    box-sizing: border-box;
+    page-break-inside: avoid;
+    object-fit: cover;
+}
 /* Begin Ted */
-img, svg, audio, video {
+ svg, audio, video {
     max-height: 95% !important;
     max-width: 100% !important;
     box-sizing: border-box;

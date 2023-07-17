@@ -33,7 +33,7 @@ public class ScreenUtils {
     }
 
     public int getRealHeight() {
-        return metrics.heightPixels / metrics.densityDpi;
+        return (int)(((float)metrics.heightPixels) / metrics.densityDpi *160);
     }
 
     public int getRealWidth() {

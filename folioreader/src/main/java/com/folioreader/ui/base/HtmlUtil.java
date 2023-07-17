@@ -1,10 +1,12 @@
 package com.folioreader.ui.base;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 
 import com.folioreader.Config;
 import com.folioreader.R;
 import com.folioreader.util.FontFinder;
+import com.folioreader.util.ScreenUtils;
 
 import java.io.File;
 
@@ -81,6 +83,14 @@ public final class HtmlUtil {
             toInject += "}\n";
             toInject += "\n</style>";
         }
+        //添加图片样式
+        ScreenUtils screenUtils = new ScreenUtils(context);
+        toInject += "<style>\n";
+        toInject += " img {\n";
+        toInject += " max-height: "+screenUtils.getRealHeight()*0.9+"px !important;\n";
+        toInject += "}\n";
+        toInject += "\n</style>";
+
         //修改
         //行距
         String textSpace = " 1em ";
@@ -138,7 +148,6 @@ public final class HtmlUtil {
             default:
                 break;
         }
-
         String styles = "font-family: '" + fontName + "';";
         styles +="background-color: "+config.getBackgroundColor()+";";
         htmlContent = htmlContent.replace("<html",

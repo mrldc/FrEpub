@@ -152,7 +152,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var tv_page_save: TextView? = null
 
     private var tv_listen_book: TextView? = null
+    private var ll_listen_book: LinearLayout? = null
     private var tv_video: TextView? = null
+    private var ll_video: LinearLayout? = null
     private var iv_directory: ImageView? = null
     private var iv_write: ImageView? = null
     private var iv_light: ImageView? = null
@@ -360,21 +362,21 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         if(path == null){
             //从共享文件夹读取文件
-             path= applicationContext.getExternalFilesDir(
+            /* path= applicationContext.getExternalFilesDir(
                  Environment.DIRECTORY_DOCUMENTS
-             ).toString() + "/test.epub"
+             ).toString() + "/test.epub"*/
 
         }
         folioReader!!.setConfig(config, true)
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
         //读取来源配置
         //从文件夹读取文件，开启此配置
-        mEpubSourceType = EpubSourceType.SD_CARD
+     //   mEpubSourceType = EpubSourceType.SD_CARD
         //从assets中读取文件
-     //   mEpubSourceType = EpubSourceType.RAW
+        mEpubSourceType = EpubSourceType.RAW
 
         //assets文件
-       // mEpubRawId  = R.raw.test
+        mEpubRawId  = R.raw.test
         if(mEpubFilePath== null){
             mEpubFilePath = path
         }
@@ -408,6 +410,10 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         } else {
             setupBook()
         }
+        //状态栏
+        window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.statusBarColor = Color.TRANSPARENT;
     }
 
     private fun initTopAndBottom() {
@@ -416,7 +422,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         tvLeft = findViewById(R.id.tv_left)
         ll_collect = findViewById(R.id.ll_collect)
         tv_listen_book = findViewById(R.id.tv_listen_book)
+        ll_listen_book = findViewById(R.id.ll_listen)
         tv_video = findViewById(R.id.tv_video)
+        ll_video = findViewById(R.id.ll_video)
         rl_comment = findViewById(R.id.rl_comment)
         et_page_note = findViewById(R.id.et_page_note)
         tv_page_save = findViewById(R.id.tv_page_note_save)
@@ -442,11 +450,11 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         }
         //去听书
-        tv_listen_book?.setOnClickListener {
+        ll_listen_book?.setOnClickListener {
 
         }
         //看视频
-        tv_video?.setOnClickListener {
+        ll_video?.setOnClickListener {
 
         }
 //        et_page_note?.addTextChangedListener(object : TextWatcher {
@@ -1157,7 +1165,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
              if(flMain!!.visibility == View.VISIBLE){
                  rl_edit!!.visibility = View.GONE
              }else{
-                 rl_edit!!.visibility = View.VISIBLE
+               //  rl_edit!!.visibility = View.VISIBLE
              }
 
          }

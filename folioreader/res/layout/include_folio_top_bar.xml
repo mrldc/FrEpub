@@ -33,7 +33,66 @@
         android:textSize="15sp"
         android:textColor="#2C2C2C"
         android:text="0字" />
+        <LinearLayout
+            android:id="@+id/ll_listen"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="16dp"
+            android:background="@drawable/shape_30_stroke_dd4f0f_bg"
+            android:layout_toStartOf="@+id/ll_video"
+            >
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="12dp"
+                android:scaleType="fitXY"
+                android:src="@mipmap/iv_listening" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="12dp"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textSize="13sp"
+                android:textColor="#333333"
+                android:text="去听书" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_video"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginHorizontal="16dp"
+            android:background="@drawable/shape_30_stroke_dd4f0f_bg"
+            android:layout_toStartOf="@+id/ll_collect"
+            >
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="14dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="12dp"
+                android:scaleType="fitXY"
+                android:src="@mipmap/iv_videos" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="12dp"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textSize="13sp"
+                android:textColor="#333333"
+                android:text="看视频" />
+        </LinearLayout>
     <LinearLayout
         android:id="@+id/ll_collect"
         android:layout_width="wrap_content"
