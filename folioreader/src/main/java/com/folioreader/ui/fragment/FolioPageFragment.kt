@@ -459,6 +459,13 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             mWebview!!.loadUrl("javascript:scrollToFirst()")
         }
     }
+    fun scrollToProgress(){
+        var toPageNumber = 5
+        if(toPageNumber > webViewPager.horizontalPageCount){
+            toPageNumber = webViewPager.horizontalPageCount
+        }
+        webViewPager.currentItem  = toPageNumber
+    }
 
     @SuppressLint("JavascriptInterface", "SetJavaScriptEnabled")
     private fun initWebView() {

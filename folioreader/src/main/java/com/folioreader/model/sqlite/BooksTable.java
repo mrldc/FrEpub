@@ -111,7 +111,7 @@ public class BooksTable {
         Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + IDENTIFIER + " = \"" + bookId + "\"", null);
         Book book = null;
         while (cursor.moveToNext()) {
-            book = new Book(cursor.getInt(cursor.getColumnIndex(HREF)),
+            book = new Book(cursor.getInt(cursor.getColumnIndex(ID)),
                     cursor.getString(cursor.getColumnIndex(CREATION_DATE)),
                     cursor.getString(cursor.getColumnIndex(HREF)),
                     cursor.getString(cursor.getColumnIndex(TITLE)),

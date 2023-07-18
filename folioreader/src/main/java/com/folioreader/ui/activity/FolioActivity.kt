@@ -23,6 +23,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -44,6 +45,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
@@ -55,11 +57,13 @@ import com.folioreader.Constants.*
 import com.folioreader.FolioReader
 import com.folioreader.FolioReader.OnClosedListener
 import com.folioreader.R
+import com.folioreader.databinding.CustomTipViewBinding
 import com.folioreader.model.DisplayUnit
 import com.folioreader.model.HighLight
 import com.folioreader.model.HighlightImpl
 import com.folioreader.model.MarkVo
 import com.folioreader.model.db.Book
+import com.folioreader.model.db.PageProgress
 import com.folioreader.model.event.HighlightNoteEvent
 import com.folioreader.model.event.MediaOverlayPlayPauseEvent
 import com.folioreader.model.event.NoteSelectEvent
@@ -67,8 +71,10 @@ import com.folioreader.model.locators.ReadLocator
 import com.folioreader.model.locators.SearchLocator
 import com.folioreader.model.sqlite.BookmarkTable
 import com.folioreader.model.sqlite.BooksTable
+import com.folioreader.model.sqlite.PageProgressTable
 import com.folioreader.ui.adapter.FolioPageFragmentAdapter
 import com.folioreader.ui.adapter.SearchAdapter
+import com.folioreader.ui.base.PageProgressTaskCallback
 import com.folioreader.ui.fragment.*
 import com.folioreader.ui.view.ConfigBottomSheetDialogFragment
 import com.folioreader.ui.view.DirectionalViewpager
@@ -76,8 +82,14 @@ import com.folioreader.ui.view.FolioAppBarLayout
 import com.folioreader.ui.view.MediaControllerCallback
 import com.folioreader.util.*
 import com.folioreader.util.AppUtil.Companion.getSavedConfig
+import com.folioreader.util.Utils.setColorAlpha
 import com.folioreader.viewmodels.PageTrackerViewModel
 import com.folioreader.viewmodels.PageTrackerViewModelFactory
+import com.litao.slider.NiftySlider
+import com.litao.slider.anim.RevealTransition
+import com.litao.slider.effect.AnimationEffect
+import com.litao.slider.effect.ITEffect
+import kotlinx.android.synthetic.main.layout_dictionary.view.progress
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -94,7 +106,7 @@ import kotlin.math.ceil
 
 class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControllerCallback,
     OnHighlightListener, ReadLocatorListener, OnClosedListener,
-    View.OnSystemUiVisibilityChangeListener {
+    View.OnSystemUiVisibilityChangeListener,PageProgressTaskCallback {
     private var bookFileName: String? = null
 
     private var mFolioPageViewPager: DirectionalViewpager? = null
@@ -166,6 +178,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var readBook: Book?  =null
     //页笔记编辑页
     private lateinit var viewNoteEdit: View
+
+    private var niftySlider : NiftySlider? = null
+    private var customTipView : CustomTipViewBinding ?= null
     // page count
     private lateinit var pageTrackerViewModel: PageTrackerViewModel
 
@@ -437,6 +452,59 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rl_edit = findViewById(R.id.rl_edit)
         tv_mark_content = findViewById(R.id.tv_mark_content)
         rl_mark_content = findViewById(R.id.rl_mark_content)
+        //进度条
+        niftySlider = findViewById(R.id.ns_progress_bar);
+        val activeTrackColor =
+            setColorAlpha(ContextCompat.getColor(this, R.color.active_progress_color), 1f)
+        val inactiveTrackColor = setColorAlpha(
+            ContextCompat.getColor(this, R.color.inactive_progress_color),
+            0.1f
+        )
+        val iconTintColor = setColorAlpha(
+            ContextCompat.getColor(this, R.color.we_read_theme_color),
+            0.7f
+        )
+        val animEffect = ITEffect(niftySlider!!).apply {
+            startIconSize = 10.dp
+            endIconSize = 14.dp
+            startTintList = ColorStateList.valueOf(iconTintColor)
+            endTintList = ColorStateList.valueOf(iconTintColor)
+            startPadding = 12.dp
+            endPadding = 12.dp
+
+        }
+        customTipView =  CustomTipViewBinding.bind(View.inflate(this,R.layout.custom_tip_view,null));
+        niftySlider?.apply {
+            effect = animEffect
+            //添加自定义tip view
+            addCustomTipView(customTipView!!.root)
+            setTrackTintList(ColorStateList.valueOf(activeTrackColor))
+            setTrackInactiveTintList(ColorStateList.valueOf(inactiveTrackColor))
+            setOnIntValueChangeListener { slider, value, fromUser ->
+                setThumbText(Utils.formatProgress(value))
+            }
+            //监听滑动开始/结束 控制滑块的显示状态
+            niftySlider!!.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener {
+                override fun onStartTrackingTouch(slider: NiftySlider) {
+                    // slider.showThumb(false)
+                }
+
+                override fun onStopTrackingTouch(slider: NiftySlider) {
+                    //slider.hideThumb(delayMillis = 2000)
+                    //查询当前百分比在哪个页面
+                   var pageProgress = PageProgressTable.getPageProgressByProgress(mBookId,slider.value/100,context)
+                }
+            })
+
+            //更换tip展示动画 - 揭露动画
+            niftySlider!!.createTipAnimation {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    RevealTransition()
+                } else {
+                    null
+                }
+            }
+        }
 
 
         tvLeft!!.text = bookFileName
@@ -447,7 +515,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         //收藏
         ll_collect?.setOnClickListener {
-
+            Log.v(LOG_TAG,"跳转页面")
+            currentFragment!!.scrollToProgress()
         }
         //去听书
         ll_listen_book?.setOnClickListener {
@@ -1272,6 +1341,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         return false
     }
 
+    fun gotoPage(pageProgress: PageProgress){
+        currentChapterIndex = pageProgress.pageNumber
+        mFolioPageViewPager!!.currentItem = currentChapterIndex
+        val folioPageFragment = currentFragment
+        folioPageFragment!!.scrollToFirst()
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -1672,6 +1747,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     fun writeHighlightNote(highlightNoteEvent: HighlightNoteEvent ){
         val noteDetailFragment = NoteDetailFragment(null,null,null,highlightNoteEvent.content,MarkVo.HighlightMarkType,currentFragment!!)
         noteDetailFragment.show(supportFragmentManager,"")
+    }
+
+    override fun onError() {
+    }
+
+    /**完成页面进度计算**/
+    override fun onCompletePageCalculate(pageProgressList: MutableList<PageProgress>?) {
+
     }
 
 }

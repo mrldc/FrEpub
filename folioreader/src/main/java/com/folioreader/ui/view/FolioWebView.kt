@@ -100,7 +100,7 @@ class FolioWebView : WebView {
     private lateinit var gestureDetector: GestureDetectorCompat
     private var eventActionDown: MotionEvent? = null
     private var pageWidthCssDp: Int = 0
-    private var pageWidthCssPixels: Float = 0.toFloat()
+    var pageWidthCssPixels: Float = 0.toFloat()
     private lateinit var webViewPager: WebViewPager
     private lateinit var uiHandler: Handler
     private lateinit var folioActivityCallback: FolioActivityCallback

@@ -43,6 +43,10 @@
     <color name="background04">#E2F3F1</color>
     <color name="we_read_theme_color">#444138</color>
     <color name="we_read_thumb_color">#fbf7eb</color>
+    <color name="active_progress_color">#DD4F0F</color>
+    <color name="inactive_progress_color">#F1F1F1</color>
+    <color name="progress_text_color">#98958F</color>
+    <color name="progress_thumb_color">#FFF2EC</color>
 
 
 

@@ -1,10 +1,10 @@
 package com.folioreader.util
 
-import android.content.Context
 import android.content.res.Resources
 import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
+import java.text.DecimalFormat
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
@@ -31,6 +31,13 @@ object Utils {
     fun dpToPxF(@Dimension(unit = Dimension.DP) dp: Float): Float {
         val r = Resources.getSystem()
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.displayMetrics)
+    }
+
+    @JvmStatic
+    fun formatProgress(progress: Int): String {
+        val result = progress.toDouble() / 100
+        val df = DecimalFormat("#.00")
+        return df.format(result)+"%"
     }
 
     @JvmStatic

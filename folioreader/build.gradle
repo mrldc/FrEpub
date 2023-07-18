@@ -81,6 +81,9 @@ android {
                 "-Xjvm-default=all",
         ]
     }
+    viewBinding{
+        enabled = true
+    }
 }
 
 //apply from: '../folioreader/bintray/installv1.gradle'
