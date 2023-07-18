@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.folioreader.model.db.PageProgress;
 import com.folioreader.ui.fragment.FolioPageFragment;
 import com.folioreader.viewmodels.PageTrackerViewModel;
 
@@ -29,6 +30,10 @@ public class FolioPageFragmentAdapter extends FragmentStatePagerAdapter {
     private String mEpubFileName;
     private String mBookId;
     private ArrayList<FolioPageFragment> fragments;
+    private List<PageProgress> pageProgressesList;
+
+
+
     private ArrayList<FolioPageFragment.SavedState> savedStateList;
     private PageTrackerViewModel viewModel;
 
@@ -73,6 +78,10 @@ public class FolioPageFragmentAdapter extends FragmentStatePagerAdapter {
                     mSpineReferences.get(position),
                     mBookId,
                     viewModel);
+            if(pageProgressesList != null && pageProgressesList.size() > 0){
+                fragment.setPageProgress(pageProgressesList.get(position));
+            }
+
             fragments.set(position, fragment);
         }
         return fragment;
@@ -113,5 +122,12 @@ public class FolioPageFragmentAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return mSpineReferences.size();
+    }
+    public List<PageProgress> getPageProgressesList() {
+        return pageProgressesList;
+    }
+
+    public void setPageProgressesList(List<PageProgress> pageProgressesList) {
+        this.pageProgressesList = pageProgressesList;
     }
 }

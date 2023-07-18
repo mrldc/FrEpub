@@ -87,7 +87,8 @@ public final class HtmlUtil {
         ScreenUtils screenUtils = new ScreenUtils(context);
         toInject += "<style>\n";
         toInject += " img {\n";
-        toInject += " max-height: "+screenUtils.getRealHeight()*0.9+"px !important;\n";
+        toInject += " max-height: "+screenUtils.getRealHeight()*0.85+"px !important;\n";
+        toInject += " max-width: "+screenUtils.getRealWidth()*0.85/config.getColumnCount()+"px !important;\n";
         toInject += "}\n";
         toInject += "\n</style>";
 

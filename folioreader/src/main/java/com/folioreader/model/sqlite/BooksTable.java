@@ -121,6 +121,7 @@ public class BooksTable {
                     cursor.getString(cursor.getColumnIndex(TYPE)),
                     cursor.getString(cursor.getColumnIndex(CFI)));
         }
+        cursor.close();
         return book;
     }
 }

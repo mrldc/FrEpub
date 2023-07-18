@@ -40,4 +40,7 @@ public interface FolioActivityCallback {
     WeakReference<FolioActivity> getActivity();
 
     String getStreamerUrl();
+
+    /**更新进度条**/
+    void updateProgressUi(double percent);
 }

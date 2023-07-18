@@ -37,7 +37,7 @@ public class ScreenUtils {
     }
 
     public int getRealWidth() {
-        return metrics.widthPixels / metrics.densityDpi;
+        return (int)(((float)metrics.widthPixels) / metrics.densityDpi *160);
     }
 
     public int getDensity() {

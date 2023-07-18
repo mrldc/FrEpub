@@ -9,9 +9,15 @@ import android.database.sqlite.SQLiteDatabase;
 import com.folioreader.Constants;
 import com.folioreader.model.db.Book;
 import com.folioreader.model.db.PageProgress;
+import com.folioreader.ui.activity.FolioActivity;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -49,7 +55,11 @@ public class PageProgressTable {
 
     public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public final boolean insertBook(PageProgress pageProgress) {
+        public final static boolean insert(PageProgress pageProgress,Context context) {
+            if(database == null){
+                FolioDatabaseHelper dbHelper = new FolioDatabaseHelper(context);
+                database = dbHelper.getWritableDatabase();
+            }
         ContentValues values = new ContentValues();
         values.put(BOOK_ID, pageProgress.bookId);
         values.put(HREF, pageProgress.href);
@@ -88,7 +98,31 @@ public class PageProgressTable {
             pageProgress.end = cursor.getFloat(cursor.getColumnIndex(END));
             pageProgress.contentSize = cursor.getInt(cursor.getColumnIndex(CONTENT_SIZE));
         }
+        cursor.close();
         return pageProgress;
+    }
+    @SuppressLint("Range")
+    public static List<PageProgress> getAllPageProgress(String bookId,Context context){
+        if(database == null){
+            FolioDatabaseHelper dbHelper = new FolioDatabaseHelper(context);
+            database = dbHelper.getWritableDatabase();
+        }
+
+        Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + BOOK_ID + " = \"" + bookId + "\""+ " order by "+ PAGE_NUMBER, null);
+        List<PageProgress> pageProgressList =  new ArrayList<>();
+        while (cursor.moveToNext()) {
+            PageProgress pageProgress =  new PageProgress();
+            pageProgress.id = cursor.getInt(cursor.getColumnIndex(ID));
+            pageProgress.bookId = cursor.getString(cursor.getColumnIndex(BOOK_ID));
+            pageProgress.href = cursor.getString(cursor.getColumnIndex(HREF));
+            pageProgress.pageNumber = cursor.getInt(cursor.getColumnIndex(PAGE_NUMBER));
+            pageProgress.start = cursor.getFloat(cursor.getColumnIndex(START));
+            pageProgress.end = cursor.getFloat(cursor.getColumnIndex(END));
+            pageProgress.contentSize = cursor.getInt(cursor.getColumnIndex(CONTENT_SIZE));
+            pageProgressList.add(pageProgress);
+        }
+        cursor.close();
+        return pageProgressList;
     }
     @SuppressLint("Range")
     public static PageProgress getPageProgressByProgress(String bookId,float progress,Context context){
@@ -97,7 +131,7 @@ public class PageProgressTable {
             database = dbHelper.getWritableDatabase();
         }
         Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + BOOK_ID + " = \"" + bookId + "\""+
-                " and " + START + " > "+progress + " and " + END + " <= "+progress,
+                " and " + START + " < "+progress + " and " + END + " >= "+progress,
                 null);
         PageProgress pageProgress =  null;
         while (cursor.moveToNext()) {
@@ -110,6 +144,23 @@ public class PageProgressTable {
             pageProgress.end = cursor.getFloat(cursor.getColumnIndex(END));
             pageProgress.contentSize = cursor.getInt(cursor.getColumnIndex(CONTENT_SIZE));
         }
+        cursor.close();
         return pageProgress;
+    }
+
+    @NotNull
+    public static boolean checkPageProgress(@Nullable String mBookId, @NotNull  Context context) {
+        if(database == null){
+            FolioDatabaseHelper dbHelper = new FolioDatabaseHelper(context);
+            database = dbHelper.getWritableDatabase();
+        }
+        Cursor cursor = database.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + BOOK_ID + " = \"" + mBookId + "\"",
+                null);
+        if(cursor.moveToNext()){
+            cursor.close();
+            return true;
+        }
+        cursor.close();
+        return false;
     }
 }

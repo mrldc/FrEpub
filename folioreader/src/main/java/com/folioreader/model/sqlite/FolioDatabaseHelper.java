@@ -57,6 +57,7 @@ public class FolioDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(HighLightTable.SQL_CREATE);
         db.execSQL(BookmarkTable.SQL_CREATE);
         db.execSQL(BooksTable.SQL_CREATE);
+        db.execSQL(PageProgressTable.SQL_CREATE);
     }
 
     @Override

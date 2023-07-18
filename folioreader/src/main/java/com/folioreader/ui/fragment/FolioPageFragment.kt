@@ -36,6 +36,7 @@ import com.folioreader.mediaoverlay.MediaControllerCallbacks
 import com.folioreader.model.HighLight
 import com.folioreader.model.HighlightImpl
 import com.folioreader.model.MarkVo
+import com.folioreader.model.db.PageProgress
 import com.folioreader.model.event.*
 import com.folioreader.model.locators.ReadLocator
 import com.folioreader.model.locators.SearchLocator
@@ -62,6 +63,7 @@ import org.readium.r2.shared.Link
 import org.readium.r2.shared.Locations
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.math.ceil
 
 
 /**
@@ -114,6 +116,8 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         }
     }
 
+    //进度条信息
+    public var pageProgress :PageProgress? = null
     private lateinit var uiHandler: Handler
     private var mHtmlString: String? = null
     private val hasMediaOverlay = false
@@ -459,12 +463,17 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             mWebview!!.loadUrl("javascript:scrollToFirst()")
         }
     }
-    fun scrollToProgress(){
-        var toPageNumber = 5
-        if(toPageNumber > webViewPager.horizontalPageCount){
-            toPageNumber = webViewPager.horizontalPageCount
+    fun scrollToProgress(progress : Float){
+        if(pageProgress != null){
+            //计算所在页面,(百分比-开始值)/(结束值-开始值) * 页面数，向上取整
+
+            var toPageNumber = ceil((progress-pageProgress!!.start)/(pageProgress!!.end - pageProgress!!.start)*webViewPager.horizontalPageCount.toDouble()).toInt()
+            if(toPageNumber > webViewPager.horizontalPageCount){
+                toPageNumber = webViewPager.horizontalPageCount
+            }
+            webViewPager.currentItem  = toPageNumber
         }
-        webViewPager.currentItem  = toPageNumber
+
     }
 
     @SuppressLint("JavascriptInterface", "SetJavaScriptEnabled")
@@ -496,6 +505,8 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                     currentPageHasBookmark = false
                     Log.v(LOG_TAG,"ACTION_PAGE_MARK-->folioPageFragment onPageSelected")
                     getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK+"|"+ FolioReader.ACTION_PAGE_MARK)
+                    //更新阅读进度条
+                    updatePageProgress()
                 }
                 // pageViewModel.setCurrentPage(webViewPager.currentItem + 1)
 
@@ -1150,5 +1161,14 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             mConfig!!.columnCount
         ))
 
+    }
+
+    //更新进度条
+    fun updatePageProgress(){
+        if(pageProgress != null){
+            //章节的开始占比+当前章节的阅读进度 * 章节总占比
+           var totalProgress = pageProgress!!.start + (pageProgress!!.end - pageProgress!!.start) * (mWebview!!.currentProgress/100)
+            mActivityCallback!!.updateProgressUi(totalProgress)
+        }
     }
 }

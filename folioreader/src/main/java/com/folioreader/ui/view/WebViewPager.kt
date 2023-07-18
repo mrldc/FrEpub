@@ -74,10 +74,13 @@ class WebViewPager : ViewPager {
             override fun onPageSelected(position: Int) {
 //
                 Log.v(LOG_TAG, "-> onPageSelected -> $position")
-                val scrollX =
-                    folioWebView!!.getScrollXPixelsForPage(position) + (folioWebView!!.pageWidthCssPixels/2).toInt()
-                //Log.d(LOG_TAG, "-> onPageScrolled -> scrollX = " + scrollX);
-                folioWebView!!.scrollTo(scrollX, 0)
+                if(folioWebView != null){
+                    val scrollX =
+                        folioWebView!!.getScrollXPixelsForPage(position) + (folioWebView!!.pageWidthCssPixels/2).toInt()
+                    //Log.d(LOG_TAG, "-> onPageScrolled -> scrollX = " + scrollX);
+                    folioWebView!!.scrollTo(scrollX, 0)
+                }
+
 //                val intent = Intent(this@WebViewPager.context,FolioPageFragment::class.java).apply {
 //                    putExtra("pageNo", position)
 //                }

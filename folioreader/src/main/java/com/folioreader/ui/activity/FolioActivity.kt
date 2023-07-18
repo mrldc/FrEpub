@@ -45,7 +45,6 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
@@ -74,6 +73,7 @@ import com.folioreader.model.sqlite.BooksTable
 import com.folioreader.model.sqlite.PageProgressTable
 import com.folioreader.ui.adapter.FolioPageFragmentAdapter
 import com.folioreader.ui.adapter.SearchAdapter
+import com.folioreader.ui.base.PageProgressTask
 import com.folioreader.ui.base.PageProgressTaskCallback
 import com.folioreader.ui.fragment.*
 import com.folioreader.ui.view.ConfigBottomSheetDialogFragment
@@ -87,9 +87,7 @@ import com.folioreader.viewmodels.PageTrackerViewModel
 import com.folioreader.viewmodels.PageTrackerViewModelFactory
 import com.litao.slider.NiftySlider
 import com.litao.slider.anim.RevealTransition
-import com.litao.slider.effect.AnimationEffect
 import com.litao.slider.effect.ITEffect
-import kotlinx.android.synthetic.main.layout_dictionary.view.progress
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -301,7 +299,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             Log.v(LOG_TAG,"ACTION_PAGE_MARK-->onResume ")
             if(currentFragment != null){
                 currentFragment!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK +"|" +FolioReader.ACTION_PAGE_MARK)
-
+                //更新阅读进度条
+                currentFragment!!.updatePageProgress()
             }
         },3000)
 
@@ -377,21 +376,21 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         if(path == null){
             //从共享文件夹读取文件
-            /* path= applicationContext.getExternalFilesDir(
+             path= applicationContext.getExternalFilesDir(
                  Environment.DIRECTORY_DOCUMENTS
-             ).toString() + "/test.epub"*/
+             ).toString() + "/test.epub"
 
         }
         folioReader!!.setConfig(config, true)
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
         //读取来源配置
         //从文件夹读取文件，开启此配置
-     //   mEpubSourceType = EpubSourceType.SD_CARD
+        mEpubSourceType = EpubSourceType.SD_CARD
         //从assets中读取文件
-        mEpubSourceType = EpubSourceType.RAW
+       // mEpubSourceType = EpubSourceType.RAW
 
         //assets文件
-        mEpubRawId  = R.raw.test
+       // mEpubRawId  = R.raw.test
         if(mEpubFilePath== null){
             mEpubFilePath = path
         }
@@ -429,6 +428,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.statusBarColor = Color.TRANSPARENT;
+    }
+    //初始化章节进度
+    private fun initPageProgress() {
+       //查询是否有计算过章节进度
+        Log.v(LOG_TAG,"initPageProgress-->")
+        PageProgressTask(this,this,streamerUrl,mBookId).execute(*spine!!.toTypedArray())
     }
 
     private fun initTopAndBottom() {
@@ -492,7 +497,11 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 override fun onStopTrackingTouch(slider: NiftySlider) {
                     //slider.hideThumb(delayMillis = 2000)
                     //查询当前百分比在哪个页面
-                   var pageProgress = PageProgressTable.getPageProgressByProgress(mBookId,slider.value/100,context)
+                    var progress = slider.value/100;
+                   var pageProgress = PageProgressTable.getPageProgressByProgress(mBookId,progress,context)
+                    //跳转页面
+                   gotoPage(pageProgress,progress)
+
                 }
             })
 
@@ -515,8 +524,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         //收藏
         ll_collect?.setOnClickListener {
-            Log.v(LOG_TAG,"跳转页面")
-            currentFragment!!.scrollToProgress()
+
         }
         //去听书
         ll_listen_book?.setOnClickListener {
@@ -1046,6 +1054,10 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         return streamerUri.toString()
     }
 
+    override fun updateProgressUi(percent: Double) {
+       niftySlider!!.setValue((percent*100).toFloat(),true)
+    }
+
     override fun onDirectionChange(newDirection: Config.Direction) {
         Log.v(LOG_TAG, "-> onDirectionChange")
 
@@ -1056,9 +1068,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         direction = newDirection
 
         mFolioPageViewPager!!.setDirection(newDirection)
+        var pageProgressList = PageProgressTable.getAllPageProgress(mBookId,this)
+
         mFolioPageFragmentAdapter = FolioPageFragmentAdapter(
             supportFragmentManager, spine, bookFileName, mBookId, pageTrackerViewModel
         )
+        mFolioPageFragmentAdapter!!.pageProgressesList = pageProgressList
         mFolioPageViewPager!!.adapter = mFolioPageFragmentAdapter
         mFolioPageViewPager!!.currentItem = currentChapterIndex
 
@@ -1341,11 +1356,11 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         return false
     }
 
-    fun gotoPage(pageProgress: PageProgress){
+    fun gotoPage(pageProgress: PageProgress, progress: Float){
         currentChapterIndex = pageProgress.pageNumber
         mFolioPageViewPager!!.currentItem = currentChapterIndex
         val folioPageFragment = currentFragment
-        folioPageFragment!!.scrollToFirst()
+        folioPageFragment!!.scrollToProgress(progress)
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -1461,7 +1476,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 //读取章节位置信息-校验是否有书签
                 Log.v(LOG_TAG,"ACTION_PAGE_MARK-->onPageSelected ")
                 currentFragment!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK +"|" +FolioReader.ACTION_PAGE_MARK)
-
+                //更新阅读进度条
+                currentFragment!!.updatePageProgress()
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -1495,6 +1511,15 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         )
         mFolioPageViewPager!!.adapter = mFolioPageFragmentAdapter
 
+        var pageProgressList = PageProgressTable.getAllPageProgress(mBookId,this)
+        if(pageProgressList != null && pageProgressList.size > 0){
+            mFolioPageFragmentAdapter!!.pageProgressesList = pageProgressList
+            //有记录
+            onCompletePageCalculate(pageProgressList)
+        }else{
+            //无记录，初始化
+            initPageProgress()
+        }
         // In case if SearchActivity is recreated due to screen rotation then FolioActivity
         // will also be recreated, so searchLocator is checked here.
         if (searchLocator != null) {
@@ -1754,7 +1779,21 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     /**完成页面进度计算**/
     override fun onCompletePageCalculate(pageProgressList: MutableList<PageProgress>?) {
+        if(pageProgressList != null && pageProgressList.size > 0){
+            if(mFolioPageFragmentAdapter != null && mFolioPageFragmentAdapter!!.fragments.size == pageProgressList.size){
+                //初始化页面
+                for (i in pageProgressList.indices){
+                   var fragment = mFolioPageFragmentAdapter!!.fragments[i]
+                    if(fragment != null){
+                        fragment.pageProgress = pageProgressList[i];
+                    }
 
+                }
+            }else{
+                Log.v(LOG_TAG,"页面进度计算结果与现有章节数对应不上")
+            }
+
+        }
     }
 
 }

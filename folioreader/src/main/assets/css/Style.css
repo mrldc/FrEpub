@@ -130,7 +130,7 @@ img {
     max-width: 100% !important;
     box-sizing: border-box;
     page-break-inside: avoid;
-    object-fit: cover;
+    object-fit: contain;
 }
 /* Begin Ted */
  svg, audio, video {
