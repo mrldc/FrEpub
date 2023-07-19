@@ -60,7 +60,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textSize="14sp"
-                android:textColor="#333333"
+                android:textColor="@drawable/font_setting_textcolor_selector"
                 android:text="自动"
                 />
             <TextView
@@ -73,7 +73,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textSize="14sp"
-                android:textColor="#333333"
+                android:textColor="@drawable/font_setting_textcolor_selector"
                 android:text="横屏"
                 />
             <TextView
@@ -86,7 +86,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textSize="14sp"
-                android:textColor="#333333"
+                android:textColor="@drawable/font_setting_textcolor_selector"
                 android:text="竖屏"
                 />
 
@@ -130,7 +130,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textSize="14sp"
-                android:textColor="#333333"
+                android:textColor="@drawable/font_setting_textcolor_selector"
                 android:text="开"
                 />
             <TextView
@@ -143,7 +143,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textSize="14sp"
-                android:textColor="#333333"
+                android:textColor="@drawable/font_setting_textcolor_selector"
                 android:text="关"
                 />
 

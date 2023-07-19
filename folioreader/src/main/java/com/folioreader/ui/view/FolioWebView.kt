@@ -125,7 +125,7 @@ class FolioWebView : WebView {
     private var lastScrollType: LastScrollType? = null
     private  var highlightId: String? = null
     private var textUnderlineTextView: TextView? = null
-
+    public var stopScroll: Boolean = false
     val contentHeightVal: Int
         get() = floor((this.contentHeight * this.scale).toDouble()).toInt()
 
@@ -194,7 +194,7 @@ class FolioWebView : WebView {
             velocityX: Float,
             velocityY: Float
         ): Boolean {
-            //Log.d(LOG_TAG, "-> onFling -> e1 = " + e1 + ", e2 = " + e2 + ", velocityX = " + velocityX + ", velocityY = " + velocityY);
+            Log.d(LOG_TAG, "-> onFling -> e1 = " + e1 + ", e2 = " + e2 + ", velocityX = " + velocityX + ", velocityY = " + velocityY);
 
             if (!webViewPager.isScrolling) {
                 // Need to complete the scroll as ViewPager thinks these touch events should not
@@ -211,7 +211,7 @@ class FolioWebView : WebView {
         }
 
         override fun onDown(event: MotionEvent): Boolean {
-            //Log.v(LOG_TAG, "-> onDown -> " + event.toString());
+            Log.v(LOG_TAG, "-> onDown -> " + event.toString());
 
             eventActionDown = MotionEvent.obtain(event)
             super@FolioWebView.onTouchEvent(event)
@@ -483,10 +483,13 @@ class FolioWebView : WebView {
     }
 
     private fun computeHorizontalScroll(event: MotionEvent): Boolean {
-        //Log.v(LOG_TAG, "-> computeHorizontalScroll");
-
+        Log.v(LOG_TAG, "-> computeHorizontalScroll--> event.action"+ event.action);
+        //非点击事件，停止滑动标志为真时，禁止滑动
+        if(event.action != MotionEvent.ACTION_DOWN && event.action != MotionEvent.ACTION_UP && stopScroll){
+            return true
+        }
         // Rare condition in fast scrolling
-        if (!::webViewPager.isInitialized)
+        if (!::webViewPager.isInitialized )
             return super.onTouchEvent(event)
 
         webViewPager.dispatchTouchEvent(event)
@@ -515,7 +518,7 @@ class FolioWebView : WebView {
 
     override fun scrollTo(x: Int, y: Int) {
         super.scrollTo(x, y)
-        //Log.d(LOG_TAG, "-> scrollTo -> x = " + x);
+        Log.d(LOG_TAG, "-> scrollTo -> x = " + x);
 
         if (getDirection() == "HORIZONTAL") { // should always be true
             calculatedProgress =

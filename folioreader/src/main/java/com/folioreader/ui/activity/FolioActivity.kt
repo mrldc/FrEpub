@@ -16,6 +16,10 @@
 package com.folioreader.ui.activity
 
 import android.Manifest
+import android.R.attr.bottom
+import android.R.attr.left
+import android.R.attr.right
+import android.R.attr.top
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.BroadcastReceiver
@@ -39,14 +43,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginTop
+import androidx.core.view.setMargins
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -153,6 +161,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var taskImportance: Int = 0
     private var ivBack: ImageView? = null
     private var flMain: FrameLayout? = null
+    private var rlMain: RelativeLayout? = null
     private var tvLeft: TextView? = null
     private var ll_collect: LinearLayout? = null
     private var rl_comment: RelativeLayout? = null
@@ -385,12 +394,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
         //读取来源配置
         //从文件夹读取文件，开启此配置
-        mEpubSourceType = EpubSourceType.SD_CARD
+      //  mEpubSourceType = EpubSourceType.SD_CARD
         //从assets中读取文件
-       // mEpubSourceType = EpubSourceType.RAW
+        mEpubSourceType = EpubSourceType.RAW
 
         //assets文件
-       // mEpubRawId  = R.raw.test
+        mEpubRawId  = R.raw.test
         if(mEpubFilePath== null){
             mEpubFilePath = path
         }
@@ -427,7 +436,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         //状态栏
         window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.statusBarColor = Color.TRANSPARENT;
+      //  window.statusBarColor = Color.TRANSPARENT;
+
+
     }
     //初始化章节进度
     private fun initPageProgress() {
@@ -438,6 +449,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     private fun initTopAndBottom() {
         flMain = findViewById(R.id.fl_main)
+        rlMain = findViewById(R.id.rl_main)
         ivBack = findViewById(R.id.iv_back)
         tvLeft = findViewById(R.id.tv_left)
         ll_collect = findViewById(R.id.ll_collect)
@@ -593,46 +605,54 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         }
         //目录
-        iv_directory?.setOnClickListener {
+        var ll_directory= findViewById<LinearLayout>(R.id.ll_directory)
+        ll_directory?.setOnClickListener {
 //            iv_directory!!.setImageResource(R.mipmap.ic_directory_select)
 //            iv_write!!.setImageResource(R.mipmap.ic_note_select)
 //            iv_light!!.setImageResource(R.mipmap.ic_day_night_select)
 //            iv_font!!.setImageResource(R.mipmap.ic_font_select)
             statusIcon(true, false, false, false)
             goToTableOfCOntentActivity()
-            flMain!!.visibility = View.VISIBLE
+            rlMain!!.visibility = View.VISIBLE
             rl_edit!!.visibility = View.GONE
+            niftySlider!!.visibility = View.GONE
         }
         //笔记页面
-        iv_write?.setOnClickListener {
+        var ll_write= findViewById<LinearLayout>(R.id.ll_write)
+        ll_write?.setOnClickListener {
            // startContentHighlightActivity()
 //            iv_write!!.setImageResource(R.mipmap.ic_note_select)
             statusIcon(false, true, false, false)
             gaToHighlightFragment()
-            flMain!!.visibility = View.VISIBLE
+            rlMain!!.visibility = View.VISIBLE
             rl_edit!!.visibility = View.GONE
+            niftySlider!!.visibility = View.GONE
         }
         //亮度、背景
-        iv_light?.setOnClickListener {
+        var ll_light= findViewById<LinearLayout>(R.id.ll_light)
+        ll_light?.setOnClickListener {
 //            iv_light!!.setImageResource(R.mipmap.ic_day_night_select)
             statusIcon(false, false, true, false)
             val ft: FragmentTransaction =
                 supportFragmentManager.beginTransaction()
             ft.replace(R.id.fl_main, LightFragment())
             ft.commit()
-            flMain!!.visibility = View.VISIBLE
+            rlMain!!.visibility = View.VISIBLE
             rl_edit!!.visibility = View.GONE
+            niftySlider!!.visibility = View.GONE
         }
         //字体
-        iv_font?.setOnClickListener {
+        var ll_font= findViewById<LinearLayout>(R.id.ll_font)
+        ll_font?.setOnClickListener {
 //            iv_font!!.setImageResource(R.mipmap.ic_font_select)
             statusIcon(false, false, false, true)
             val ft: FragmentTransaction =
                 supportFragmentManager.beginTransaction()
             ft.replace(R.id.fl_main, FontFragment())
             ft.commit()
-            flMain!!.visibility = View.VISIBLE
+            rlMain!!.visibility = View.VISIBLE
             rl_edit!!.visibility = View.GONE
+            niftySlider!!.visibility = View.GONE
 //            showConfigBottomSheetDialogFragment()
         }
 
@@ -1239,17 +1259,22 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
              rl_edit!!.visibility = View.GONE
              rl_mark_content!!.visibility = View.GONE
              tv_mark_content!!.text = ""
-             flMain!!.visibility = View.GONE
+             rlMain!!.visibility = View.GONE
+             niftySlider!!.visibility = View.GONE
              statusIcon(false, false, false, false)
              InputMethodUtils.close(window.decorView)
          } else {
+             val layoutParams = rl_top!!.getLayoutParams() as ConstraintLayout.LayoutParams
+             layoutParams.topMargin = UiUtil.getStatusBarHeight(this)
+             rl_top!!.setLayoutParams(layoutParams)
              rl_top!!.visibility = View.VISIBLE
              rl_bottom!!.visibility = View.VISIBLE
              //状态栏有内容是，笔记页面隐藏
-             if(flMain!!.visibility == View.VISIBLE){
+             if(rlMain!!.visibility == View.VISIBLE){
                  rl_edit!!.visibility = View.GONE
              }else{
                //  rl_edit!!.visibility = View.VISIBLE
+                 niftySlider!!.visibility = View.VISIBLE
              }
 
          }
@@ -1265,19 +1290,26 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rl_top!!.visibility = View.GONE
         rl_bottom!!.visibility = View.GONE
         rl_edit!!.visibility = View.GONE
-        flMain!!.visibility = View.GONE
+        rlMain!!.visibility = View.GONE
     }
 
     private fun showSystemUI() {
         Log.v(LOG_TAG, "-> showSystemUI")
+        //停止滑动
+        if(currentFragment != null &&  currentFragment!!.mWebview != null){
+            currentFragment!!.mWebview!!.stopScroll = true
+        }
+
         if(Build.VERSION.SDK_INT >= 30){
             val windowInsetsController = window.decorView.windowInsetsController
             windowInsetsController!!.show(WindowInsets.Type.statusBars())
+            windowInsetsController!!.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS)
+
         }
         else if (Build.VERSION.SDK_INT >= 16) {
             Log.v(LOG_TAG, "-> showSystemUI01")
             val decorView = window.decorView
-            decorView.systemUiVisibility =View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            decorView.systemUiVisibility =View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                 (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
         } else {
             Log.v(LOG_TAG, "-> showSystemUI02")
@@ -1289,7 +1321,10 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     private fun hideSystemUI() {
         Log.v(LOG_TAG, "-> hideSystemUI")
-
+        //允许滑动
+        if(currentFragment != null &&  currentFragment!!.mWebview != null){
+            currentFragment!!.mWebview!!.stopScroll = false
+        }
         if(Build.VERSION.SDK_INT >= 30){
             Log.v(LOG_TAG, "-> hideSystemUI01")
             val windowInsetsController = window.decorView.windowInsetsController
@@ -1348,7 +1383,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                     }, 1000)
 
                 }
-                flMain!!.visibility = View.GONE
+                rlMain!!.visibility = View.GONE
                 return true
             }
         }

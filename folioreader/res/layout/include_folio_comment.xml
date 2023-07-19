@@ -61,7 +61,7 @@
         android:id="@+id/view_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#999999"
+        android:background="#f0999999"
         android:layout_below="@+id/iv_idea"/>
     </RelativeLayout>
     <RelativeLayout
@@ -78,19 +78,17 @@
             android:layout_height="16dp"
             android:background="#999999"
             android:layout_centerVertical="true"
-            android:layout_marginStart="42dp"
+            android:layout_marginStart="16dp"
             />
 
         <TextView
             android:id="@+id/tv_mark_content"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/view"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textSize="17sp"
+            android:textSize="13sp"
             android:textColor="#999999"
             android:text="" />
     </RelativeLayout>

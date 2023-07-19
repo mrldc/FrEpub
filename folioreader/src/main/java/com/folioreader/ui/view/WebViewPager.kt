@@ -31,6 +31,7 @@ class WebViewPager : ViewPager {
 
     private var lastGestureType: LastGestureType? = null
 
+
     private enum class LastGestureType {
         OnSingleTapUp, OnLongPress, OnFling, OnScroll
     }

@@ -25,13 +25,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/indicatorLayout"
-            android:background="@color/highlight_green">
+            >
 
             <com.folioreader.ui.view.WebViewPager
                 android:id="@+id/webViewPager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/red" />
+                android:background="@mipmap/read_background"
+
+                />
 
             <com.folioreader.ui.view.FolioWebView
                 android:id="@+id/folioWebView"
@@ -52,10 +54,10 @@
                     ></View>
                 <ImageView
                     android:id="@+id/iv_bookmark"
-                    android:layout_width="15dp"
-                    android:layout_height="30dp"
+                    android:layout_width="20dp"
+                    android:layout_height="35dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="50dp"
                     android:background="#3283FF"
                     android:scaleType="fitXY"
                     android:layout_alignParentRight="true"
@@ -66,7 +68,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginEnd="50dp"
+                    android:layout_marginEnd="80dp"
                     android:background="#3283FF"
                     android:scaleType="fitXY"
                     android:visibility="gone"

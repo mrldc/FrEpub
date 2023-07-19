@@ -8,6 +8,8 @@ import com.folioreader.R;
 import com.folioreader.util.FontFinder;
 import com.folioreader.util.ScreenUtils;
 
+import org.springframework.util.StringUtils;
+
 import java.io.File;
 
 /**
@@ -150,7 +152,9 @@ public final class HtmlUtil {
                 break;
         }
         String styles = "font-family: '" + fontName + "';";
-        styles +="background-color: "+config.getBackgroundColor()+";";
+        if(!StringUtils.isEmpty(config.getBackgroundColor())){
+            styles +="background-color: "+config.getBackgroundColor()+";";
+        }
         htmlContent = htmlContent.replace("<html",
                 "<html class=\"" + classes + "\"" +
                         " style=\"" + styles + "\"" +

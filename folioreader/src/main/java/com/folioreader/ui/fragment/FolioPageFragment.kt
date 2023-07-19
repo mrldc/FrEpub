@@ -482,8 +482,8 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         val webViewLayout = mRootView!!.findViewById<FrameLayout>(R.id.webViewLayout)
         mWebview = webViewLayout.findViewById(R.id.folioWebView)
         mWebview!!.setParentFragment(this)
-       // mWebview!!.setBackgroundColor(0)
-       // mWebview!!.background.alpha = 0
+        mWebview!!.setBackgroundColor(0)
+        mWebview!!.background.alpha = 0
         webViewPager = webViewLayout.findViewById(R.id.webViewPager)
 
         webViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {

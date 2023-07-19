@@ -46,7 +46,7 @@ public class Config implements Parcelable {
 
     private String font = "Roboto";
 
-    private String backgroundColor = "#E6E6DA";
+    private String backgroundColor = "";
     private int bodyPadding = 10;
     private int textSpace = 1;
     private int fontSize = 2;
@@ -129,7 +129,7 @@ public class Config implements Parcelable {
                 setDefaults();
             } else {
                 font = getBundleItem(bundle, CONFIG_FONT, "Roboto");
-                backgroundColor = getBundleItem(bundle, BACKGROUND_COLOR,"#E6E6DA");
+                backgroundColor = getBundleItem(bundle, BACKGROUND_COLOR,"");
                 bodyPadding = getBundleItem(bundle, BODY_PADDING,10);
                 textSpace = getBundleItem(bundle, TEXT_SPACE,5);
                 columnCount = getBundleItem(bundle, COLUMN_COUNT,2);
@@ -169,7 +169,7 @@ public class Config implements Parcelable {
         direction = DEFAULT_DIRECTION;
         showRemainingIndicator = false;
         showTextSelection = true;
-        backgroundColor = "#E6E6DA";
+        backgroundColor = null;
         bodyPadding = 10;
         textSpace = 5;
         columnCount = 2;
