@@ -17,6 +17,8 @@ package com.folioreader.android.sample;
 
 import static com.folioreader.Constants.DATE_FORMAT;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -38,6 +40,7 @@ import com.folioreader.FolioReader;
 import com.folioreader.model.HighLight;
 import com.folioreader.model.locators.ReadLocator;
 import com.folioreader.model.sqlite.BookmarkTable;
+import com.folioreader.ui.activity.FolioActivity;
 import com.folioreader.ui.base.OnSaveHighlight;
 import com.folioreader.util.AppUtil;
 import com.folioreader.util.OnHighlightListener;
@@ -56,7 +59,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity
-        implements OnHighlightListener,ReadLocatorListener, FolioReader.OnClosedListener {
+         {
 
     private static final String LOG_TAG = HomeActivity.class.getSimpleName();
     private FolioReader folioReader;
@@ -68,13 +71,8 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         compatActivity = this;
-        folioReader = FolioReader.get()
-                .setOnHighlightListener(this)
-                .setReadLocatorListener(this)
-                .setOnClosedListener(this);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        getHighlightsAndSave();
 
         findViewById(R.id.btn_raw).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,133 +115,55 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
 
-                ReadLocator readLocator = getLastReadLocator();
-
-                Config config = AppUtil.getSavedConfig(getApplicationContext());
-                if (config == null)
-                    config = new Config();
-                config.setAllowedDirection(Config.AllowedDirection.VERTICAL_AND_HORIZONTAL);
-                config.setNightThemeColorInt(Color.parseColor("#FFFFFF"));
-                config.setShowRemainingIndicator(true);
-                config.setShowTextSelection(false);
-
-                folioReader.setReadLocator(readLocator);
-                folioReader.setConfig(config, true)
-                        .openBook("file:///android_asset/john.epub");
+            }
+        });
+        findViewById(R.id.btn_001).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startIntent = new Intent(getApplicationContext(),  FolioActivity.class);
+                startIntent.putExtra("BOOK_FILE_URL", getPath("10001.epub") );
+                setResult(Activity.RESULT_OK, startIntent);
+                startActivity(startIntent);
+            }
+        });
+        findViewById(R.id.btn_002).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startIntent = new Intent(getApplicationContext(),  FolioActivity.class);
+                startIntent.putExtra("BOOK_FILE_URL", getPath("10002.epub") );
+                setResult(Activity.RESULT_OK, startIntent);
+                startActivity(startIntent);
+            }
+        });
+        findViewById(R.id.btn_003).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startIntent = new Intent(getApplicationContext(),  FolioActivity.class);
+                startIntent.putExtra("BOOK_FILE_URL", getPath("10003.epub") );
+                setResult(Activity.RESULT_OK, startIntent);
+                startActivity(startIntent);
+            }
+        });
+        findViewById(R.id.btn_004).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startIntent = new Intent(getApplicationContext(),  FolioActivity.class);
+                startIntent.putExtra("BOOK_FILE_URL", getPath("10004.epub") );
+                setResult(Activity.RESULT_OK, startIntent);
+                startActivity(startIntent);
             }
         });
 
-        Config config = AppUtil.getSavedConfig(getApplicationContext());
-        if (config == null)
-            config = new Config();
-        config.setAllowedDirection(Config.AllowedDirection.VERTICAL_AND_HORIZONTAL);
-
-        folioReader.setConfig(config, true)
-                .openBook(R.raw.test);
-//                .openBook("file://Documents/folioreader/accessible_epub_3/accessible_epub_3.epub");
     }
 
-    private ReadLocator getLastReadLocator() {
 
-        String jsonString = loadAssetTextAsString("Locators/LastReadLocators/last_read_locator_1.json");
-        return ReadLocator.fromJson(jsonString);
+
+    private String getPath(String book){
+        return this.getApplication().getExternalFilesDir(
+                Environment.DIRECTORY_DOCUMENTS
+        ).toString() + "/"+book;
     }
 
-    //@Override
-    public void saveReadLocator(ReadLocator readLocator, String mBookId, String markType) {
-      /*  Log.i(LOG_TAG, "-> saveReadLocator -> " + readLocator.toJson()+" markType:"+markType);
-        //收到获取阅读位置信息
-        SimpleDateFormat simpleDateFormat =new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
-        String cfi = readLocator.getHref()+readLocator.getLocations().getCfi();
-        if(FolioReader.EXTRA_BOOKMARK_ADD.equals(markType)){//添加标签
-            boolean insertResult =new BookmarkTable(this).insertBookmark(
-                    mBookId,
-                    simpleDateFormat.format(new Date()),
-                    readLocator.getTitle(),
-                    readLocator.toJson().toString(),
-                    cfi,BookmarkTable.MARK_TYPE
-            );
-            if(insertResult){
-                Toast.makeText(
-                        this, "已添加到书签", Toast.LENGTH_SHORT
-                ).show();
-            }
-
-        }else if(FolioReader.EXTRA_BOOKMARK_DELETE.equals(markType)){//删除标签
-            int bookmarkId =  BookmarkTable.getBookmarkIdByCfi(cfi,mBookId,this);
-            if(bookmarkId != -1){
-                boolean deleteResult = BookmarkTable.deleteBookmarkById(bookmarkId,this);
-                if(deleteResult){
-                    Toast.makeText(
-                            this, "已删除书签", Toast.LENGTH_SHORT
-                    ).show();
-                }
-            }
-        }*/
-
-    }
-
-    /*
-     * For testing purpose, we are getting dummy highlights from asset. But you can get highlights from your server
-     * On success, you can save highlights to FolioReader DB.
-     */
-    private void getHighlightsAndSave() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ArrayList<HighLight> highlightList = null;
-                ObjectMapper objectMapper = new ObjectMapper();
-                try {
-                    highlightList = objectMapper.readValue(
-                            loadAssetTextAsString("highlights/highlights_data.json"),
-                            new TypeReference<List<HighlightData>>() {
-                            });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                if (highlightList == null) {
-                    folioReader.saveReceivedHighLights(highlightList, new OnSaveHighlight() {
-                        @Override
-                        public void onFinished() {
-                            //You can do anything on successful saving highlight list
-                        }
-                    });
-                }
-            }
-        }).start();
-    }
-
-    private String loadAssetTextAsString(String name) {
-        BufferedReader in = null;
-        try {
-            StringBuilder buf = new StringBuilder();
-            InputStream is = getAssets().open(name);
-            in = new BufferedReader(new InputStreamReader(is));
-
-            String str;
-            boolean isFirst = true;
-            while ((str = in.readLine()) != null) {
-                if (isFirst)
-                    isFirst = false;
-                else
-                    buf.append('\n');
-                buf.append(str);
-            }
-            return buf.toString();
-        } catch (IOException e) {
-            Log.e("HomeActivity", "Error opening asset " + name);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    Log.e("HomeActivity", "Error closing asset " + name);
-                }
-            }
-        }
-        return null;
-    }
 
     @Override
     protected void onDestroy() {
@@ -251,15 +171,4 @@ public class HomeActivity extends AppCompatActivity
         FolioReader.clear();
     }
 
-    @Override
-    public void onHighlight(HighLight highlight, HighLight.HighLightAction type) {
-        Toast.makeText(this,
-                "highlight id = " + highlight.getUUID() + " type = " + type,
-                Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onFolioReaderClosed() {
-        Log.v(LOG_TAG, "-> onFolioReaderClosed");
-    }
 }

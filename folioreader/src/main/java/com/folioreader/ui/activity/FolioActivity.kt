@@ -252,7 +252,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     }
 
     private val currentFragment: FolioPageFragment?
-        get() = if (mFolioPageFragmentAdapter != null && mFolioPageViewPager != null) {
+        get() = if (mFolioPageFragmentAdapter != null && mFolioPageViewPager != null &&  mFolioPageFragmentAdapter!!.getItem(mFolioPageViewPager!!.currentItem).mRootView != null) {
             mFolioPageFragmentAdapter!!.getItem(mFolioPageViewPager!!.currentItem) as FolioPageFragment
         } else {
             null
@@ -306,12 +306,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         handler!!.postDelayed({
             //读取章节位置信息-校验是否有书签
             Log.v(LOG_TAG,"ACTION_PAGE_MARK-->onResume ")
-            if(currentFragment != null){
+         /*   if(currentFragment != null){
                 currentFragment!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK +"|" +FolioReader.ACTION_PAGE_MARK)
                 //更新阅读进度条
                 currentFragment!!.updatePageProgress()
-            }
-        },3000)
+            }*/
+        },500)
 
         //当有阅读记录时，跳转
         if(readBook != null){
@@ -338,6 +338,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.v(LOG_TAG,"onCreate-->")
         super.onCreate(savedInstanceState)
         EventBus.getDefault().register(this)
         folioReader = FolioReader.get()
@@ -394,12 +395,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
         //读取来源配置
         //从文件夹读取文件，开启此配置
-      //  mEpubSourceType = EpubSourceType.SD_CARD
+        mEpubSourceType = EpubSourceType.SD_CARD
         //从assets中读取文件
-        mEpubSourceType = EpubSourceType.RAW
+       // mEpubSourceType = EpubSourceType.RAW
 
         //assets文件
-        mEpubRawId  = R.raw.test
+       // mEpubRawId  = R.raw.test
         if(mEpubFilePath== null){
             mEpubFilePath = path
         }
@@ -1037,13 +1038,15 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         title = publication.metadata.title
 
         if (mBookId == null) {
-            mBookId = publication.metadata.identifier.ifEmpty {
+           /* mBookId = publication.metadata.identifier.ifEmpty {
                 if (publication.metadata.title.isNotEmpty()) {
                     publication.metadata.title.hashCode().toString()
                 } else {
                     bookFileName!!.hashCode().toString()
                 }
-            }
+            }*/
+            mBookId =  publication.metadata.identifier +"-"+bookFileName
+
         }
         //获取当前阅读记录
         readBook = BooksTable.getBookByBooKId(mBookId,this)
@@ -1264,9 +1267,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
              statusIcon(false, false, false, false)
              InputMethodUtils.close(window.decorView)
          } else {
-             val layoutParams = rl_top!!.getLayoutParams() as ConstraintLayout.LayoutParams
+           /*  val layoutParams = rl_top!!.getLayoutParams() as ConstraintLayout.LayoutParams
              layoutParams.topMargin = UiUtil.getStatusBarHeight(this)
-             rl_top!!.setLayoutParams(layoutParams)
+             rl_top!!.setLayoutParams(layoutParams)*/
              rl_top!!.visibility = View.VISIBLE
              rl_bottom!!.visibility = View.VISIBLE
              //状态栏有内容是，笔记页面隐藏
@@ -1374,17 +1377,22 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 currentChapterIndex = spine!!.indexOf(link)
                 mFolioPageViewPager!!.currentItem = currentChapterIndex
                 val folioPageFragment = currentFragment
-                folioPageFragment!!.scrollToFirst()
-                folioPageFragment.scrollToAnchorId(href!!)
-                if(cfi != null){
-                    val handlerTime = Handler()
-                    handlerTime.postDelayed({
-                        folioPageFragment!!.scrollToCFI(cfi)
-                    }, 1000)
+                if(folioPageFragment != null){
+                    folioPageFragment!!.scrollToFirst()
+                    folioPageFragment.scrollToAnchorId(href!!)
+                    if(cfi != null){
+                        val handlerTime = Handler()
+                        handlerTime.postDelayed({
+                            folioPageFragment!!.scrollToCFI(cfi)
+                        }, 1000)
 
+                    }
+                    rlMain!!.visibility = View.GONE
+                    return true
+                }else{
+                    return false
                 }
-                rlMain!!.visibility = View.GONE
-                return true
+
             }
         }
 

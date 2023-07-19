@@ -79,7 +79,6 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         Log.v(LOG_TAG,"onResume--->"+spineIndex)
 
     }
-
     companion object {
 
         var lock ="lock"
@@ -110,10 +109,11 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             fragment.arguments = args
             return fragment
         }
-
-        private fun FolioPageFragment() {
+        @JvmStatic
+        fun newInstance(){
 
         }
+
     }
 
     //进度条信息
@@ -130,7 +130,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     private var outState: Bundle? = null
     private var savedInstanceState: Bundle? = null
 
-    private var mRootView: View? = null
+    public var mRootView: View? = null
 
     private var loadingView: LoadingView? = null
     private var mScrollSeekbar: VerticalSeekbar? = null

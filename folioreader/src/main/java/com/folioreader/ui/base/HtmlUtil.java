@@ -2,6 +2,7 @@ package com.folioreader.ui.base;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import com.folioreader.Config;
 import com.folioreader.R;
@@ -11,6 +12,8 @@ import com.folioreader.util.ScreenUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author gautam chibde on 14/6/17.
@@ -87,10 +90,12 @@ public final class HtmlUtil {
         }
         //添加图片样式
         ScreenUtils screenUtils = new ScreenUtils(context);
+        int maxHeight = (int)(screenUtils.getRealHeight()) -70;
+        int maxWidth = (int)(screenUtils.getRealWidth()/config.getColumnCount()) - config.getBodyPadding()*2;
         toInject += "<style>\n";
-        toInject += " img {\n";
-        toInject += " max-height: "+screenUtils.getRealHeight()*0.85+"px !important;\n";
-        toInject += " max-width: "+screenUtils.getRealWidth()*0.85/config.getColumnCount()+"px !important;\n";
+        toInject += " img,image {\n";
+        toInject += " max-height: "+maxHeight +"px !important;\n";
+        toInject += " max-width: "+maxWidth +"px !important;\n";
         toInject += "}\n";
         toInject += "\n</style>";
 
@@ -183,7 +188,71 @@ public final class HtmlUtil {
          bodyStyles += "padding-right: "+ padding +"px;";
         htmlContent = htmlContent.replace("<body",
                         "<body style=\"" + bodyStyles + "\"");
-
+        htmlContent =  replaceImageHeight(htmlContent,maxHeight);
+        htmlContent =  replaceImageWidth(htmlContent,maxWidth);
         return htmlContent;
+    }
+
+    /**替换最大高度**/
+    private static String replaceImageHeight(String content,int maxHeight){
+        // 待匹配替换文本
+        String html = content;
+        // 正则表达式
+        String regex = "<image[^>]*?height=\"([^\"]*)\"";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(html);
+        StringBuffer stringBuffer = new StringBuffer();
+
+        // 将html中的下划线替换为该input标签
+        while (matcher.find()) {
+            // 匹配区间
+            String groupStr = matcher.group(1);
+            Integer height = null;
+            try {
+                 height = Integer.parseInt(groupStr);
+                 if(height > maxHeight){
+                     matcher.appendReplacement(stringBuffer, matcher.group().replace(groupStr,maxHeight+"px"));
+                 }else{
+                     matcher.appendReplacement(stringBuffer,  matcher.group());
+                 }
+            }catch (Exception e){
+                matcher.appendReplacement(stringBuffer,  matcher.group());
+            }
+        }
+        // 最终结果追加到尾部
+        matcher.appendTail(stringBuffer);
+        // 最终完成替换后的结果
+       return stringBuffer.toString();
+    }
+    /**替换最大高度**/
+    private static String replaceImageWidth(String content,int maxWidth){
+        // 待匹配替换文本
+        String html = content;
+        // 正则表达式
+        String regex = "<image[^>]*?width=\"([^\"]*)\"";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(html);
+        StringBuffer stringBuffer = new StringBuffer();
+
+        // 将html中的下划线替换为该input标签
+        while (matcher.find()) {
+            // 匹配区间
+            String groupStr = matcher.group(1);
+            Integer width = null;
+            try {
+                width = Integer.parseInt(groupStr);
+                if(width > maxWidth){
+                    matcher.appendReplacement(stringBuffer, matcher.group().replace(groupStr,maxWidth+"px"));
+                }else{
+                    matcher.appendReplacement(stringBuffer, matcher.group());
+                }
+            }catch (Exception e){
+                matcher.appendReplacement(stringBuffer, matcher.group());
+            }
+        }
+        // 最终结果追加到尾部
+        matcher.appendTail(stringBuffer);
+        // 最终完成替换后的结果
+        return stringBuffer.toString();
     }
 }
