@@ -394,12 +394,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
         //读取来源配置
         //从文件夹读取文件，开启此配置
-      //  mEpubSourceType = EpubSourceType.SD_CARD
+        mEpubSourceType = EpubSourceType.SD_CARD
         //从assets中读取文件
-        mEpubSourceType = EpubSourceType.RAW
+      //  mEpubSourceType = EpubSourceType.RAW
 
         //assets文件
-        mEpubRawId  = R.raw.test
+       // mEpubRawId  = R.raw.test
         if(mEpubFilePath== null){
             mEpubFilePath = path
         }
