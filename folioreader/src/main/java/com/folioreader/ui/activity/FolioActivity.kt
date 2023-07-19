@@ -899,6 +899,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     }
 
     private fun goToTableOfCOntentActivity() {
+        if(pubBox == null || spine == null){
+            return
+        }
         var cfi = if(readBook == null){""}else readBook!!.cfi
         val tableOfContentFragment = TableOfContentFragment.newInstance(
             pubBox!!.publication,
@@ -1391,11 +1394,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         return false
     }
 
-    fun gotoPage(pageProgress: PageProgress, progress: Float){
-        currentChapterIndex = pageProgress.pageNumber
-        mFolioPageViewPager!!.currentItem = currentChapterIndex
-        val folioPageFragment = currentFragment
-        folioPageFragment!!.scrollToProgress(progress)
+    fun gotoPage(pageProgress: PageProgress?, progress: Float){
+        if(pageProgress != null){
+            currentChapterIndex = pageProgress.pageNumber
+            mFolioPageViewPager!!.currentItem = currentChapterIndex
+            val folioPageFragment = currentFragment
+            folioPageFragment!!.scrollToProgress(progress)
+        }
+
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
