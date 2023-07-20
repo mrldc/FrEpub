@@ -26,6 +26,7 @@
             android:exported="true"
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/FolioActivityDayTheme" />
 
         <activity
