@@ -53,7 +53,7 @@ public class Config implements Parcelable {
     //列数
     private int columnCount = 2;
     //亮度
-    private int light = 2;
+    private int light = 100;
     private boolean enableHorizontalColumn = true;
     private int screenOrientation = 0;
     private boolean nightMode;
@@ -133,7 +133,7 @@ public class Config implements Parcelable {
                 bodyPadding = getBundleItem(bundle, BODY_PADDING,10);
                 textSpace = getBundleItem(bundle, TEXT_SPACE,5);
                 columnCount = getBundleItem(bundle, COLUMN_COUNT,2);
-                light = getBundleItem(bundle, COLUMN_COUNT,100);
+                light = getBundleItem(bundle, LIGHT,100);
                 enableHorizontalColumn = getBundleItem(bundle, ENABLE_HORIZONTAL_COLUMN,true);
                 screenOrientation = getBundleItem(bundle, SCREEN_ORIENTATION,0);
                 fontSize = getBundleItem(bundle, CONFIG_FONT_SIZE, 2);
@@ -211,10 +211,10 @@ public class Config implements Parcelable {
         );
         showRemainingIndicator = getJsonItem(obj, CONFIG_REMAINING_INDICATOR, false);
         backgroundColor = getJsonItem(obj, BACKGROUND_COLOR, "");
-        bodyPadding = getJsonItem(obj, BODY_PADDING, 10);
+        bodyPadding = getJsonItem(obj, BODY_PADDING, 2);
         textSpace = getJsonItem(obj, TEXT_SPACE, 5);
         columnCount = getJsonItem(obj, COLUMN_COUNT, 2);
-        light = getJsonItem(obj, COLUMN_COUNT, 100);
+        light = getJsonItem(obj, LIGHT, 100);
         enableHorizontalColumn = getJsonItem(obj, ENABLE_HORIZONTAL_COLUMN, true);
         screenOrientation = getJsonItem(obj, SCREEN_ORIENTATION, 0);
     }

@@ -80,7 +80,7 @@ a { -webkit-touch-callout: none; } /* Disable link callback */
 * { -webkit-user-select: text; }
 img { -webkit-user-select: none;max-height: 200px }
 p {
-    margin: 1.3em 0 1.5em 0;
+    margin: 0.3em 0 0.3em 0;
     text-indent: 1.25em;
 }
 b, strong, th {font-weight: bolder !important;}
@@ -191,7 +191,7 @@ html .highlight_01 {background:#DD4F0F}
 html .highlight_02 {background:#6DD53C}
 html .highlight_03 {background:#3CA4DE}
 html .highlight_04 {background:#DA50CE}
-html .mark {background:#d8d8d8}
+html .mark {background:#333333}
 html .highlight_01, html .highlight_02, html .highlight_03, html .highlight_04, html .mark{
     border-radius: 3px;
     padding: 0 2px;

@@ -53,13 +53,14 @@ public class FolioPageFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        super.destroyItem(container, position, object);
-        fragments.set(position, null);
+        Log.v(LOG_TAG,LOG_TAG+"--destroyItem:"+position);
+      //  super.destroyItem(container, position, object);
+       // fragments.set(position, null);
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-
+        Log.v(LOG_TAG,LOG_TAG+"--instantiateItem --position:"+position);
         FolioPageFragment fragment = (FolioPageFragment) super.instantiateItem(container, position);
         fragments.set(position, fragment);
         return fragment;
@@ -67,7 +68,7 @@ public class FolioPageFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public FolioPageFragment getItem(int position) {
-
+        Log.v(LOG_TAG,LOG_TAG+"--getItem --position:"+position);
         if (mSpineReferences.size() == 0 || position < 0 || position >= mSpineReferences.size())
             return null;
 

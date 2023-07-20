@@ -42,7 +42,7 @@ class WebViewPager : ViewPager {
     }
 
     private fun init() {
-
+        offscreenPageLimit = 4
         uiHandler = Handler()
         gestureDetector = GestureDetectorCompat(context, GestureListener())
 
@@ -74,10 +74,10 @@ class WebViewPager : ViewPager {
 
             override fun onPageSelected(position: Int) {
 //
-                Log.v(LOG_TAG, "-> onPageSelected -> $position")
+                Log.v(LOG_TAG, "-> onPageSelected -> $position -->folioWebView--> $folioWebView")
                 if(folioWebView != null){
                     val scrollX =
-                        folioWebView!!.getScrollXPixelsForPage(position) + (folioWebView!!.pageWidthCssPixels/2).toInt()
+                        folioWebView!!.getScrollXPixelsForPage(position)
                     //Log.d(LOG_TAG, "-> onPageScrolled -> scrollX = " + scrollX);
                     folioWebView!!.scrollTo(scrollX, 0)
                 }
@@ -111,7 +111,6 @@ class WebViewPager : ViewPager {
 
         this.horizontalPageCount = horizontalPageCount
         adapter = WebViewPagerAdapter()
-        currentItem = 0
 
         if (folioWebView == null)
             folioWebView = (parent as View).findViewById(R.id.folioWebView)

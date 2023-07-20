@@ -16,13 +16,10 @@
 package com.folioreader.ui.activity
 
 import android.Manifest
-import android.R.attr.bottom
-import android.R.attr.left
-import android.R.attr.right
-import android.R.attr.top
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.BroadcastReceiver
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -35,6 +32,7 @@ import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.*
+import android.provider.Settings
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
@@ -50,11 +48,8 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginTop
-import androidx.core.view.setMargins
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -152,7 +147,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var searchAdapterDataBundle: Bundle? = null
     private var searchQuery: CharSequence? = null
     private var searchLocator: SearchLocator? = null
-
+    private var originBrightness : Int = 10
 
 
     private var displayMetrics: DisplayMetrics? = null
@@ -315,7 +310,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         //当有阅读记录时，跳转
         if(readBook != null){
-            goToChapter(readBook!!.href,readBook!!.cfi)
+            gotoChapterByNumber(readBook!!.chapterNumber!!,readBook!!.pageNumber!!)
+           // goToChapter(readBook!!.href,readBook!!.cfi)
         }
 
     }
@@ -333,6 +329,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         super.onStop()
         Log.v(LOG_TAG, "-> onStop")
         topActivity = false
+        initScreenLight(originBrightness)
     }
 
 
@@ -431,6 +428,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             } else {
                 setupBook()
             }
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.WRITE_SETTINGS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this, getWriteSettingsPerms(), WRITE_SETTING_REQUEST
+                )
+            }
         } else {
             setupBook()
         }
@@ -438,7 +443,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
       //  window.statusBarColor = Color.TRANSPARENT;
+         originBrightness = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS)
 
+        initScreenLight(config!!.light)
 
     }
     //初始化章节进度
@@ -470,6 +477,10 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rl_edit = findViewById(R.id.rl_edit)
         tv_mark_content = findViewById(R.id.tv_mark_content)
         rl_mark_content = findViewById(R.id.rl_mark_content)
+
+        rlMain!!.setOnClickListener(View.OnClickListener {
+
+        })
         //进度条
         niftySlider = findViewById(R.id.ns_progress_bar);
         val activeTrackColor =
@@ -537,7 +548,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         //收藏
         ll_collect?.setOnClickListener {
-
+            gotoChapterByNumber(3,4)
         }
         //去听书
         ll_listen_book?.setOnClickListener {
@@ -608,52 +619,92 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         //目录
         var ll_directory= findViewById<LinearLayout>(R.id.ll_directory)
         ll_directory?.setOnClickListener {
+            if(rlMain!!.visibility == View.VISIBLE){
+                statusIcon(false, false, false, false)
+                rlMain!!.visibility = View.GONE
+                rl_edit!!.visibility = View.GONE
+                niftySlider!!.visibility = View.VISIBLE
+                rl_top!!.visibility = View.VISIBLE
+            }else{
+                statusIcon(true, false, false, false)
+                goToTableOfCOntentActivity()
+                rlMain!!.visibility = View.VISIBLE
+                rl_edit!!.visibility = View.GONE
+                niftySlider!!.visibility = View.GONE
+                rl_top!!.visibility = View.GONE
+            }
 //            iv_directory!!.setImageResource(R.mipmap.ic_directory_select)
 //            iv_write!!.setImageResource(R.mipmap.ic_note_select)
 //            iv_light!!.setImageResource(R.mipmap.ic_day_night_select)
 //            iv_font!!.setImageResource(R.mipmap.ic_font_select)
-            statusIcon(true, false, false, false)
-            goToTableOfCOntentActivity()
-            rlMain!!.visibility = View.VISIBLE
-            rl_edit!!.visibility = View.GONE
-            niftySlider!!.visibility = View.GONE
+
         }
         //笔记页面
         var ll_write= findViewById<LinearLayout>(R.id.ll_write)
         ll_write?.setOnClickListener {
+            if(rlMain!!.visibility == View.VISIBLE){
+                statusIcon(false, false, false, false)
+                rlMain!!.visibility = View.GONE
+                rl_edit!!.visibility = View.GONE
+                niftySlider!!.visibility = View.VISIBLE
+                rl_top!!.visibility = View.VISIBLE
+            }else{
+                statusIcon(false, true, false, false)
+                gaToHighlightFragment()
+                rlMain!!.visibility = View.VISIBLE
+                rl_edit!!.visibility = View.GONE
+                niftySlider!!.visibility = View.GONE
+                rl_top!!.visibility = View.GONE
+            }
            // startContentHighlightActivity()
 //            iv_write!!.setImageResource(R.mipmap.ic_note_select)
-            statusIcon(false, true, false, false)
-            gaToHighlightFragment()
-            rlMain!!.visibility = View.VISIBLE
-            rl_edit!!.visibility = View.GONE
-            niftySlider!!.visibility = View.GONE
+
         }
         //亮度、背景
         var ll_light= findViewById<LinearLayout>(R.id.ll_light)
         ll_light?.setOnClickListener {
+            if(rlMain!!.visibility == View.VISIBLE){
+                statusIcon(false, false, false, false)
+                rlMain!!.visibility = View.GONE
+                rl_edit!!.visibility = View.GONE
+                niftySlider!!.visibility = View.VISIBLE
+                rl_top!!.visibility = View.VISIBLE
+            }else{
+                statusIcon(false, false, true, false)
+                val ft: FragmentTransaction =
+                    supportFragmentManager.beginTransaction()
+                ft.replace(R.id.fl_main, LightFragment())
+                ft.commit()
+                rlMain!!.visibility = View.VISIBLE
+                rl_edit!!.visibility = View.GONE
+                niftySlider!!.visibility = View.GONE
+                rl_top!!.visibility = View.GONE
+            }
 //            iv_light!!.setImageResource(R.mipmap.ic_day_night_select)
-            statusIcon(false, false, true, false)
-            val ft: FragmentTransaction =
-                supportFragmentManager.beginTransaction()
-            ft.replace(R.id.fl_main, LightFragment())
-            ft.commit()
-            rlMain!!.visibility = View.VISIBLE
-            rl_edit!!.visibility = View.GONE
-            niftySlider!!.visibility = View.GONE
+
         }
         //字体
         var ll_font= findViewById<LinearLayout>(R.id.ll_font)
         ll_font?.setOnClickListener {
+            if(rlMain!!.visibility == View.VISIBLE){
+                statusIcon(false, false, false, false)
+                rlMain!!.visibility = View.GONE
+                rl_edit!!.visibility = View.GONE
+                niftySlider!!.visibility = View.VISIBLE
+                rl_top!!.visibility = View.VISIBLE
+            }else{
+                statusIcon(false, false, false, true)
+                val ft: FragmentTransaction =
+                    supportFragmentManager.beginTransaction()
+                ft.replace(R.id.fl_main, FontFragment())
+                ft.commit()
+                rlMain!!.visibility = View.VISIBLE
+                rl_edit!!.visibility = View.GONE
+                niftySlider!!.visibility = View.GONE
+                rl_top!!.visibility = View.GONE
+            }
 //            iv_font!!.setImageResource(R.mipmap.ic_font_select)
-            statusIcon(false, false, false, true)
-            val ft: FragmentTransaction =
-                supportFragmentManager.beginTransaction()
-            ft.replace(R.id.fl_main, FontFragment())
-            ft.commit()
-            rlMain!!.visibility = View.VISIBLE
-            rl_edit!!.visibility = View.GONE
-            niftySlider!!.visibility = View.GONE
+
 //            showConfigBottomSheetDialogFragment()
         }
 
@@ -901,11 +952,13 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     private fun goToTableOfCOntentActivity() {
         var cfi = if(readBook == null){""}else readBook!!.cfi
+        var pageNumber = if(readBook == null){null}else readBook!!.pageNumber
         val tableOfContentFragment = TableOfContentFragment.newInstance(
             pubBox!!.publication,
             spine!![currentChapterIndex].href,
             bookFileName,
-            cfi
+            cfi,
+            pageNumber
         )
         tableOfContentFragment.setActivityCallback(this);
         val ft =
@@ -1079,6 +1132,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     override fun updateProgressUi(percent: Double) {
        niftySlider!!.setValue((percent*100).toFloat(),true)
+    }
+
+    override fun getReadRecord(): Book? {
+        return readBook
+    }
+
+    override fun updateReadRecord(book: Book?) {
+        readBook = book
     }
 
     override fun onDirectionChange(newDirection: Config.Direction) {
@@ -1275,6 +1336,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
              //状态栏有内容是，笔记页面隐藏
              if(rlMain!!.visibility == View.VISIBLE){
                  rl_edit!!.visibility = View.GONE
+                 rl_top!!.visibility = View.GONE
              }else{
                //  rl_edit!!.visibility = View.VISIBLE
                  niftySlider!!.visibility = View.VISIBLE
@@ -1399,11 +1461,35 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         return false
     }
 
-    fun gotoPage(pageProgress: PageProgress, progress: Float){
-        currentChapterIndex = pageProgress.pageNumber
+    fun gotoPage(pageProgress: PageProgress?, progress: Float){
+        if(pageProgress != null){
+            currentChapterIndex = pageProgress.pageNumber
+
+        }else if(progress == 0.0f){
+            currentChapterIndex = 0
+        }else if(progress == 100.0f){
+            currentChapterIndex = mFolioPageFragmentAdapter!!.count-1
+        }
         mFolioPageViewPager!!.currentItem = currentChapterIndex
         val folioPageFragment = currentFragment
-        folioPageFragment!!.scrollToProgress(progress)
+        if(folioPageFragment != null){
+            folioPageFragment!!.scrollToProgress(progress)
+        }
+
+
+    }
+    fun gotoChapterByNumber( chapterNumber:Int,pageNumber:Int ){
+        currentChapterIndex = chapterNumber
+        mFolioPageViewPager!!.currentItem = currentChapterIndex
+        Log.v(LOG_TAG,"gotoChapterByNumber-->chapterNumber:$chapterNumber-->pageNumber:$pageNumber-->"+currentFragment)
+        if(currentFragment == null){
+            handler!!.postDelayed({
+                gotoChapterByNumber(chapterNumber,pageNumber)
+            },500)
+        }else{
+            currentFragment!!.scrollToPage(pageNumber)
+        }
+
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -1494,12 +1580,17 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         mFolioPageViewPager = findViewById(R.id.folioPageViewPager)
         // Replacing with addOnPageChangeListener(), onPageSelected() is not invoked
-        mFolioPageViewPager!!.setOnPageChangeListener(object :
+        mFolioPageViewPager!!.addOnPageChangeListener(object :
             DirectionalViewpager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int, positionOffset: Float, positionOffsetPixels: Int
             ) {
-                pageTrackerViewModel.setCurrentChapter(position + 1)
+                Log.v(
+                    LOG_TAG,
+                    "-> onPageScrolled value -> DirectionalViewpager -> position = $position"
+                )
+
+
             }
 
             override fun onPageSelected(position: Int) {
@@ -1516,20 +1607,28 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 mediaControllerFragment!!.setPlayButtonDrawable()
                 currentChapterIndex = position
                 pageTrackerViewModel.setCurrentChapter(position + 1)
-                //读取章节位置信息-校验是否有书签
-                Log.v(LOG_TAG,"ACTION_PAGE_MARK-->onPageSelected ")
-                currentFragment!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK +"|" +FolioReader.ACTION_PAGE_MARK)
-                //更新阅读进度条
-                currentFragment!!.updatePageProgress()
+                if(currentFragment != null){
+                    //读取章节位置信息-校验是否有书签
+                    Log.v(LOG_TAG,"ACTION_PAGE_MARK-->onPageSelected ")
+                    currentFragment!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK +"|" +FolioReader.ACTION_READ_MARK)
+                    //更新阅读进度条
+                    currentFragment!!.updatePageProgress()
+                    //更新阅读记录
+                    currentFragment!!.updateReadRecord()
+                }
+
             }
 
             override fun onPageScrollStateChanged(state: Int) {
-
+                Log.v(
+                    LOG_TAG,
+                    "-> onPageScrollStateChanged value -> DirectionalViewpager -> state = $state"
+                )
                 if (state == DirectionalViewpager.SCROLL_STATE_IDLE) {
                     val position = mFolioPageViewPager!!.currentItem
                     Log.v(
                         LOG_TAG,
-                        "-> onPageScrollStateChanged -> DirectionalViewpager -> " + "position = " + position
+                        "-> onPageScrollStateChanged -> DirectionalViewpager -> " + "position = " + position +"-->pageCount:"+mFolioPageViewPager!!.adapter.count
                     )
                     var folioPageFragment =
                         mFolioPageFragmentAdapter!!.getItem(position - 1) as FolioPageFragment?
@@ -1549,6 +1648,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         })
 
         mFolioPageViewPager!!.setDirection(direction)
+        mFolioPageViewPager!!.offscreenPageLimit = 5
         mFolioPageFragmentAdapter = FolioPageFragmentAdapter(
             supportFragmentManager, spine, bookFileName, mBookId, pageTrackerViewModel
         )
@@ -1585,7 +1685,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             }
             currentChapterIndex = getChapterIndex(readLocator)
             if(currentChapterIndex == 0 && readBook != null){
-                currentChapterIndex = getChapterIndex(HREF, readBook!!.href)
+                currentChapterIndex = readBook!!.chapterNumber!!
             }
             mFolioPageViewPager!!.currentItem = currentChapterIndex
 
@@ -1754,23 +1854,6 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                     ).show()
                 }
             }
-        }else if(FolioReader.ACTION_READ_MARK == markType){//阅读记录
-            var addReadRecord : Boolean
-            if(readBook == null){//没有阅读记录，新增
-                addReadRecord = BooksTable(this).insertBook(mBookId,readLocator.href,bookFileName,null,null, "1",readLocator.locations.cfi)
-                if(addReadRecord){
-                    Log.v(LOG_TAG,"新增阅读记录成功")
-                    readBook = BooksTable.getBookByBooKId(mBookId,this)
-                }
-            }else{
-                 addReadRecord = BooksTable.updateBook(mBookId,readLocator.href,readLocator.locations.cfi,this)
-                 readBook!!.href = readLocator.href
-                 readBook!!.cfi = readLocator.locations.cfi
-                if(addReadRecord){
-                    Log.v(LOG_TAG,"更新阅读记录成功")
-                }
-            }
-
         }
     }
 
@@ -1839,4 +1922,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
     }
 
+    fun initScreenLight(light: Int){
+
+        val contentResolver: ContentResolver = getContentResolver()
+
+        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, light)
+        contentResolver.notifyChange(
+            Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS),
+            null
+        )
+    }
 }

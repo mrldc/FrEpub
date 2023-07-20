@@ -44,6 +44,7 @@ import dalvik.system.PathClassLoader
 import kotlinx.android.synthetic.main.text_selection.view.*
 import kotlinx.android.synthetic.main.widget_text_selection.view.UnderlineDotted2
 import kotlinx.android.synthetic.main.widget_text_selection.view.iv_blue
+import kotlinx.android.synthetic.main.widget_text_selection.view.iv_font_light
 import kotlinx.android.synthetic.main.widget_text_selection.view.iv_green
 import kotlinx.android.synthetic.main.widget_text_selection.view.iv_pink
 import kotlinx.android.synthetic.main.widget_text_selection.view.iv_right_white
@@ -318,6 +319,10 @@ class FolioWebView : WebView {
         textUnderlineTextView = viewTextSelection.findViewById(R.id.tv_dv_line)
         viewTextSelection.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
+        viewTextSelection.iv_font_light.setOnClickListener{
+            Log.v(LOG_TAG, "-> onClick -> yellowHighlight")
+            onHighlightColorItemsClicked(HighlightStyle.highlight_01, false)
+        }
         viewTextSelection.iv_right_white.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> yellowHighlight")
             onHighlightColorItemsClicked(HighlightStyle.highlight_01, false)
@@ -486,7 +491,7 @@ class FolioWebView : WebView {
         Log.v(LOG_TAG, "-> computeHorizontalScroll--> event.action"+ event.action);
         //非点击事件，停止滑动标志为真时，禁止滑动
         if(event.action != MotionEvent.ACTION_DOWN && event.action != MotionEvent.ACTION_UP && stopScroll){
-            return true
+            return false
         }
         // Rare condition in fast scrolling
         if (!::webViewPager.isInitialized )

@@ -34,6 +34,7 @@ import java.util.List;
 import static com.folioreader.Constants.BOOK_TITLE;
 import static com.folioreader.Constants.CFI;
 import static com.folioreader.Constants.CHAPTER_SELECTED;
+import static com.folioreader.Constants.PAGE_NUMBER;
 import static com.folioreader.Constants.PUBLICATION;
 import static com.folioreader.Constants.SELECTED_CHAPTER_POSITION;
 import static com.folioreader.Constants.TYPE;
@@ -50,13 +51,14 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
     private FolioActivityCallback activityCallback;
 
     public static TableOfContentFragment newInstance(Publication publication,
-                                                     String selectedChapterHref, String bookTitle,String cfi) {
+                                                     String selectedChapterHref, String bookTitle,String cfi,Integer pageNumber) {
         TableOfContentFragment tableOfContentFragment = new TableOfContentFragment();
         Bundle args = new Bundle();
         args.putSerializable(PUBLICATION, publication);
         args.putString(SELECTED_CHAPTER_POSITION, selectedChapterHref);
         args.putString(BOOK_TITLE, bookTitle);
         args.putString(CFI, cfi);
+        args.putInt(PAGE_NUMBER, pageNumber);
         tableOfContentFragment.setArguments(args);
 
 
