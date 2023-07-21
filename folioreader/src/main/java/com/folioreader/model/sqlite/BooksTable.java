@@ -33,6 +33,10 @@ public class BooksTable {
     public static final String  PROGRESSION = "progression";
     public static final String  TYPE = "type";
     public static final String  CFI = "cfi";
+    //章节所在页数
+    public static final String  PAGE_NUMBER = "page_number";
+    //章节
+    public static final String  CHAPTER_NUMBER = "chapter_number";
 
     public static SQLiteDatabase database;
 
@@ -50,11 +54,13 @@ public class BooksTable {
             + PROGRESSION + " TEXT" + ","
             + TYPE + " TEXT" + ","
             + CFI + " TEXT" + ","
+            + CHAPTER_NUMBER + " INTEGER" + ","
+            + PAGE_NUMBER + " INTEGER" + ","
             + IDENTIFIER + " TEXT" + ")";
 
     public static final String SQL_DROP = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-        public final boolean insertBook(String new_bookID,  String href, String title,String author,String progression,String type,String cfi) {
+        public final boolean insertBook(String new_bookID,  String href, String title,String author,String progression,String type,String cfi,int chapterNumber,int pageNumber) {
         ContentValues values = new ContentValues();
         values.put(IDENTIFIER, new_bookID);
         values.put(CREATION_DATE, getDateTimeString(new Date()));
@@ -64,6 +70,8 @@ public class BooksTable {
         values.put(PROGRESSION,progression);
         values.put(TYPE,type);
         values.put(CFI,cfi);
+        values.put(CHAPTER_NUMBER,chapterNumber);
+        values.put(PAGE_NUMBER,pageNumber);
 
 
         return database.insert(TABLE_NAME, null, values) > 0;
@@ -79,7 +87,17 @@ public class BooksTable {
         values.put(CFI,cfi);
         return database.update(TABLE_NAME,values,IDENTIFIER+"=?",new String[]{new_bookID}) > 0;
     }
-
+    public static boolean updateBookPage(String new_bookID,int chapterNumber,int pageNumber,Context context){
+        if(database == null){
+            FolioDatabaseHelper dbHelper = new FolioDatabaseHelper(context);
+            database = dbHelper.getWritableDatabase();
+        }
+        ContentValues values = new ContentValues();
+        values.put(CREATION_DATE, getDateTimeString(new Date()));
+        values.put(CHAPTER_NUMBER, chapterNumber);
+        values.put(PAGE_NUMBER,pageNumber);
+        return database.update(TABLE_NAME,values,IDENTIFIER+"=?",new String[]{new_bookID}) > 0;
+    }
     @SuppressLint("Range")
     public final static String getReadHref(String bookId, Context context){
         if(database == null){
@@ -119,7 +137,11 @@ public class BooksTable {
                     cursor.getString(cursor.getColumnIndex(IDENTIFIER)),
                     cursor.getString(cursor.getColumnIndex(PROGRESSION)),
                     cursor.getString(cursor.getColumnIndex(TYPE)),
-                    cursor.getString(cursor.getColumnIndex(CFI)));
+                    cursor.getString(cursor.getColumnIndex(CFI)),
+                    cursor.getInt(cursor.getColumnIndex(CHAPTER_NUMBER)),
+                    cursor.getInt(cursor.getColumnIndex(PAGE_NUMBER))
+            );
+
         }
         cursor.close();
         return book;

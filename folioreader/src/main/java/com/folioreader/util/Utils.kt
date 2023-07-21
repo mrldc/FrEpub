@@ -36,7 +36,7 @@ object Utils {
     @JvmStatic
     fun formatProgress(progress: Int): String {
         val result = progress.toDouble() / 100
-        val df = DecimalFormat("#.00")
+        val df = DecimalFormat("#0.00")
         return df.format(result)+"%"
     }
 

@@ -95,7 +95,7 @@
                         </View>
                         <ImageView
                             android:layout_gravity="center"
-                            android:id="@+id/deleteHighlight"
+                            android:id="@+id/iv_font_light"
                             style="@style/ImageViewTextSelectorMarker"
                             app:srcCompat="@mipmap/ic_selection_font_a" />
                     </FrameLayout>

@@ -41,6 +41,7 @@ import com.folioreader.model.event.*
 import com.folioreader.model.locators.ReadLocator
 import com.folioreader.model.locators.SearchLocator
 import com.folioreader.model.sqlite.BookmarkTable
+import com.folioreader.model.sqlite.BooksTable
 import com.folioreader.model.sqlite.HighLightTable
 import com.folioreader.ui.activity.FolioActivity
 import com.folioreader.ui.activity.FolioActivityCallback
@@ -124,6 +125,9 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     private var mAnchorId: String? = null
     private var rangy = ""
     private var highlightId: String? = null
+    private var initPageNumber : Int? = null
+    private var webViewOnFinished : Boolean = false
+    private var currentPageNumber :Int = 0
 
     private var lastReadLocator: ReadLocator? = null
     private var pageMarkReadLocator: ReadLocator? = null
@@ -249,7 +253,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
      * 书签添加、删除监听； 删除时需判断当前有无书签
      */
     private fun initBookMarkListen() {
-        Log.v(LOG_TAG, "initBookMarkListen-->$currentPageHasBookmark")
+        Log.v(LOG_TAG, "initBookMarkListen-->$currentPageHasBookmark-->chapter:$spineIndex")
         val refreshLayout  =  mRootView!!.findViewById<View>(R.id.refreshLayout) as RefreshLayout
         //当前页有书签，添加头部为删除书签头部
         if(currentPageHasBookmark){
@@ -353,7 +357,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     fun reload(reloadDataEvent: ReloadDataEvent) {
         if (isCurrentFragment)
             getLastReadLocator("")
-
+        initPageNumber = webViewPager!!.currentItem
         if (isAdded) {
             mWebview!!.dismissPopupWindow()
             mWebview!!.initViewTextSelection()
@@ -362,6 +366,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             mIsPageReloaded = true
             setHtml(true)
             updatePagesLeftTextBg()
+            updatePageProgress()
         }
     }
 
@@ -472,10 +477,20 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                 toPageNumber = webViewPager.horizontalPageCount
             }
             webViewPager.currentItem  = toPageNumber
+            if(progress == 100f){
+                webViewPager.setPageToLast()
+            }
         }
 
     }
+    fun scrollToPage(pageNumber : Int){
+        if(webViewOnFinished){
+            webViewPager.currentItem  = pageNumber
+        }else{
+            this.initPageNumber = pageNumber
+        }
 
+    }
     @SuppressLint("JavascriptInterface", "SetJavaScriptEnabled")
     private fun initWebView() {
 
@@ -488,26 +503,31 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
         webViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                Log.v(LOG_TAG, "-> onPageSelected ->pagePosition-> $position->chapter->$spineIndex")
+                Log.v(LOG_TAG, "-> onPageScrolled ->pagePosition-> $position->chapter->$spineIndex-->positionOffsetPixels:$positionOffsetPixels")
                 // pageViewModel.setCurrentPage(position + 1)
             }
 
             override fun onPageSelected(position: Int) {
                 pageViewModel.setCurrentPage(position + 1)
                 Log.v(LOG_TAG, "-> onPageSelected ->pagePosition-> $position->chapter->$spineIndex")
-
+                updatePageProgress()
             }
 
             override fun onPageScrollStateChanged(state: Int) {
-                Log.v(LOG_TAG, "-> onPageScrollStateChanged -->state -> $state->chapter->$spineIndex")
+                Log.v(LOG_TAG, "-> onPageScrollStateChanged -->state -> $state->chapter->$spineIndex -->webViewPager position:"+webViewPager.currentItem)
                 if(state == SCROLL_STATE_IDLE){
+
+
                     //获取当前页位置，判断是否有标签
                     currentPageHasBookmark = false
                     Log.v(LOG_TAG,"ACTION_PAGE_MARK-->folioPageFragment onPageSelected")
-                    getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+FolioReader.ACTION_READ_MARK+"|"+ FolioReader.ACTION_PAGE_MARK)
+                    getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK+"|"+ FolioReader.ACTION_PAGE_MARK)
                     //更新阅读进度条
                     updatePageProgress()
+                    //更新阅读记录
+                    updateReadRecord()
                 }
+
                 // pageViewModel.setCurrentPage(webViewPager.currentItem + 1)
 
             }
@@ -554,7 +574,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     private val webViewClient = object : WebViewClient() {
 
         override fun onPageFinished(view: WebView, url: String) {
-
+            Log.v(LOG_TAG,"webViewClient onPageFinished -->chapter:$spineIndex")
             mWebview!!.loadUrl("javascript:checkCompatMode()")
             mWebview!!.loadUrl("javascript:alert(getReadingTime())")
 
@@ -592,8 +612,9 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
 
                 } else {
-                    if (spineIndex == mActivityCallback!!.currentChapterIndex - 1) {
+                    if (spineIndex == mActivityCallback!!.currentChapterIndex - 1 && webViewOnFinished) {
                         // Scroll to last, the page before current page
+                        Log.v(LOG_TAG,"webViewClient onPageFinished mIsPageReloaded scrollToLast")
                         mWebview!!.loadUrl("javascript:scrollToLast()")
                     } else {
                         // Make loading view invisible for all other fragments
@@ -639,10 +660,12 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                     loadingView!!.hide()
                 }
 
+
             } else {
 
-                if (spineIndex == mActivityCallback!!.currentChapterIndex - 1) {
+                if (spineIndex == mActivityCallback!!.currentChapterIndex - 1 && webViewOnFinished) {
                     // Scroll to last, the page before current page
+                    Log.v(LOG_TAG,"webViewClient onPageFinished scrollToLast -->chapter:$spineIndex")
                     mWebview!!.loadUrl("javascript:scrollToLast()")
                 } else {
                     // Make loading view invisible for all other fragments
@@ -820,14 +843,14 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                 uiHandler.post{initBookMarkListen()}
 
             }
-            if(actionList.contains(FolioReader.ACTION_READ_MARK)){
+           /* if(actionList.contains(FolioReader.ACTION_READ_MARK)){
                 //阅读记录
                 val intent = Intent(FolioReader.ACTION_SAVE_READ_LOCATOR)
                 intent.putExtra(FolioReader.EXTRA_READ_LOCATOR, lastReadLocator as Parcelable?)
                 intent.putExtra(FolioReader.ACTION_TYPE, FolioReader.ACTION_READ_MARK)
                 intent.putExtra(FolioReader.EXTRA_BOOK_ID, mBookId)
                 LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
-            }
+            }*/
 
 
             (this as java.lang.Object).notify()
@@ -838,9 +861,18 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     fun setHorizontalPageCount(horizontalPageCount: Int) {
         Log.v(
             LOG_TAG, "-> setHorizontalPageCount = " + horizontalPageCount
-                    + " -> " + spineItem.href
+                    + " -> " + spineItem.href +"->chapter:$spineIndex"
         )
         mWebview!!.setHorizontalPageCount(horizontalPageCount)
+        //第一次完成页面时判断是否有跳转
+        if(initPageNumber != null){
+            uiHandler.post {
+                webViewPager.currentItem = initPageNumber!!
+            }
+        }
+        webViewOnFinished = true
+
+
     }
 
     fun loadRangy(rangy: String) {
@@ -992,6 +1024,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         mFadeInAnimation!!.setAnimationListener(null)
         mFadeOutAnimation!!.setAnimationListener(null)
         EventBus.getDefault().unregister(this)
+
         super.onDestroyView()
     }
 
@@ -1165,10 +1198,34 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
     //更新进度条
     fun updatePageProgress(){
+        Log.v(LOG_TAG,"updatePageProgress-->"+pageProgress)
         if(pageProgress != null){
             //章节的开始占比+当前章节的阅读进度 * 章节总占比
            var totalProgress = pageProgress!!.start + (pageProgress!!.end - pageProgress!!.start) * (mWebview!!.currentProgress/100)
+
             mActivityCallback!!.updateProgressUi(totalProgress)
+        }
+    }
+    //更新阅读记录
+    fun updateReadRecord(){
+        var addReadRecord : Boolean
+        var readBook = mActivityCallback!!.readRecord
+
+
+        if(readBook == null){//没有阅读记录，新增
+            addReadRecord = BooksTable(activity).insertBook(mBookId,null,null,null,null, "1",null,spineIndex,webViewPager.currentItem)
+            if(addReadRecord){
+                Log.v(FolioActivity.LOG_TAG,"新增阅读记录成功")
+                readBook = BooksTable.getBookByBooKId(mBookId,activity)
+                mActivityCallback!!.updateReadRecord(readBook)
+            }
+        }else{
+            addReadRecord = BooksTable.updateBookPage(mBookId,spineIndex,webViewPager.currentItem,activity)
+            readBook!!.chapterNumber = spineIndex
+            readBook!!.pageNumber = webViewPager.currentItem
+            if(addReadRecord){
+                Log.v(FolioActivity.LOG_TAG,"更新阅读记录成功")
+            }
         }
     }
 }

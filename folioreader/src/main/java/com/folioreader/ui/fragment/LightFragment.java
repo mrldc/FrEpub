@@ -56,7 +56,7 @@ public class LightFragment extends Fragment {
                 Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color), 0.1f);
         int iconTintColor =
                 Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color), 0.7f);
-        seekBar = (NiftySlider) mRootView.findViewById(R.id.seekbar_light);
+        seekBar =  mRootView.findViewById(R.id.seekbar_light);
         // #FFFFFF
         mRootView.findViewById(R.id.iv_light_1).setOnClickListener(new View.OnClickListener() {
             @SuppressLint("ResourceType")
@@ -112,12 +112,15 @@ public class LightFragment extends Fragment {
         seekBar.setOnIntValueChangeListener(new NiftySlider.OnIntValueChangeListener() {
             @Override
             public void onValueChange(@NonNull NiftySlider niftySlider, int progress, boolean fromUser) {
-                if (progress > 3 && fromUser) {//以免太暗
-                    config.setFontSize(progress);
+                if (fromUser) {//以免太暗
+                    config.setLight(progress);
                     AppUtil.saveConfig(getActivity(), config);
-                    WindowManager.LayoutParams layoutParams = getActivity().getWindow().getAttributes();
+                  /*  WindowManager.LayoutParams layoutParams = getActivity().getWindow().getAttributes();
                     layoutParams.screenBrightness = (float) progress / 255;//因为这个值是[0, 1]范围的
-                    getActivity().getWindow().setAttributes(layoutParams);
+                    getActivity().getWindow().setAttributes(layoutParams);*/
+                    ContentResolver contentResolver = getActivity().getContentResolver();
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, progress);
+                    contentResolver.notifyChange(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS),null);
                 }
 
             }

@@ -4,6 +4,7 @@ import android.graphics.Rect;
 
 import com.folioreader.Config;
 import com.folioreader.model.DisplayUnit;
+import com.folioreader.model.db.Book;
 import com.folioreader.model.locators.ReadLocator;
 
 import org.jetbrains.annotations.Nullable;
@@ -43,4 +44,7 @@ public interface FolioActivityCallback {
 
     /**更新进度条**/
     void updateProgressUi(double percent);
+
+    Book getReadRecord();
+    void updateReadRecord(Book book);
 }

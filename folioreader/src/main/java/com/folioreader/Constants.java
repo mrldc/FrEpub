@@ -10,6 +10,7 @@ public class Constants {
     public static final String SELECTED_CHAPTER_POSITION = "selected_chapter_position";
     public static final String TYPE = "type";
     public static final String CFI = "cfi";
+    public static final String PAGE_NUMBER = "page_number";
     public static final String CHAPTER_SELECTED = "chapter_selected";
     public static final String HIGHLIGHT_SELECTED = "highlight_selected";
     public static final String BOOKMARK_SELECTED = "bookmark_selected";
@@ -28,12 +29,19 @@ public class Constants {
     public static final String DATE_FORMAT = "MMM dd, yyyy | HH:mm";
     public static final String ASSET = "file:///android_asset/";
     public static final int WRITE_EXTERNAL_STORAGE_REQUEST = 102;
+    public static final int WRITE_SETTING_REQUEST = 1;
     public static final String CHAPTER_ID = "id";
     public static final String HREF = "href";
 
     public static String[] getWriteExternalStoragePerms() {
         return new String[]{
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_SETTINGS
+        };
+    }
+    public static String[] getWriteSettingsPerms() {
+        return new String[]{
+                Manifest.permission.WRITE_SETTINGS
         };
     }
 }
