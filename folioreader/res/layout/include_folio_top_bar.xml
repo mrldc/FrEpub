@@ -38,27 +38,28 @@
         <LinearLayout
             android:id="@+id/ll_listen"
             android:layout_width="wrap_content"
-            android:layout_height="28dp"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:layout_marginHorizontal="16dp"
-            android:background="@drawable/shape_30_stroke_dd4f0f_bg"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="7dp"
+            android:background="@drawable/shape_30_stroke_dash_bg"
             android:layout_toStartOf="@+id/ll_video"
             >
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="13dp"
+                android:layout_height="13dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="12dp"
                 android:scaleType="fitXY"
                 android:src="@mipmap/iv_listening" />
 
             <TextView
+                android:id="@+id/tv_listen_book"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:layout_marginEnd="12dp"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textSize="13sp"
@@ -68,27 +69,28 @@
         <LinearLayout
             android:id="@+id/ll_video"
             android:layout_width="wrap_content"
-            android:layout_height="28dp"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:layout_marginHorizontal="16dp"
-            android:background="@drawable/shape_30_stroke_dd4f0f_bg"
+            android:paddingHorizontal="22dp"
+            android:paddingVertical="7dp"
+            android:background="@drawable/shape_30_stroke_dash_bg"
             android:layout_toStartOf="@+id/ll_collect"
             >
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="14dp"
+                android:layout_width="13dp"
+                android:layout_height="8dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="12dp"
                 android:scaleType="fitXY"
                 android:src="@mipmap/iv_videos" />
 
             <TextView
+                android:id="@+id/tv_video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:layout_marginEnd="12dp"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textSize="13sp"
@@ -98,19 +100,20 @@
     <LinearLayout
         android:id="@+id/ll_collect"
         android:layout_width="wrap_content"
-        android:layout_height="28dp"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_alignParentEnd="true"
         android:layout_marginHorizontal="16dp"
+        android:paddingHorizontal="28dp"
+        android:paddingVertical="7dp"
         android:background="@drawable/shape_30_stroke_dd4f0f_bg"
         >
     <ImageView
         android:layout_width="14dp"
         android:layout_height="14dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="12dp"
         android:scaleType="fitXY"
         android:src="@mipmap/read_collect" />
 
@@ -118,7 +121,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
-        android:layout_marginEnd="12dp"
         android:maxLines="1"
         android:singleLine="true"
         android:textSize="13sp"

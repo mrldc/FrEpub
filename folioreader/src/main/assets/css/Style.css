@@ -128,19 +128,14 @@ a, h1, h2, h3, h4, h5, h6 {
     -webkit-hyphens: none !important;
     hyphens: none !important;
 }
-img,image {
+img,image,svg, audio, video {
     box-sizing: border-box;
     page-break-inside: avoid;
     object-fit: contain;
 }
+
 /* Begin Ted */
- svg, audio, video {
-    max-height: 95% !important;
-    max-width: 100% !important;
-    box-sizing: border-box;
-    object-fit: contain;
-    page-break-inside: avoid;
-}
+
 
 /* End Ted */
 
@@ -187,11 +182,11 @@ html .highlight_yellow, html .highlight_green, html .highlight_blue, html .highl
     padding: 0 2px;
     margin: 0 -2px;
 }
-html .highlight_01 {background:#DD4F0F}
-html .highlight_02 {background:#6DD53C}
-html .highlight_03 {background:#3CA4DE}
-html .highlight_04 {background:#DA50CE}
-html .mark {background:#333333}
+html .highlight_01 {background-color:rgba(221,79,15,0.5)}
+html .highlight_02 {background-color:rgba(109,213,60,0.5)}
+html .highlight_03 {background-color:rgba(60,164,222,0.5)}
+html .highlight_04 {background-color:rgba(218,80,206,0.5)}
+html .mark {background-color:rgba(51,51,51,0.5)}
 html .highlight_01, html .highlight_02, html .highlight_03, html .highlight_04, html .mark{
     border-radius: 3px;
     padding: 0 2px;

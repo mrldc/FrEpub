@@ -242,7 +242,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         initWebView()
         updatePagesLeftTextBg()
         //书签添加、删除监听
-      //  initBookMarkListen()
+        initBookMarkListen()
 
         Log.d("FolioPageFragment", "onCreateView: initialised $spineIndex")
 
@@ -268,6 +268,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 //        refreshLayout.setRefreshHeader(AddBookmarkHeaderView(context))
 
         refreshLayout.setOnRefreshListener { refreshlayout ->
+            refreshlayout.finishRefresh(10 )
             //进行
             getLastReadLocator(FolioReader.ACTION_BOOKMARK);
             initBookMarkListen()
@@ -287,7 +288,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 //            }
 
            // Toast.makeText(context, "刷新", Toast.LENGTH_LONG).show()
-            refreshlayout.finishRefresh(10 )
+
         }
     }
 
@@ -503,7 +504,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
         webViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                Log.v(LOG_TAG, "-> onPageScrolled ->pagePosition-> $position->chapter->$spineIndex-->positionOffsetPixels:$positionOffsetPixels")
+               // Log.v(LOG_TAG, "-> onPageScrolled ->pagePosition-> $position->chapter->$spineIndex-->positionOffsetPixels:$positionOffsetPixels")
                 // pageViewModel.setCurrentPage(position + 1)
             }
 

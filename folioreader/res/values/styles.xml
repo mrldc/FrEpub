@@ -97,9 +97,9 @@
     </style>
 
     <style name="ImageViewTextSelectorMarker">
-        <item name="android:layout_width">45dp</item>
-        <item name="android:layout_height">45dp</item>
-        <item name="android:padding">12dp</item>
+        <item name="android:layout_width">23dp</item>
+        <item name="android:layout_height">23dp</item>
+        <item name="android:padding">5dp</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:background">?selectableItemBackground</item>

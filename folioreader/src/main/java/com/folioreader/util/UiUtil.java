@@ -139,13 +139,13 @@ public class UiUtil {
             textView.setDotted(true);
             textView.invalidate();
         }else if (type.equals("highlight_01")) {
-            setUnderLineColor(textView, context, R.color.highlight_01, R.color.highlight_01);
+            setUnderLineColor(textView, context, R.color.highlight_01_bg, R.color.highlight_01_bg);
         } else if (type.equals("highlight_02")) {
-            setUnderLineColor(textView, context, R.color.highlight_02, R.color.highlight_02);
+            setUnderLineColor(textView, context, R.color.highlight_02_bg, R.color.highlight_02_bg);
         } else if (type.equals("highlight_03")) {
-            setUnderLineColor(textView, context, R.color.highlight_03, R.color.highlight_03);
+            setUnderLineColor(textView, context, R.color.highlight_03_bg, R.color.highlight_03_bg);
         } else if (type.equals("highlight_04")) {
-            setUnderLineColor(textView, context, R.color.highlight_04, R.color.highlight_04);
+            setUnderLineColor(textView, context, R.color.highlight_04_bg, R.color.highlight_04_bg);
         }
     }
 

@@ -34,6 +34,7 @@ import com.folioreader.model.event.BookPageEvent;
 import com.folioreader.model.event.ReloadDataEvent;
 import com.folioreader.ui.adapter.FontAdapter;
 import com.folioreader.ui.adapter.FontGridAdapter;
+import com.folioreader.ui.base.HtmlUtil;
 import com.folioreader.util.AppUtil;
 import com.folioreader.util.FontFinder;
 import com.folioreader.util.Utils;
@@ -148,7 +149,7 @@ public class FontFragment extends Fragment implements FontsCallback {
                 mRootView.findViewById(R.id.tv_screen_h).setSelected(false);
                 //设置竖屏
                 config.setScreenOrientation(1);
-                config.setColumnCount(1);
+                //config.setColumnCount(1);
                 AppUtil.saveConfig(getActivity(),config);
                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
@@ -200,6 +201,7 @@ public class FontFragment extends Fragment implements FontsCallback {
         //字体大小
         final NiftySlider fontBar = mRootView.findViewById(R.id.seekbar_font);
         fontBar.setValue(config.getFontSize(),false);
+        fontBar.setThumbText(HtmlUtil.getFontSize(config.getFontSize())+"");
         fontBar.setValueFrom(0);
         fontBar.setValueTo(4);
         ITEffect effect = new ITEffect(fontBar);
@@ -222,6 +224,7 @@ public class FontFragment extends Fragment implements FontsCallback {
                 if(fromUser){
                     config.setFontSize(progress);
                     AppUtil.saveConfig(getActivity(), config);
+                    fontBar.setThumbText(HtmlUtil.getFontSize(config.getFontSize())+"");
                     EventBus.getDefault().post(new ReloadDataEvent());
                 }
 
@@ -317,7 +320,7 @@ public class FontFragment extends Fragment implements FontsCallback {
 
 
          fontsRecyclerView = (RecyclerView) mRootView.findViewById(R.id.rv_fonts);
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 6);
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 4);
 
         // 将布局管理器设置到RecyclerView中
         fontsRecyclerView.setLayoutManager(layoutManager);
@@ -326,7 +329,7 @@ public class FontFragment extends Fragment implements FontsCallback {
         iv_font_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ll_font_select.setVisibility(View.INVISIBLE);
+                ll_font_select.setVisibility(View.GONE);
             }
         });
     }
@@ -337,7 +340,8 @@ public class FontFragment extends Fragment implements FontsCallback {
         config.setFont(fontName);
         AppUtil.saveConfig(getActivity(),config);
         EventBus.getDefault().post(new ReloadDataEvent());
-        ll_font_select.setVisibility(View.INVISIBLE);
+        ll_font_select.setVisibility(View.GONE);
+
 
     }
 }

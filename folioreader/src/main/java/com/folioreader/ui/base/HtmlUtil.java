@@ -91,9 +91,9 @@ public final class HtmlUtil {
         //添加图片样式
         ScreenUtils screenUtils = new ScreenUtils(context);
         int maxHeight = (int)(screenUtils.getRealHeight()) -70;
-        int maxWidth = (int)(screenUtils.getRealWidth()/config.getColumnCount()) - config.getBodyPadding()*2;
+        int maxWidth = (int)(screenUtils.getRealWidth()/config.getColumnCount()) - getBodyPadding(config.getBodyPadding())*2;
         toInject += "<style>\n";
-        toInject += " img,image {\n";
+        toInject += " img,image,svg, audio, video {\n";
         toInject += " max-height: "+maxHeight +"px !important;\n";
         toInject += " max-width: "+maxWidth +"px !important;\n";
         toInject += "}\n";
@@ -167,19 +167,19 @@ public final class HtmlUtil {
         Integer padding = 10;
         switch (config.getBodyPadding()) {
             case 0:
-                padding = 10;
-                break;
-            case 1:
-                padding = 20;
-                break;
-            case 2:
                 padding = 30;
                 break;
-            case 3:
+            case 1:
                 padding = 40;
                 break;
-            case 4:
+            case 2:
                 padding = 50;
+                break;
+            case 3:
+                padding = 60;
+                break;
+            case 4:
+                padding = 70;
                 break;
             default:
                 break;
@@ -188,8 +188,8 @@ public final class HtmlUtil {
          bodyStyles += "padding-right: "+ padding +"px;";
         htmlContent = htmlContent.replace("<body",
                         "<body style=\"" + bodyStyles + "\"");
-        htmlContent =  replaceImageHeight(htmlContent,maxHeight);
-        htmlContent =  replaceImageWidth(htmlContent,maxWidth);
+   //     htmlContent =  replaceImageHeight(htmlContent,maxHeight);
+    //    htmlContent =  replaceImageWidth(htmlContent,maxWidth);
         return htmlContent;
     }
 
@@ -254,5 +254,46 @@ public final class HtmlUtil {
         matcher.appendTail(stringBuffer);
         // 最终完成替换后的结果
         return stringBuffer.toString();
+    }
+
+    public static int getFontSize(int progress){
+        switch (progress) {
+            case 0:
+                return 12;
+            case 1:
+                return 16;
+            case 2:
+                return 20;
+            case 3:
+                return 24;
+            case 4:
+                return 28;
+            default:
+                break;
+        }
+        return 20;
+    }
+    public static int getBodyPadding(int progress){
+        int padding = 0;
+        switch (progress) {
+            case 0:
+                padding = 30;
+                break;
+            case 1:
+                padding = 40;
+                break;
+            case 2:
+                padding = 50;
+                break;
+            case 3:
+                padding = 60;
+                break;
+            case 4:
+                padding = 70;
+                break;
+            default:
+                break;
+        }
+        return padding;
     }
 }

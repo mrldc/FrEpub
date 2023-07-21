@@ -428,14 +428,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             } else {
                 setupBook()
             }
-            if (ContextCompat.checkSelfPermission(
-                    this, Manifest.permission.WRITE_SETTINGS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this, getWriteSettingsPerms(), WRITE_SETTING_REQUEST
-                )
-            }
+
         } else {
             setupBook()
         }
@@ -443,8 +436,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
       //  window.statusBarColor = Color.TRANSPARENT;
-         originBrightness = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS)
-
+       //  originBrightness = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS)
+        val layoutParams: WindowManager.LayoutParams = getWindow().getAttributes()
+        originBrightness = (layoutParams.screenBrightness*255).toInt()
         initScreenLight(config!!.light)
 
     }
@@ -487,7 +481,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             setColorAlpha(ContextCompat.getColor(this, R.color.active_progress_color), 1f)
         val inactiveTrackColor = setColorAlpha(
             ContextCompat.getColor(this, R.color.inactive_progress_color),
-            0.1f
+            1f
         )
         val iconTintColor = setColorAlpha(
             ContextCompat.getColor(this, R.color.we_read_theme_color),
@@ -548,7 +542,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         //收藏
         ll_collect?.setOnClickListener {
-            gotoChapterByNumber(3,4)
+
         }
         //去听书
         ll_listen_book?.setOnClickListener {
@@ -1648,7 +1642,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         })
 
         mFolioPageViewPager!!.setDirection(direction)
-        mFolioPageViewPager!!.offscreenPageLimit = 5
+       // mFolioPageViewPager!!.offscreenPageLimit = 5
         mFolioPageFragmentAdapter = FolioPageFragmentAdapter(
             supportFragmentManager, spine, bookFileName, mBookId, pageTrackerViewModel
         )
@@ -1923,13 +1917,11 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     }
 
     fun initScreenLight(light: Int){
+        val layoutParams: WindowManager.LayoutParams = getWindow().getAttributes()
+        layoutParams.screenBrightness = light / 255f //因为这个值是[0, 1]范围的
+        getWindow().setAttributes(layoutParams)
 
-        val contentResolver: ContentResolver = getContentResolver()
 
-        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, light)
-        contentResolver.notifyChange(
-            Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS),
-            null
-        )
     }
+
 }

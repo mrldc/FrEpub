@@ -37,6 +37,10 @@
     <color name="highlight_02">#6DD53C</color>
     <color name="highlight_03">#3CA4DE</color>
     <color name="highlight_04">#DA50CE</color>
+    <color name="highlight_01_bg">#66DD4F0F</color>
+    <color name="highlight_02_bg">#666DD53C</color>
+    <color name="highlight_03_bg">#663CA4DE</color>
+    <color name="highlight_04_bg">#66DA50CE</color>
 
     <color name="background">#FFFFFF</color>
     <color name="background02">#EDEAE4</color>

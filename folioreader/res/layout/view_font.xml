@@ -24,7 +24,7 @@
         android:orientation="horizontal"
         android:layout_gravity="end"
         android:gravity="center_vertical"
-        android:layout_marginHorizontal="16dp"
+        android:paddingHorizontal="25dp"
         >
 
         <LinearLayout
@@ -150,39 +150,56 @@
         </LinearLayout>
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/ll_font"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="28dp"
         android:orientation="horizontal"
         android:layout_gravity="end"
         android:gravity="center_vertical"
-        android:layout_marginHorizontal="8dp"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
         >
 
 
         <com.litao.slider.NiftySlider
             android:id="@+id/seekbar_font"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:padding="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_weight="1"
             android:valueFrom="0"
             android:valueTo="4"
             app:trackHeight="30dp"
-            app:thumbRadius="18dp"
-            app:thumbTextSize="12sp"
+            app:thumbRadius="15dp"
+            app:thumbTextSize="10sp"
             app:thumbText="字体"
             android:hapticFeedbackEnabled="true"
             app:thumbTextColor="@color/we_read_theme_color"
             app:thumbColor="@color/we_read_thumb_color"
             android:stepSize="1"
             app:thumbWithinTrackBounds="true"
-            app:enableDrawHalo="false"
-
- />
-
+            android:layout_marginEnd="5dp"
+            app:enableDrawHalo="false" />
+        <com.litao.slider.NiftySlider
+            android:id="@+id/seekbar_margins"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:layout_marginStart="5dp"
+            android:valueFrom="0"
+            android:valueTo="4"
+            app:trackHeight="30dp"
+            app:thumbRadius="15dp"
+            app:thumbTextSize="10sp"
+            app:thumbText="边距"
+            android:hapticFeedbackEnabled="true"
+            app:thumbTextColor="@color/we_read_theme_color"
+            app:thumbColor="@color/we_read_thumb_color"
+            android:stepSize="1"
+            app:thumbWithinTrackBounds="true"
+            app:enableDrawHalo="false" />
       <!--  <ImageView
             android:layout_width="15dp"
             android:layout_height="15dp"
@@ -200,7 +217,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="24dp"
             android:src="@mipmap/ic_font" />-->
-    </RelativeLayout>
+    </LinearLayout>
 
 
 
@@ -209,95 +226,43 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="25dp"
         android:orientation="horizontal"
+        android:layout_gravity="end"
         android:gravity="center_vertical"
-        android:layout_marginTop="16dp"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
+        android:layout_marginBottom="45dp"
         >
-        <RelativeLayout
-            android:id="@+id/ll_margins"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="6dp"
-            android:orientation="horizontal"
-            android:layout_gravity="end"
-            android:gravity="center_vertical"
-            android:layout_marginHorizontal="8dp"
-            >
-
-            <com.litao.slider.NiftySlider
-                android:id="@+id/seekbar_margins"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:valueFrom="0"
-                android:valueTo="4"
-                app:trackHeight="30dp"
-                app:thumbRadius="18dp"
-                app:thumbTextSize="12sp"
-                app:thumbText="边距"
-                android:hapticFeedbackEnabled="true"
-                app:thumbTextColor="@color/we_read_theme_color"
-                app:thumbColor="@color/we_read_thumb_color"
-                android:stepSize="1"
-                app:thumbWithinTrackBounds="true"
-                app:enableDrawHalo="false" />
-
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/ll_space"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="6dp"
-            android:orientation="horizontal"
-            android:layout_gravity="end"
-            android:gravity="center_vertical"
-            android:layout_marginHorizontal="8dp"
-            >
 
             <com.litao.slider.NiftySlider
                 android:id="@+id/seekbar_space"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
                 android:valueFrom="0"
                 android:valueTo="4"
                 app:trackHeight="30dp"
-                app:thumbRadius="18dp"
-                app:thumbTextSize="12sp"
+                app:thumbRadius="15dp"
+                app:thumbTextSize="10sp"
                 app:thumbText="行距"
                 android:hapticFeedbackEnabled="true"
                 app:thumbTextColor="@color/we_read_theme_color"
                 app:thumbColor="@color/we_read_thumb_color"
                 android:stepSize="1"
                 app:thumbWithinTrackBounds="true"
-                app:enableDrawHalo="false"  />
+                app:enableDrawHalo="false"
+                android:layout_marginEnd="5dp"
+                />
 
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_system"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginHorizontal="16dp"
-
-        >
         <RelativeLayout
             android:id="@+id/rl_font_bottom"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_weight="1"
-            android:layout_height="34dp"
+            android:layout_height="35dp"
             android:orientation="horizontal"
+            android:layout_marginStart="5dp"
             android:background="@drawable/shape_34_solid_f8f8f8_bg"
             >
 
@@ -324,46 +289,14 @@
 
         </RelativeLayout>
 
-
-        <RelativeLayout
-            android:visibility="invisible"
-            android:id="@+id/rl_page_way"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="60dp"
-            android:orientation="horizontal"
-            android:layout_marginStart="16dp"
-            android:background="@drawable/shape_34_solid_f8f8f8_bg"
-            >
-
-            <TextView
-                android:id="@+id/tv_left_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:layout_marginStart="20dp"
-                android:textSize="14sp"
-                android:textColor="#333333"
-                android:text="翻页方式" />
-            <ImageView
-                android:id="@+id/iv_right_1"
-                android:layout_width="10dp"
-                android:layout_height="16dp"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="20dp"
-                android:src="@mipmap/ic_directory_item_right" />
-
-        </RelativeLayout>
     </LinearLayout>
+
+
 </LinearLayout>
     <LinearLayout
         android:id="@+id/ll_font_select"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
         android:visibility="gone"
@@ -392,7 +325,7 @@
         </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="230dp"
+            android:layout_height="220dp"
             android:id="@+id/rv_fonts"
             >
 

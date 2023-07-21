@@ -1,7 +1,9 @@
 package com.folioreader.ui.fragment;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -115,12 +118,21 @@ public class LightFragment extends Fragment {
                 if (fromUser) {//以免太暗
                     config.setLight(progress);
                     AppUtil.saveConfig(getActivity(), config);
-                  /*  WindowManager.LayoutParams layoutParams = getActivity().getWindow().getAttributes();
-                    layoutParams.screenBrightness = (float) progress / 255;//因为这个值是[0, 1]范围的
-                    getActivity().getWindow().setAttributes(layoutParams);*/
-                    ContentResolver contentResolver = getActivity().getContentResolver();
-                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, progress);
-                    contentResolver.notifyChange(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS),null);
+
+                    WindowManager.LayoutParams layoutParams = getActivity().getWindow().getAttributes();
+                    layoutParams.screenBrightness = (float) progress/255 ;//因为这个值是[0, 1]范围的
+                    getActivity().getWindow().setAttributes(layoutParams);
+                  /*  if (ContextCompat.checkSelfPermission(
+                            getActivity(), Manifest.permission.WRITE_SETTINGS
+                    ) != PackageManager.PERMISSION_GRANTED
+                    ){
+                        Toast.makeText(getActivity(),"请前往设置->应用权限 打开系统设置权限",Toast.LENGTH_LONG).show();
+                    }else{
+                        ContentResolver contentResolver = getActivity().getContentResolver();
+                        Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, progress);
+                        contentResolver.notifyChange(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS),null);
+                    }*/
+
                 }
 
             }

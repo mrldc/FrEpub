@@ -19,8 +19,8 @@
 
             <LinearLayout
                 android:id="@+id/firstSectionLayout"
-                android:layout_width="440dp"
-                android:layout_height="100dp"
+                android:layout_width="251dp"
+                android:layout_height="73dp"
                 android:background="@drawable/shape_20_solid_cc000000_bg"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -82,8 +82,8 @@
                     android:orientation="horizontal">
 
                     <FrameLayout
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:background="@drawable/shape_20_solid_cc000000_bg"
                         android:gravity="center"
                         >
@@ -101,8 +101,8 @@
                     </FrameLayout>
 
                     <LinearLayout
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_marginStart="5dp"
                         android:background="@drawable/shape_20_solid_cc000000_bg"
                         android:gravity="center"
@@ -115,8 +115,8 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_marginStart="5dp"
                         android:background="@drawable/shape_20_solid_cc000000_bg"
                         android:gravity="center"
@@ -130,14 +130,14 @@
 
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="60dp"
+                        android:layout_height="34dp"
                         android:layout_marginStart="5dp"
                         android:background="@drawable/shape_20_solid_cc000000_bg"
                         android:gravity="center"
                         android:orientation="horizontal">
                         <FrameLayout
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
                             android:background="@drawable/shape_20_solid_cc000000_bg"
                             android:gravity="center"
                             >
@@ -156,8 +156,8 @@
                                 app:srcCompat="@mipmap/ic_selection_right_white" />
                         </FrameLayout>
                         <FrameLayout
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
                             android:background="@drawable/shape_20_solid_cc000000_bg"
                             android:gravity="center"
 
@@ -177,8 +177,8 @@
                                 app:srcCompat="@mipmap/ic_selection_right_white" />
                         </FrameLayout>
                         <FrameLayout
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
                             android:background="@drawable/shape_20_solid_cc000000_bg"
                             android:gravity="center"
 
@@ -199,8 +199,8 @@
                         </FrameLayout>
 
                         <FrameLayout
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
                             android:background="@drawable/shape_20_solid_cc000000_bg"
                             android:gravity="center"
 

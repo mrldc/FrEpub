@@ -74,49 +74,7 @@ public class HomeActivity extends AppCompatActivity
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        findViewById(R.id.btn_raw).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Config config = AppUtil.getSavedConfig(getApplicationContext());
-                if (config == null)
-                    config = new Config();
-                config.setAllowedDirection(Config.AllowedDirection.VERTICAL_AND_HORIZONTAL);
-                config.setShowTextSelection(true);
-                /*folioReader.setConfig(config, true)
-                        .openBook(R.raw.four);*/
-                String path  =  compatActivity.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)+"/10005.epub";
-                File file = new File(path);
-                try {
-                    int permission =ActivityCompat.checkSelfPermission(compatActivity,"android.permission.READ_EXTERNAL_STORAGE");
-                    if(permission != PackageManager.PERMISSION_GRANTED){
-                        Log.v("无权限","");
-                    }else
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        if(Environment.isExternalStorageLegacy()){
-                            FileInputStream fis = new FileInputStream(file);
-                            byte[] bytes = new byte[fis.available()];
-                            fis.read(bytes);
-                            String ss = new String(bytes);
-                            fis.close();
-                        }
-                    }
-
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                folioReader.setConfig(config, true)
-//                .openBook(R.raw.accessible_epub_3);
-                        .openBook(path);
-            }
-        });
-
-        findViewById(R.id.btn_assest).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
         findViewById(R.id.btn_001).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

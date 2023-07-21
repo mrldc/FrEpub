@@ -3,24 +3,7 @@
     android:layout_height="match_parent"
     android:layout_centerInParent="true">
 
-    <Button
-        android:id="@+id/btn_raw"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="10dp"
-        android:text="Open epub from raw" />
 
-    <Button
-        android:id="@+id/btn_assest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_raw"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="10dp"
-        android:text="Open epub assests" />
     <Button
         android:id="@+id/btn_001"
         android:layout_width="match_parent"
@@ -28,9 +11,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="10dp"
-        android:layout_below="@+id/btn_assest"
-
-        android:text="001" />
+        android:text="10001" />
     <Button
         android:id="@+id/btn_002"
         android:layout_width="match_parent"
@@ -39,7 +20,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="10dp"
         android:layout_below="@+id/btn_001"
-        android:text="002" />
+        android:text="10002" />
     <Button
         android:id="@+id/btn_003"
         android:layout_width="match_parent"
@@ -48,7 +29,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="10dp"
         android:layout_below="@+id/btn_002"
-        android:text="003" />
+        android:text="10003" />
     <Button
         android:id="@+id/btn_004"
         android:layout_width="match_parent"
@@ -57,5 +38,5 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="10dp"
         android:layout_below="@+id/btn_003"
-        android:text="004" />
+        android:text="10004" />
 </RelativeLayout>

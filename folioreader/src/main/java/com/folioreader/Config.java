@@ -44,10 +44,10 @@ public class Config implements Parcelable {
     private static final int DEFAULT_THEME_COLOR_INT =
             ContextCompat.getColor(AppContext.get(), R.color.default_theme_accent_color);
 
-    private String font = "Roboto";
+    private String font = "冬青黑体W3";
 
     private String backgroundColor = "";
-    private int bodyPadding = 10;
+    private int bodyPadding = 2;
     private int textSpace = 1;
     private int fontSize = 2;
     //列数
@@ -130,7 +130,7 @@ public class Config implements Parcelable {
             } else {
                 font = getBundleItem(bundle, CONFIG_FONT, "Roboto");
                 backgroundColor = getBundleItem(bundle, BACKGROUND_COLOR,"");
-                bodyPadding = getBundleItem(bundle, BODY_PADDING,10);
+                bodyPadding = getBundleItem(bundle, BODY_PADDING,2);
                 textSpace = getBundleItem(bundle, TEXT_SPACE,5);
                 columnCount = getBundleItem(bundle, COLUMN_COUNT,2);
                 light = getBundleItem(bundle, LIGHT,100);
@@ -170,7 +170,7 @@ public class Config implements Parcelable {
         showRemainingIndicator = false;
         showTextSelection = true;
         backgroundColor = null;
-        bodyPadding = 10;
+        bodyPadding = 2;
         textSpace = 5;
         columnCount = 2;
         light = 100;
