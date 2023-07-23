@@ -47,4 +47,6 @@ public interface FolioActivityCallback {
 
     Book getReadRecord();
     void updateReadRecord(Book book);
+    //控制显示哪一个tab
+    void tabController(Boolean directory ,Boolean write  ,Boolean light  , Boolean font  );
 }

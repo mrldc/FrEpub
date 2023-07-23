@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.net.Uri
@@ -22,12 +23,10 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
-import androidx.viewpager.widget.ViewPager.SCROLL_STATE_DRAGGING
 import androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE
 import com.folioreader.Config
 import com.folioreader.FolioReader
@@ -54,10 +53,7 @@ import com.folioreader.util.AppUtil
 import com.folioreader.util.HighlightUtil
 import com.folioreader.util.UiUtil
 import com.folioreader.viewmodels.PageTrackerViewModel
-import com.scwang.smart.refresh.footer.ClassicsFooter
-import com.scwang.smart.refresh.header.ClassicsHeader
 import com.scwang.smart.refresh.layout.api.RefreshLayout
-import com.scwang.smart.refresh.layout.listener.OnRefreshListener
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -230,7 +226,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                 Log.v(FolioActivity.LOG_TAG, "笔记详情$markVo")
                 if(markVo != null){
                     val noteDetailFragment = NoteDetailFragment(markVo.bookId,markVo.id,markVo.note,markVo.content,
-                        MarkVo.PageNoteType,this)
+                        MarkVo.PageNoteType,this,markVo.rangy)
                     noteDetailFragment.show(this.activity!!.supportFragmentManager,"")
                 }
             }
@@ -501,6 +497,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         mWebview!!.setParentFragment(this)
         mWebview!!.setBackgroundColor(0)
         mWebview!!.background.alpha = 0
+        //加载图片资源
         webViewPager = webViewLayout.findViewById(R.id.webViewPager)
 
         webViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -582,7 +579,6 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             Log.v(LOG_TAG,"webViewClient onPageFinished -->chapter:$spineIndex")
             mWebview!!.loadUrl("javascript:checkCompatMode()")
             mWebview!!.loadUrl("javascript:alert(getReadingTime())")
-
             if (mActivityCallback!!.direction == Config.Direction.HORIZONTAL)
                initHorizontalDirection()
 
@@ -889,11 +885,11 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         )
     }
     //删除下划线
-    fun unhighlightSelection(){
+    fun unhighlightSelection(id: String?){
         mWebview!!.loadUrl(
             String.format(
-                "javascript:if(typeof ssReader !== \"undefined\"){ssReader.unHighlightSelection();}"
-
+                "javascript:if(typeof ssReader !== \"undefined\"){ssReader.unHighlightSelection('%s');}",
+                id
             )
         )
     }

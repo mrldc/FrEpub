@@ -19,7 +19,6 @@ import android.Manifest
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.BroadcastReceiver
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -32,7 +31,6 @@ import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.*
-import android.provider.Settings
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
@@ -50,6 +48,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -149,6 +149,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var searchLocator: SearchLocator? = null
     private var originBrightness : Int = 10
 
+    private var tabIndex: Int = -1
 
     private var displayMetrics: DisplayMetrics? = null
     private var density: Float = 0.toFloat()
@@ -492,9 +493,11 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rl_mark_content = findViewById(R.id.rl_mark_content)
 
         rlMain!!.setOnClickListener(View.OnClickListener {
+            hideSystemUI()
+        })
+        rl_edit!!.setOnClickListener(View.OnClickListener {
 
         })
-
         //进度条
         niftySlider = findViewById(R.id.ns_progress_bar);
         val activeTrackColor =
@@ -603,7 +606,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 //        })
         //写笔记输入界面
         et_page_note?.setOnFocusChangeListener { view: View, hasFocus: Boolean ->
-            if(hasFocus){
+           /* if(hasFocus){
                 Log.v(LOG_TAG,"点击写笔记输入界面")
                 InputMethodUtils.show(et_page_note)
                 //获取段落第一句
@@ -617,14 +620,23 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 }
 
 
-            }
+            }*/
 
 
         }
         //保存页笔记
         tv_page_save?.setOnClickListener{
 
-            if(pageMarkReadLocator != null && et_page_note!!.text != null ){
+            var newNote = et_page_note!!.text.toString()
+
+            currentFragment!!.highlight(HighlightImpl.HighlightStyle.mark,newNote,false)
+            //关闭编辑
+            rl_edit!!.visibility = View.GONE
+            tv_mark_content!!.text = ""
+            et_page_note!!.setText("")
+            InputMethodUtils.close(et_page_note)
+                //页笔记不要
+           /* if(pageMarkReadLocator != null && et_page_note!!.text != null ){
 
                 //查看当前页是否存在
                 var markVo = BookmarkTable.getPageNote(mBookId,BookmarkTable.getReadLocatorString(pageMarkReadLocator),pageMarkReadLocator!!.locations.cfi) as MarkVo?
@@ -646,28 +658,13 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                }
 
 
-            }
+            }*/
 
         }
         //目录
         var ll_directory= findViewById<LinearLayout>(R.id.ll_directory)
         ll_directory?.setOnClickListener {
-            if (currentFragment!!.mWebview != null) currentFragment!!.mWebview!!.dismissPopupWindowAndClearSelection()
-
-            if(rlMain!!.visibility == View.VISIBLE){
-                statusIcon(false, false, false, false)
-                rlMain!!.visibility = View.GONE
-                rl_edit!!.visibility = View.GONE
-                niftySlider!!.visibility = View.VISIBLE
-                rl_top!!.visibility = View.VISIBLE
-            }else{
-                statusIcon(true, false, false, false)
-                goToTableOfCOntentActivity()
-                rlMain!!.visibility = View.VISIBLE
-                rl_edit!!.visibility = View.GONE
-                niftySlider!!.visibility = View.GONE
-                rl_top!!.visibility = View.GONE
-            }
+            tabController(true,false,false,false)
 //            iv_directory!!.setImageResource(R.mipmap.ic_directory_select)
 //            iv_write!!.setImageResource(R.mipmap.ic_note_select)
 //            iv_light!!.setImageResource(R.mipmap.ic_day_night_select)
@@ -677,22 +674,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         //笔记页面
         var ll_write= findViewById<LinearLayout>(R.id.ll_write)
         ll_write?.setOnClickListener {
-            if (currentFragment!!.mWebview != null) currentFragment!!.mWebview!!.dismissPopupWindowAndClearSelection()
-
-            if(rlMain!!.visibility == View.VISIBLE){
-                statusIcon(false, false, false, false)
-                rlMain!!.visibility = View.GONE
-                rl_edit!!.visibility = View.GONE
-                niftySlider!!.visibility = View.VISIBLE
-                rl_top!!.visibility = View.VISIBLE
-            }else{
-                statusIcon(false, true, false, false)
-                gaToHighlightFragment()
-                rlMain!!.visibility = View.VISIBLE
-                rl_edit!!.visibility = View.GONE
-                niftySlider!!.visibility = View.GONE
-                rl_top!!.visibility = View.GONE
-            }
+            tabController(false,true,false,false)
            // startContentHighlightActivity()
 //            iv_write!!.setImageResource(R.mipmap.ic_note_select)
 
@@ -700,50 +682,14 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         //亮度、背景
         var ll_light= findViewById<LinearLayout>(R.id.ll_light)
         ll_light?.setOnClickListener {
-            if (currentFragment!!.mWebview != null) currentFragment!!.mWebview!!.dismissPopupWindowAndClearSelection()
-
-            if(rlMain!!.visibility == View.VISIBLE){
-                statusIcon(false, false, false, false)
-                rlMain!!.visibility = View.GONE
-                rl_edit!!.visibility = View.GONE
-                niftySlider!!.visibility = View.VISIBLE
-                rl_top!!.visibility = View.VISIBLE
-            }else{
-                statusIcon(false, false, true, false)
-                val ft: FragmentTransaction =
-                    supportFragmentManager.beginTransaction()
-                ft.replace(R.id.fl_main, LightFragment())
-                ft.commit()
-                rlMain!!.visibility = View.VISIBLE
-                rl_edit!!.visibility = View.GONE
-                niftySlider!!.visibility = View.GONE
-                rl_top!!.visibility = View.GONE
-            }
+            tabController(false,false,true,false)
 //            iv_light!!.setImageResource(R.mipmap.ic_day_night_select)
 
         }
         //字体
         var ll_font= findViewById<LinearLayout>(R.id.ll_font)
         ll_font?.setOnClickListener {
-            if (currentFragment!!.mWebview != null) currentFragment!!.mWebview!!.dismissPopupWindowAndClearSelection()
-
-            if(rlMain!!.visibility == View.VISIBLE){
-                statusIcon(false, false, false, false)
-                rlMain!!.visibility = View.GONE
-                rl_edit!!.visibility = View.GONE
-                niftySlider!!.visibility = View.VISIBLE
-                rl_top!!.visibility = View.VISIBLE
-            }else{
-                statusIcon(false, false, false, true)
-                val ft: FragmentTransaction =
-                    supportFragmentManager.beginTransaction()
-                ft.replace(R.id.fl_main, FontFragment())
-                ft.commit()
-                rlMain!!.visibility = View.VISIBLE
-                rl_edit!!.visibility = View.GONE
-                niftySlider!!.visibility = View.GONE
-                rl_top!!.visibility = View.GONE
-            }
+            tabController(false,false,false,true)
 //            iv_font!!.setImageResource(R.mipmap.ic_font_select)
 
 //            showConfigBottomSheetDialogFragment()
@@ -1011,7 +957,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private fun gaToHighlightFragment(){
         val bookId = mBookId
         val bookTitle = bookFileName
-        val noteFragment = NoteFragment.newInstance(bookId, bookTitle)
+        val noteFragment = NoteFragment.newInstance(bookId, bookTitle,this)
         val ft = supportFragmentManager.beginTransaction()
         ft.replace(R.id.fl_main, noteFragment)
         ft.commit()
@@ -1181,6 +1127,170 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     override fun updateReadRecord(book: Book?) {
         readBook = book
+    }
+
+    override fun tabController(
+        directory: Boolean,
+        write: Boolean,
+        light: Boolean,
+        font: Boolean
+    ) {
+        //目录
+        if(directory){
+            if (currentFragment!!.mWebview != null) currentFragment!!.mWebview!!.dismissPopupWindowAndClearSelection()
+            if(rlMain!!.visibility == View.VISIBLE){
+                //判读是否是当前页面
+
+                if (tabIndex == 0) {
+                    //关闭当前
+                    statusIcon(false, false, false, false)
+                    rlMain!!.visibility = View.GONE
+                    rl_edit!!.visibility = View.GONE
+                    niftySlider!!.visibility = View.VISIBLE
+                    rl_top!!.visibility = View.VISIBLE
+                    tabIndex = -1
+                } else {
+                    //显示
+                    statusIcon(true, false, false, false)
+                    goToTableOfCOntentActivity()
+                    rlMain!!.visibility = View.VISIBLE
+                    rl_edit!!.visibility = View.GONE
+                    niftySlider!!.visibility = View.GONE
+                    rl_top!!.visibility = View.GONE
+                    tabIndex = 0
+                }
+
+
+            }else{
+                statusIcon(true, false, false, false)
+                goToTableOfCOntentActivity()
+                rlMain!!.visibility = View.VISIBLE
+                rl_edit!!.visibility = View.GONE
+                niftySlider!!.visibility = View.GONE
+                rl_top!!.visibility = View.GONE
+                tabIndex = 0
+            }
+        }
+        //笔记
+        else if(write){
+            if (currentFragment!!.mWebview != null) currentFragment!!.mWebview!!.dismissPopupWindowAndClearSelection()
+
+            if(rlMain!!.visibility == View.VISIBLE){
+                if(tabIndex == 1){
+                    //关闭
+                    statusIcon(false, false, false, false)
+                    rlMain!!.visibility = View.GONE
+                    rl_edit!!.visibility = View.GONE
+                    niftySlider!!.visibility = View.VISIBLE
+                    rl_top!!.visibility = View.VISIBLE
+                    tabIndex = -1
+                }else{
+                    //显示
+                    statusIcon(false, true, false, false)
+                    gaToHighlightFragment()
+                    rlMain!!.visibility = View.VISIBLE
+                    rl_edit!!.visibility = View.GONE
+                    niftySlider!!.visibility = View.GONE
+                    rl_top!!.visibility = View.GONE
+                    tabIndex = 1
+                }
+
+            }else{
+                statusIcon(false, true, false, false)
+                gaToHighlightFragment()
+                rlMain!!.visibility = View.VISIBLE
+                rl_edit!!.visibility = View.GONE
+                niftySlider!!.visibility = View.GONE
+                rl_top!!.visibility = View.GONE
+                tabIndex = 1
+            }
+        }
+        //亮度
+        else if(light){
+            if (currentFragment!!.mWebview != null) currentFragment!!.mWebview!!.dismissPopupWindowAndClearSelection()
+
+            if(rlMain!!.visibility == View.VISIBLE){
+                if(tabIndex == 2){
+                    //关闭
+                    statusIcon(false, false, false, false)
+                    rlMain!!.visibility = View.GONE
+                    rl_edit!!.visibility = View.GONE
+                    niftySlider!!.visibility = View.VISIBLE
+                    rl_top!!.visibility = View.VISIBLE
+                    tabIndex = -1
+                }else{
+                    //显示
+                    statusIcon(false, false, true, false)
+                    val ft: FragmentTransaction =
+                        supportFragmentManager.beginTransaction()
+                    ft.replace(R.id.fl_main, LightFragment(this))
+                    ft.commit()
+                    rlMain!!.visibility = View.VISIBLE
+                    rl_edit!!.visibility = View.GONE
+                    niftySlider!!.visibility = View.GONE
+                    rl_top!!.visibility = View.GONE
+                    tabIndex = 2
+                }
+
+            }else{
+                statusIcon(false, false, true, false)
+                val ft: FragmentTransaction =
+                    supportFragmentManager.beginTransaction()
+                ft.replace(R.id.fl_main, LightFragment(this))
+                ft.commit()
+                rlMain!!.visibility = View.VISIBLE
+                rl_edit!!.visibility = View.GONE
+                niftySlider!!.visibility = View.GONE
+                rl_top!!.visibility = View.GONE
+                tabIndex = 2
+            }
+        }
+        //字体
+        else if(font){
+            if (currentFragment!!.mWebview != null) currentFragment!!.mWebview!!.dismissPopupWindowAndClearSelection()
+
+            if(rlMain!!.visibility == View.VISIBLE){
+                if(tabIndex == 3){
+                    //关闭
+                    statusIcon(false, false, false, false)
+                    rlMain!!.visibility = View.GONE
+                    rl_edit!!.visibility = View.GONE
+                    niftySlider!!.visibility = View.VISIBLE
+                    rl_top!!.visibility = View.VISIBLE
+                    tabIndex = -1
+                }else{
+                    //显示
+                    statusIcon(false, false, false, true)
+                    val ft: FragmentTransaction =
+                        supportFragmentManager.beginTransaction()
+                    ft.replace(R.id.fl_main, FontFragment())
+                    ft.commit()
+                    rlMain!!.visibility = View.VISIBLE
+                    rl_edit!!.visibility = View.GONE
+                    niftySlider!!.visibility = View.GONE
+                    rl_top!!.visibility = View.GONE
+                    tabIndex = 3
+                }
+
+            }else{
+                statusIcon(false, false, false, true)
+                val ft: FragmentTransaction =
+                    supportFragmentManager.beginTransaction()
+                ft.replace(R.id.fl_main, FontFragment())
+                ft.commit()
+                rlMain!!.visibility = View.VISIBLE
+                rl_edit!!.visibility = View.GONE
+                niftySlider!!.visibility = View.GONE
+                rl_top!!.visibility = View.GONE
+                tabIndex = 3
+            }
+        }else{
+            statusIcon(false, false, false, false)
+            rlMain!!.visibility = View.GONE
+            rl_edit!!.visibility = View.GONE
+            niftySlider!!.visibility = View.VISIBLE
+            rl_top!!.visibility = View.VISIBLE
+        }
     }
 
     override fun onDirectionChange(newDirection: Config.Direction) {
@@ -1937,8 +2047,19 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     //写笔记请求
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun writeHighlightNote(highlightNoteEvent: HighlightNoteEvent ){
-        val noteDetailFragment = NoteDetailFragment(null,null,null,highlightNoteEvent.content,MarkVo.HighlightMarkType,currentFragment!!)
+        val noteDetailFragment = AddNoteFragment(null,null,null,highlightNoteEvent.content,MarkVo.HighlightMarkType,currentFragment!!,null)
         noteDetailFragment.show(supportFragmentManager,"")
+
+        //
+        rl_edit!!.visibility = View.GONE
+        rl_top!!.visibility = View.GONE
+        rl_bottom!!.visibility = View.GONE
+        rl_mark_content!!.visibility = View.GONE
+        tv_mark_content!!.text = highlightNoteEvent.content
+        rlMain!!.visibility = View.GONE
+        niftySlider!!.visibility = View.GONE
+     /*   et_page_note!!.requestFocus()
+        InputMethodUtils.show(et_page_note)*/
     }
 
     override fun onError() {
@@ -1967,7 +2088,6 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         val layoutParams: WindowManager.LayoutParams = getWindow().getAttributes()
         layoutParams.screenBrightness = light / 255f //因为这个值是[0, 1]范围的
         getWindow().setAttributes(layoutParams)
-
 
     }
 

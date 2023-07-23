@@ -32,6 +32,7 @@ import com.folioreader.model.MarkVo;
 import com.folioreader.model.event.NoteSelectEvent;
 import com.folioreader.model.event.UpdateHighlightEvent;
 import com.folioreader.model.sqlite.HighLightTable;
+import com.folioreader.ui.activity.FolioActivityCallback;
 import com.folioreader.ui.adapter.HighlightAdapter;
 import com.folioreader.ui.adapter.NoteAdapter;
 import com.folioreader.util.AppUtil;
@@ -46,15 +47,19 @@ public class NoteFragment extends Fragment implements NoteAdapter.NoteAdapterCal
     private String mBookId;
     RecyclerView highlightsView;
 
-    public static NoteFragment newInstance(String bookId, String epubTitle) {
-        NoteFragment highlightFragment = new NoteFragment();
+    FolioActivityCallback callback;
+
+    public static NoteFragment newInstance(String bookId, String epubTitle,FolioActivityCallback callback) {
+        NoteFragment highlightFragment = new NoteFragment(callback);
         Bundle args = new Bundle();
         args.putString(FolioReader.EXTRA_BOOK_ID, bookId);
         args.putString(Constants.BOOK_TITLE, epubTitle);
         highlightFragment.setArguments(args);
         return highlightFragment;
     }
-
+    public NoteFragment(FolioActivityCallback callback){
+        this.callback = callback;
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +89,14 @@ public class NoteFragment extends Fragment implements NoteAdapter.NoteAdapterCal
 
         adapter = new NoteAdapter(getActivity(), HighLightTable.getAllNotes(mBookId), this, config);
         highlightsView.setAdapter(adapter);
+
+        View iv_item_delete = mRootView.findViewById(R.id.iv_item_delete);
+        iv_item_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callback.tabController(false,false,false,false);
+            }
+        });
     }
 
     /**

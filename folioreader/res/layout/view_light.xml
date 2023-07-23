@@ -55,10 +55,40 @@
             >
 
             <View
+                android:id="@+id/light_background_select01"
                 android:layout_width="39dp"
                 android:layout_height="39dp"
                 android:layout_gravity="center"
+                android:visibility="gone"
                 android:background="@drawable/shape_highlight_back_1" />
+            <View
+                android:id="@+id/iv_light_2"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_gravity="center"
+                android:background="@drawable/light_background_selector_01"
+                />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            >
+
+            <View
+                android:id="@+id/light_background_select02"
+
+                android:layout_width="39dp"
+                android:layout_height="39dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:background="@drawable/shape_highlight_back_1" />
+            <View
+                android:layout_width="39dp"
+                android:layout_height="39dp"
+                android:layout_gravity="center"
+                android:background="@drawable/shape_highlight_gray" />
                 <View
                     android:id="@+id/iv_light_1"
                     android:layout_width="38dp"
@@ -66,27 +96,49 @@
                     android:layout_gravity="center"
                     android:background="@drawable/shape_highlight_1" />
         </FrameLayout>
-        <View
-            android:id="@+id/iv_light_2"
-            android:layout_width="39dp"
-            android:layout_height="39dp"
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:background="@drawable/shape_highlight_white"
-            />
-        <View
-            android:id="@+id/iv_light_3"
-            android:layout_width="39dp"
-            android:layout_height="39dp"
+            >
+
+            <View
+                android:id="@+id/light_background_select03"
+                android:layout_width="39dp"
+                android:layout_height="39dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:background="@drawable/shape_highlight_back_1" />
+            <View
+                android:id="@+id/iv_light_3"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_gravity="center"
+                android:background="@drawable/light_background_selector_02"
+                />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:background="@drawable/shape_highlight_3"
-            />
-        <View
-            android:id="@+id/iv_light_4"
-            android:layout_width="39dp"
-            android:layout_height="39dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/shape_highlight_4"
-            />
+            >
+
+            <View
+                android:id="@+id/light_background_select04"
+                android:layout_width="39dp"
+                android:layout_height="39dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:background="@drawable/shape_highlight_back_1" />
+            <View
+                android:id="@+id/iv_light_4"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_gravity="center"
+                android:background="@drawable/light_background_selector_04"
+                />
+
+        </FrameLayout>
 
 
     </LinearLayout>

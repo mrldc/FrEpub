@@ -440,7 +440,7 @@ class FolioWebView : WebView {
         val highlightImpl = HighLightTable.getHighlightForRangy(id)
        if (HighLightTable.deleteHighlight(id)) {
             //删除选中的下划线
-            uiHandler.post { parentFragment.unhighlightSelection() }
+            uiHandler.post { parentFragment.unhighlightSelection(id) }
 
             if (highlightImpl != null) {
                 HighlightUtil.sendHighlightBroadcastEvent(
@@ -778,18 +778,23 @@ class FolioWebView : WebView {
         uiHandler.post {
             if(id != null && id!!.contains(HighLightTable.MARK_TYPE)){//段落笔记
                 //查询
-              val markVo: MarkVo =  HighLightTable.getOneHighlightNote(parentFragment!!.mBookId,id)
-                if(markVo != null){
-                    val noteDetailFragment = NoteDetailFragment(markVo.bookId,markVo.id,markVo.note,markVo.content,MarkVo.HighlightMarkType,parentFragment!!)
-                    noteDetailFragment.show(parentFragment!!.activity!!.supportFragmentManager,"")
-                }
+                showNoteDetail(id)
             }else{
                 showTextSelectionPopup(id)
             }
 
         }
     }
-
+    /**查看笔记详情**/
+    @JavascriptInterface
+    fun showNoteDetail(id:String){
+        //查询
+        val markVo: MarkVo? =  HighLightTable.getOneHighlightNote(parentFragment!!.mBookId,id)
+        if(markVo != null){
+            val noteDetailFragment = NoteDetailFragment(markVo.bookId,markVo.id,markVo.note,markVo.content,MarkVo.HighlightMarkType,parentFragment!!,markVo.rangy)
+            noteDetailFragment.show(parentFragment!!.activity!!.supportFragmentManager,"")
+        }
+    }
     private fun computeTextSelectionRect(currentSelectionRect: Rect) {
         Log.v(LOG_TAG, "-> computeTextSelectionRect")
 

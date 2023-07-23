@@ -27,6 +27,7 @@ import com.folioreader.FolioReader;
 import com.folioreader.R;
 import com.folioreader.model.event.ChangeBackgroundEvent;
 import com.folioreader.model.event.ReloadDataEvent;
+import com.folioreader.ui.activity.FolioActivityCallback;
 import com.folioreader.util.AppUtil;
 import com.folioreader.util.Utils;
 import com.litao.slider.NiftySlider;
@@ -40,7 +41,15 @@ import org.greenrobot.eventbus.EventBus;
 public class LightFragment extends Fragment {
     private View mRootView;
     private NiftySlider seekBar;
+    private FolioActivityCallback callback;
 
+    private View backgroundView1;
+    private View backgroundView2;
+    private View backgroundView3;
+    private View backgroundView4;
+    public LightFragment(FolioActivityCallback callback){
+        this.callback = callback;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +61,12 @@ public class LightFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         Log.i("Bookmark fragment", "onViewCreated: inside onViewCreated ");
         super.onViewCreated(view, savedInstanceState);
+        backgroundView1 = mRootView.findViewById(R.id.light_background_select01);
+        backgroundView2 = mRootView.findViewById(R.id.light_background_select02);
+        backgroundView3 = mRootView.findViewById(R.id.light_background_select03);
+        backgroundView4 = mRootView.findViewById(R.id.light_background_select04);
+
+
         Config config = AppUtil.getSavedConfig(getActivity());
         int activeTrackColor =
                 Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_thumb_color), 1f);
@@ -65,6 +80,9 @@ public class LightFragment extends Fragment {
             @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
+                config.setLightBackground(2);
+                AppUtil.saveConfig(getActivity(),config);
+                changeBackgroundSelect(false,true,false,false);
                 EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background)));
             }
         });
@@ -73,6 +91,9 @@ public class LightFragment extends Fragment {
             @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
+                config.setLightBackground(1);
+                AppUtil.saveConfig(getActivity(),config);
+                changeBackgroundSelect(true,false,false,false);
                 EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background02)));
             }
         });
@@ -81,6 +102,9 @@ public class LightFragment extends Fragment {
             @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
+                config.setLightBackground(3);
+                AppUtil.saveConfig(getActivity(),config);
+                changeBackgroundSelect(false,false,true,false);
                 EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background03)));
             }
         });
@@ -89,6 +113,9 @@ public class LightFragment extends Fragment {
             @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
+                config.setLightBackground(4);
+                AppUtil.saveConfig(getActivity(),config);
+                changeBackgroundSelect(false,false,false,true);
                 EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background04)));
 
             }
@@ -160,5 +187,28 @@ public class LightFragment extends Fragment {
             e.printStackTrace();
         }
         return nowBrightnessValue;
+    }
+    private void changeBackgroundSelect(boolean select01,boolean select02,boolean select03,boolean select04){
+        if(select01){
+            backgroundView1.setVisibility(View.VISIBLE);
+            backgroundView2.setVisibility(View.GONE);
+            backgroundView3.setVisibility(View.GONE);
+            backgroundView4.setVisibility(View.GONE);
+        }else if(select02){
+            backgroundView1.setVisibility(View.GONE);
+            backgroundView2.setVisibility(View.VISIBLE);
+            backgroundView3.setVisibility(View.GONE);
+            backgroundView4.setVisibility(View.GONE);
+        }else if(select03){
+            backgroundView1.setVisibility(View.GONE);
+            backgroundView2.setVisibility(View.GONE);
+            backgroundView3.setVisibility(View.VISIBLE);
+            backgroundView4.setVisibility(View.GONE);
+        }else if(select04){
+            backgroundView1.setVisibility(View.GONE);
+            backgroundView2.setVisibility(View.GONE);
+            backgroundView3.setVisibility(View.GONE);
+            backgroundView4.setVisibility(View.VISIBLE);
+        }
     }
 }

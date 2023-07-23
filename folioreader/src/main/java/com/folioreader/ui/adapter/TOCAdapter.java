@@ -34,6 +34,8 @@ public class TOCAdapter extends MultiLevelExpIndListAdapter {
     private Config mConfig;
     private String cfi;
 
+    private int initPosition;
+
     public TOCAdapter(Context context, ArrayList<TOCLinkWrapper> tocLinkWrappers, String selectedHref, Config config,String cfi) {
         super(tocLinkWrappers);
         mContext = context;
@@ -118,6 +120,7 @@ public class TOCAdapter extends MultiLevelExpIndListAdapter {
                     R.color.black));
         }
         if (tocLinkWrapper.getTocLink().getHref().equals(selectedHref)) {
+            initPosition = position;
             viewHolder.sectionTitle.setTextColor(ContextCompat.getColor(mContext, R.color.red_DD4F0F));
         }
     }
@@ -161,5 +164,9 @@ public class TOCAdapter extends MultiLevelExpIndListAdapter {
         final float scale = context.getResources().getDisplayMetrics().density;
         // Convert the dps to pixels, based on density scale
         return (int) (dpValue * scale + 0.5f);
+    }
+
+    public int getInitPosition() {
+        return initPosition;
     }
 }

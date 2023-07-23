@@ -50,6 +50,8 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
     private String cfi;
     private FolioActivityCallback activityCallback;
 
+    private int initPosition = 0;
+
     public static TableOfContentFragment newInstance(Publication publication,
                                                      String selectedChapterHref, String bookTitle,String cfi,Integer pageNumber) {
         TableOfContentFragment tableOfContentFragment = new TableOfContentFragment();
@@ -66,6 +68,9 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
         return tableOfContentFragment;
     }
 
+    public TableOfContentFragment(){
+
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,17 +97,24 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
         mTableOfContentsRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_menu);
         errorView = (TextView) view.findViewById(R.id.tv_error);
         deleteView = (ImageView) view.findViewById(R.id.iv_item_delete);
-//        deleteView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                EventBus.getDefault().post(new MessageEvent("接收到TwoActivity发送过来的事件啦"));
-//            }
-//        });
+        deleteView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activityCallback.tabController(false,false,false,false);
+            }
+        });
         configRecyclerViews();
         initAdapter();
-        if (getActivity() instanceof FolioActivityCallback){
 
-        }
+        mTableOfContentsRecyclerView.scrollToPosition(mTOCAdapter.getInitPosition());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //判断跳转初始位置
+        mTableOfContentsRecyclerView.scrollToPosition(initPosition);
     }
 
     public void configRecyclerViews() {
@@ -113,11 +125,17 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
 
     private void initAdapter() {
         if (publication != null) {
+            String selectHref = getArguments().getString(SELECTED_CHAPTER_POSITION);
             if (!publication.getTableOfContents().isEmpty()) {
                 ArrayList<TOCLinkWrapper> tocLinkWrappers = new ArrayList<>();
-                for (Link tocLink : publication.getTableOfContents()) {
+                List<Link> tableOfContents = publication.getTableOfContents();
+                for (int i = 0; i < tableOfContents.size(); i++) {
+                    Link tocLink = tableOfContents.get(i);
                     TOCLinkWrapper tocLinkWrapper = createTocLinkWrapper(tocLink, 0);
                     tocLinkWrappers.add(tocLinkWrapper);
+                    if (tocLinkWrapper.getTocLink().getHref().equals(selectHref)) {
+                        initPosition = i;
+                    }
                 }
                 onLoadTOC(tocLinkWrappers);
             } else {
@@ -160,10 +178,12 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
     }
 
     public void onLoadTOC(ArrayList<TOCLinkWrapper> tocLinkWrapperList) {
+        String selectHref = getArguments().getString(SELECTED_CHAPTER_POSITION);
         mTOCAdapter = new TOCAdapter(getActivity(), tocLinkWrapperList,
-                getArguments().getString(SELECTED_CHAPTER_POSITION), mConfig,getArguments().getString(CFI));
+                selectHref, mConfig,getArguments().getString(CFI));
         mTOCAdapter.setCallback(this);
         mTableOfContentsRecyclerView.setAdapter(mTOCAdapter);
+
     }
 
     public void onError() {

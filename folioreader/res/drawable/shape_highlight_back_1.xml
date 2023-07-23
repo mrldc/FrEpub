@@ -8,6 +8,6 @@
 
         />
 
-    <solid android:color="@color/night_title_text_color" />
+    <solid android:color="@color/highlight_01" />
 
 </shape>

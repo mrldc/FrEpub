@@ -3,6 +3,8 @@ package com.folioreader.ui.fragment
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,28 +22,33 @@ import com.folioreader.model.sqlite.HighLightTable
 import com.folioreader.util.InputMethodUtils
 
 
-class NoteDetailFragment(
+class AddNoteFragment(
     var bookId: String?, var noteId: Int?, var note: String?, var content: String,
     var noteType:String,
     var fragment: FolioPageFragment,var rangy:String?) : DialogFragment() {
     var tvBookmarkNote :TextView? = null
     var rlShowView :RelativeLayout? = null
-    var rlEditView : LinearLayout? = null
     var tvEditNote :EditText? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+      //  setStyle(STYLE_NO_TITLE, R.style.MatchWidthDialog)
+
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        var window = dialog!!.window;
+        window!!.setGravity(Gravity.BOTTOM)
+        window!!.setBackgroundDrawable( ColorDrawable(Color.TRANSPARENT))
+        /*window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);*/
+        //dialog!!.setCanceledOnTouchOutside(true)
+        val rootView: View = inflater.inflate(R.layout.add_note_fragment, container, false)
 
-        dialog!!.window!!.setBackgroundDrawable( ColorDrawable(Color.TRANSPARENT))
-        val rootView: View = inflater.inflate(R.layout.dialog_folio_bookmark, container, false)
-        //展示笔记的布局
-        rlShowView = rootView.findViewById(R.id.rl_bookmark_content)
-        //编辑笔记的布局
-        rlEditView = rootView.findViewById(R.id.edit_bookmark)
          tvEditNote = rootView.findViewById(R.id.et_page_note)
-        tvEditNote!!.setText(note)
+
         var tvEditContent = rootView.findViewById<TextView>(R.id.tv_mark_content)
         tvEditContent.text = content
         var tvEditSave = rootView.findViewById<TextView>(R.id.tv_page_note_save)
@@ -54,9 +61,7 @@ class NoteDetailFragment(
                     val updateResult = BookmarkTable.updateNote(newNote,noteId,activity)
                     if(updateResult){
                         Toast.makeText(activity,"保存成功",Toast.LENGTH_SHORT).show()
-                        tvBookmarkNote!!.text = newNote
-                        rlEditView!!.visibility = View.INVISIBLE
-                        rlShowView!!.visibility = View.VISIBLE
+                        this.dismiss()
                     }else{
                         Toast.makeText(activity,"保存失败",Toast.LENGTH_SHORT).show()
                     }
@@ -72,9 +77,6 @@ class NoteDetailFragment(
                     }
                     if(updateResult){
                         Toast.makeText(activity,"保存成功",Toast.LENGTH_SHORT).show()
-                        tvBookmarkNote!!.text = newNote
-                        rlEditView!!.visibility = View.INVISIBLE
-                        rlShowView!!.visibility = View.VISIBLE
                         InputMethodUtils.close(tvEditNote)
                         dismiss()
                     }else{
@@ -85,43 +87,15 @@ class NoteDetailFragment(
             }
 
         }
-        var tvBookmarkContent = rootView.findViewById<TextView>(R.id.tv_bookmark_content)
-        tvBookmarkContent!!.text = content
-        tvBookmarkNote  = rootView.findViewById<TextView>(R.id.tv_page_note)
-        tvBookmarkNote!!.text = note
-        //删除按钮
-        var tvDeleteNote = rootView.findViewById<TextView>(R.id.tv_bookmark_delete)
-        if(noteId == null){
-            tvDeleteNote.visibility=View.GONE
-        }
-        tvDeleteNote.setOnClickListener{
-           var deleteResult = HighLightTable.deleteHighlight(noteId!!)
-            if(deleteResult){
-                Toast.makeText(activity,"删除成功",Toast.LENGTH_SHORT).show()
-                dismiss()
-                //清除标记
-                fragment.unhighlightSelection(rangy)
-            }else{
-                Toast.makeText(activity,"删除失败",Toast.LENGTH_SHORT).show()
-            }
-        }
-        //编辑
-        var tvEdit = rootView.findViewById<TextView>(R.id.tv_edit)
-        if(noteId == null){
-            tvEdit.visibility=View.GONE
-        }
-        tvEdit.setOnClickListener{
-            rlShowView!!.visibility = View.GONE
-            rlEditView!!.visibility = View.VISIBLE
-        }
-        var tvCancel = rootView.findViewById<TextView>(R.id.tv_cancel)
-        tvCancel.setOnClickListener{
-            dismiss()
-        }
-        if(noteId == null){
-            rlShowView!!.visibility = View.GONE
-            rlEditView!!.visibility = View.VISIBLE
-        }
+
         return rootView
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val dm = DisplayMetrics()
+        activity?.windowManager?.defaultDisplay!!.getMetrics(dm)
+        dialog?.window?.setLayout(dm.widthPixels * 1, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 }
