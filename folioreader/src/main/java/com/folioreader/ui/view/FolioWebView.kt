@@ -1,5 +1,6 @@
 package com.folioreader.ui.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
@@ -205,8 +206,8 @@ class FolioWebView : WebView {
                     // Delayed to avoid inconsistency of scrolling in WebView
                     scrollTo(getScrollXPixelsForPage(webViewPager.currentItem), 0)
                 }, 100)
-            }
 
+            }
             lastScrollType = LastScrollType.USER
             return true
         }
@@ -223,6 +224,7 @@ class FolioWebView : WebView {
     @JavascriptInterface
     fun dismissPopupWindow(): Boolean {
         Log.d(LOG_TAG, "-> dismissPopupWindow -> " + parentFragment.spineItem?.href)
+        stopScroll = false
         val wasShowing = popupWindow.isShowing
         if (Looper.getMainLooper().thread == Thread.currentThread()) {
             popupWindow.dismiss()
@@ -234,9 +236,16 @@ class FolioWebView : WebView {
             uiHandler.removeCallbacks(isScrollingRunnable!!)
         }
         isScrollingCheckDuration = 0
+
         return wasShowing
     }
 
+    fun dismissPopupWindowAndClearSelection(){
+        Log.v(LOG_TAG,"dismissPopupWindowAndClearSelection")
+        dismissPopupWindow()
+        loadUrl("javascript:clearSelection()")
+
+    }
     override fun destroy() {
         super.destroy()
         Log.d(LOG_TAG, "-> destroy")
@@ -614,11 +623,14 @@ class FolioWebView : WebView {
             Log.d(LOG_TAG, "-> onGetContentRect")
 
             evaluateJavascript("javascript:getSelectionRect()") { value ->
-                val rectJson = JSONObject(value)
-                setSelectionRect(
-                    rectJson.getInt("left"), rectJson.getInt("top"),
-                    rectJson.getInt("right"), rectJson.getInt("bottom"),null
-                )
+                if (value != null && value !="null" ){
+                    val rectJson = JSONObject(value)
+                    setSelectionRect(
+                        rectJson.getInt("left"), rectJson.getInt("top"),
+                        rectJson.getInt("right"), rectJson.getInt("bottom"),null
+                    )
+                }
+
             }
         }
     }
@@ -751,6 +763,7 @@ class FolioWebView : WebView {
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     @JavascriptInterface
     fun setSelectionRect(left: Int, top: Int, right: Int, bottom: Int,id: String?) {
 
@@ -768,7 +781,7 @@ class FolioWebView : WebView {
               val markVo: MarkVo =  HighLightTable.getOneHighlightNote(parentFragment!!.mBookId,id)
                 if(markVo != null){
                     val noteDetailFragment = NoteDetailFragment(markVo.bookId,markVo.id,markVo.note,markVo.content,MarkVo.HighlightMarkType,parentFragment!!)
-                    noteDetailFragment.show(parentFragment.activity!!.supportFragmentManager,"")
+                    noteDetailFragment.show(parentFragment!!.activity!!.supportFragmentManager,"")
                 }
             }else{
                 showTextSelectionPopup(id)
@@ -782,6 +795,7 @@ class FolioWebView : WebView {
 
         val viewportRect = folioActivityCallback.getViewportRect(DisplayUnit.PX)
         Log.d(LOG_TAG, "-> viewportRect -> $viewportRect")
+        Log.d(LOG_TAG, "-> currentSelectionRect -> $currentSelectionRect")
 
         if (!Rect.intersects(viewportRect, currentSelectionRect)) {
             Log.i(LOG_TAG, "-> currentSelectionRect doesn't intersects viewportRect")
@@ -899,6 +913,7 @@ class FolioWebView : WebView {
                         this@FolioWebView, Gravity.NO_GRAVITY,
                         popupRect.left, popupRect.top
                     )
+                    stopScroll = true
                     if(id != null){
                         //选择的高亮部分
                         textUnderlineTextView!!.text ="删除划线"

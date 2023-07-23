@@ -2,6 +2,7 @@ package com.folioreader.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
 import android.view.MotionEvent
@@ -196,6 +197,25 @@ class AppUtil {
             }
 
             return portNumberAvailable
+        }
+        //初始化页面时单页还是双页
+        fun initHorizontalColumn(orientation:Int,context: Context?){
+            var mConfig = getSavedConfig(context)
+            if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+                //横屏
+                //判断当前是否有开启横屏双页
+                if(mConfig!!.enableHorizontalColumn){
+                    //横屏双页
+                    mConfig!!.columnCount = 2
+                }else{
+                    mConfig!!.columnCount = 1
+                }
+
+            }else{
+                //竖屏
+                mConfig!!.columnCount = 1
+            }
+            saveConfig(context,mConfig!!)
         }
     }
 }

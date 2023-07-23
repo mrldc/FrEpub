@@ -159,6 +159,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var rlMain: RelativeLayout? = null
     private var tvLeft: TextView? = null
     private var ll_collect: LinearLayout? = null
+    private var tv_collect: TextView? = null
     private var rl_comment: RelativeLayout? = null
     private var et_page_note: EditText? = null
     private var tv_mark_content: TextView? = null
@@ -180,6 +181,16 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var readBook: Book?  =null
     //页笔记编辑页
     private lateinit var viewNoteEdit: View
+
+    //去听书
+    private var hideListenAudeoL: Boolean = false
+    private var HIDE_LISTEN_AUDEOL: String = "hideListenAudeoL"
+    //看视频
+    private var hideWatchVideo: Boolean = false
+    private var HIDE_WATCHVIDEO: String = "hideWatchVideo"
+    //收藏状态
+    private var changeSaveButtonText:Boolean = false
+    private var CHANGE_SAVE_BUTTONTEXT:String = "changeSaveButtonText"
 
     private var niftySlider : NiftySlider? = null
     private var customTipView : CustomTipViewBinding ?= null
@@ -377,10 +388,17 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         if (config == null) config = Config()
         config!!.allowedDirection = Config.AllowedDirection.ONLY_HORIZONTAL
         config!!.isShowTextSelection = true
+        //横屏双页
+        AppUtil.saveConfig(this,config!!)
+        AppUtil.initHorizontalColumn(resources.configuration.orientation,this)
+
+        //获取其他参数
+        hideListenAudeoL = intent.getBooleanExtra(this.HIDE_LISTEN_AUDEOL,false)
+        hideWatchVideo = intent.getBooleanExtra(this.HIDE_WATCHVIDEO,false)
+        changeSaveButtonText = intent.getBooleanExtra(this.CHANGE_SAVE_BUTTONTEXT,false)
 
         //外部传入电子书的路径
         var path  = intent.getStringExtra(FolioReader.BOOK_FILE_URL)
-
         if(path == null){
             //从共享文件夹读取文件
              path= applicationContext.getExternalFilesDir(
@@ -455,6 +473,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         ivBack = findViewById(R.id.iv_back)
         tvLeft = findViewById(R.id.tv_left)
         ll_collect = findViewById(R.id.ll_collect)
+        tv_collect = findViewById(R.id.tv_collect)
         tv_listen_book = findViewById(R.id.tv_listen_book)
         ll_listen_book = findViewById(R.id.ll_listen)
         tv_video = findViewById(R.id.tv_video)
@@ -475,6 +494,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rlMain!!.setOnClickListener(View.OnClickListener {
 
         })
+
         //进度条
         niftySlider = findViewById(R.id.ns_progress_bar);
         val activeTrackColor =
@@ -541,14 +561,33 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             finish()
         }
         //收藏
+        if(changeSaveButtonText){
+            tv_collect!!.text = "取消收藏"
+        }else{
+            tv_collect!!.text = "收藏"
+        }
         ll_collect?.setOnClickListener {
+            val intent = Intent(FolioReader.COLLECT_BOOK)
+            if(changeSaveButtonText){
+                intent.putExtra(FolioReader.COLLECT_BOOK_PARAM, false)
+            }else{
+                intent.putExtra(FolioReader.COLLECT_BOOK_PARAM, true)
+            }
 
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
         }
         //去听书
+        //去听书是否显示
+        if(hideListenAudeoL){
+            ll_listen_book?.visibility = View.GONE
+        }
         ll_listen_book?.setOnClickListener {
 
         }
         //看视频
+        if(hideListenAudeoL){
+            ll_video?.visibility = View.GONE
+        }
         ll_video?.setOnClickListener {
 
         }
@@ -613,6 +652,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         //目录
         var ll_directory= findViewById<LinearLayout>(R.id.ll_directory)
         ll_directory?.setOnClickListener {
+            if (currentFragment!!.mWebview != null) currentFragment!!.mWebview!!.dismissPopupWindowAndClearSelection()
+
             if(rlMain!!.visibility == View.VISIBLE){
                 statusIcon(false, false, false, false)
                 rlMain!!.visibility = View.GONE
@@ -636,6 +677,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         //笔记页面
         var ll_write= findViewById<LinearLayout>(R.id.ll_write)
         ll_write?.setOnClickListener {
+            if (currentFragment!!.mWebview != null) currentFragment!!.mWebview!!.dismissPopupWindowAndClearSelection()
+
             if(rlMain!!.visibility == View.VISIBLE){
                 statusIcon(false, false, false, false)
                 rlMain!!.visibility = View.GONE
@@ -657,6 +700,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         //亮度、背景
         var ll_light= findViewById<LinearLayout>(R.id.ll_light)
         ll_light?.setOnClickListener {
+            if (currentFragment!!.mWebview != null) currentFragment!!.mWebview!!.dismissPopupWindowAndClearSelection()
+
             if(rlMain!!.visibility == View.VISIBLE){
                 statusIcon(false, false, false, false)
                 rlMain!!.visibility = View.GONE
@@ -680,6 +725,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         //字体
         var ll_font= findViewById<LinearLayout>(R.id.ll_font)
         ll_font?.setOnClickListener {
+            if (currentFragment!!.mWebview != null) currentFragment!!.mWebview!!.dismissPopupWindowAndClearSelection()
+
             if(rlMain!!.visibility == View.VISIBLE){
                 statusIcon(false, false, false, false)
                 rlMain!!.visibility = View.GONE

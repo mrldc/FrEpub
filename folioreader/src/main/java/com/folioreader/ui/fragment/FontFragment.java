@@ -149,7 +149,7 @@ public class FontFragment extends Fragment implements FontsCallback {
                 mRootView.findViewById(R.id.tv_screen_h).setSelected(false);
                 //设置竖屏
                 config.setScreenOrientation(1);
-                //config.setColumnCount(1);
+                config.setColumnCount(1);
                 AppUtil.saveConfig(getActivity(),config);
                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }

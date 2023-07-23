@@ -80,6 +80,9 @@ public class HomeActivity extends AppCompatActivity
             public void onClick(View v) {
                 Intent startIntent = new Intent(getApplicationContext(),  FolioActivity.class);
                 startIntent.putExtra("BOOK_FILE_URL", getPath("10001.epub") );
+                startIntent.putExtra("hideListenAudeoL",true );
+                startIntent.putExtra("hideWatchVideo",false );
+                startIntent.putExtra("changeSaveButtonText",true );
                 setResult(Activity.RESULT_OK, startIntent);
                 startActivity(startIntent);
             }

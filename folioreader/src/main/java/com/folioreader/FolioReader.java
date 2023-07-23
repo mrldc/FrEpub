@@ -59,6 +59,8 @@ public class FolioReader {
     public static final String ACTION_PAGE_MARK = "com.folioreader.action.PAGE_MARK";
     public static final String ACTION_TYPE = "com.folioreader.action.TYPE";
     public static final String BOOK_FILE_URL = "BOOK_FILE_URL";
+    public static final String COLLECT_BOOK = "saveNotification";
+    public static final String COLLECT_BOOK_PARAM = "saveStatus";
 
 
     private Context context;

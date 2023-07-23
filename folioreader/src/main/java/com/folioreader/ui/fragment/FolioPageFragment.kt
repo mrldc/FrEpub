@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager.widget.ViewPager.SCROLL_STATE_DRAGGING
 import androidx.viewpager.widget.ViewPager.SCROLL_STATE_IDLE
 import com.folioreader.Config
 import com.folioreader.FolioReader
@@ -504,14 +505,17 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
         webViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-               // Log.v(LOG_TAG, "-> onPageScrolled ->pagePosition-> $position->chapter->$spineIndex-->positionOffsetPixels:$positionOffsetPixels")
+                Log.v(LOG_TAG, "-> onPageScrolled ->pagePosition-> $position->chapter->$spineIndex-->positionOffsetPixels:$positionOffsetPixels")
                 // pageViewModel.setCurrentPage(position + 1)
+
+
             }
 
             override fun onPageSelected(position: Int) {
                 pageViewModel.setCurrentPage(position + 1)
                 Log.v(LOG_TAG, "-> onPageSelected ->pagePosition-> $position->chapter->$spineIndex")
                 updatePageProgress()
+                mWebview!!.dismissPopupWindowAndClearSelection()
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -1180,6 +1184,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         Log.v(LOG_TAG,"onConfigurationChanged")
+        AppUtil.initHorizontalColumn(newConfig.orientation,activity)
         initHorizontalDirection()
         reload(ReloadDataEvent())
     }

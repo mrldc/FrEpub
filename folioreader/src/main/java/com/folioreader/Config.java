@@ -44,7 +44,7 @@ public class Config implements Parcelable {
     private static final int DEFAULT_THEME_COLOR_INT =
             ContextCompat.getColor(AppContext.get(), R.color.default_theme_accent_color);
 
-    private String font = "冬青黑体W3";
+    private String font = "冬青黑体W3.otf";
 
     private String backgroundColor = "";
     private int bodyPadding = 2;
@@ -54,6 +54,7 @@ public class Config implements Parcelable {
     private int columnCount = 2;
     //亮度
     private int light = 100;
+    //是否开启横屏双页
     private boolean enableHorizontalColumn = true;
     private int screenOrientation = 0;
     private boolean nightMode;
@@ -159,7 +160,7 @@ public class Config implements Parcelable {
     }
 
     private void setDefaults() {
-        font = "Roboto";
+        font = "冬青黑体W3.otf";
         fontSize = 2;
         nightMode = false;
         themeColor = DEFAULT_THEME_COLOR_INT;
@@ -191,7 +192,7 @@ public class Config implements Parcelable {
 
     public Config(JSONObject obj) {
         try {
-            font = getJsonItem(obj, CONFIG_FONT, "Roboto");
+            font = getJsonItem(obj, CONFIG_FONT, "冬青黑体W3.otf");
         } catch(Exception e) {
             Log.i("Parse Error", "Bundle does not exist, using default configuration.");
         }

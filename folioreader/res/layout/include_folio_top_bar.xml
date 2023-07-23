@@ -45,7 +45,7 @@
             android:layout_marginHorizontal="16dp"
             android:paddingHorizontal="20dp"
             android:paddingVertical="7dp"
-            android:background="@drawable/shape_30_stroke_dash_bg"
+            android:background="@mipmap/button_background"
             android:layout_toStartOf="@+id/ll_video"
             >
             <ImageView
@@ -76,7 +76,7 @@
             android:layout_marginHorizontal="16dp"
             android:paddingHorizontal="22dp"
             android:paddingVertical="7dp"
-            android:background="@drawable/shape_30_stroke_dash_bg"
+            android:background="@mipmap/button_background"
             android:layout_toStartOf="@+id/ll_collect"
             >
             <ImageView
@@ -118,6 +118,7 @@
         android:src="@mipmap/read_collect" />
 
     <TextView
+        android:id="@+id/tv_collect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
