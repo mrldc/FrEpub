@@ -235,7 +235,7 @@ public class FontFragment extends Fragment implements FontsCallback {
 
         //边距
         NiftySlider paddingBar = mRootView.findViewById(R.id.seekbar_margins);
-        paddingBar.setValue(config.getFontSize(),false);
+        paddingBar.setValue(config.getBodyPadding(),false);
         paddingBar.setValueFrom(0);
         paddingBar.setValueTo(4);
         ITEffect paddingEffect = new ITEffect(paddingBar);
@@ -266,7 +266,7 @@ public class FontFragment extends Fragment implements FontsCallback {
 
         //行距
         NiftySlider textSpaceBar = mRootView.findViewById(R.id.seekbar_space);
-        textSpaceBar.setValue(config.getFontSize(),false);
+        textSpaceBar.setValue(config.getTextSpace(),false);
         textSpaceBar.setValueFrom(0);
         textSpaceBar.setValueTo(4);
         ITEffect textSpaceEffect = new ITEffect(textSpaceBar);

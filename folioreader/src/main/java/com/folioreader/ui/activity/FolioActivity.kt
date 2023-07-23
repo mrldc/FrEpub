@@ -574,7 +574,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 intent.putExtra(FolioReader.COLLECT_BOOK_PARAM, true)
             }
 
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+            sendBroadcast(intent)
         }
         //去听书
         //去听书是否显示
@@ -585,7 +585,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         }
         //看视频
-        if(hideListenAudeoL){
+        if(hideWatchVideo){
             ll_video?.visibility = View.GONE
         }
         ll_video?.setOnClickListener {
