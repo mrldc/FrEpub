@@ -28,6 +28,7 @@ var horizontalIntervalCounter = 0;
 var horizontalIntervalLimit = 3000;
 
 var viewportRect;
+var markIdSuffix="_markImage"
 
 // Class manipulation
 function hasClass(ele, cls) {
@@ -322,17 +323,36 @@ $(function () {
 
                 this.highlighter.highlightSelection(color, null);
                 var range = window.getSelection().toString();
-                var params = {content: range, rangy: this.getHighlights(), color: color,note:note};
+                var rangy =  this.getHighlights()
+                var params = {content: range, rangy: rangy, color: color,note:note};
                 this.clearSelection();
+
+                //添加图标
+                console.log("highlightSelection--->",rangy)
+                var id = rangy.split("|")[1];
+                if(color.includes("mark")){
+                    insertMarkIcon(id);
+                }
+
                 Highlight.onReceiveHighlights(JSON.stringify(params));
             } catch (err) {
                 console.log("highlightSelection : " + err);
             }
         },
 
-        unHighlightSelection: function () {
+        unHighlightSelection: function (id) {
             try {
+                console.log("unHighlightSelection : " + id);
+                if(id){
+                    var range = document.createRange(); // 创建一个范围对象
+                    range.selectNodeContents(document.getElementById(id)); // 设置范围的起始位置和偏移量为span元素的内容
+                    var selection = window.getSelection(); // 获取当前选中的文本范围
+                    selection.addRange(range);
+                }
                 this.highlighter.unhighlightSelection();
+                //删除笔记图标
+                var element = document.getElementById(id+markIdSuffix);
+                element.parentNode.removeChild(element);
               //  Highlight.onReceiveHighlights(this.getHighlights());
             } catch (err) {
             }
@@ -350,6 +370,15 @@ $(function () {
                 console.log("setHighlights : " ,serializedHighlight);
                 this.highlighter.removeAllHighlights();
                 this.highlighter.deserialize(serializedHighlight);
+                //查询mark标记，插入图标
+                var serializedHighlights = serializedHighlight.split("|");
+                for (let i = 1; i < serializedHighlights.length; i++) {
+                    //笔记
+                    if(serializedHighlights[i].includes("mark")){
+                        insertMarkIcon(serializedHighlights[i])
+                    }
+                }
+                var highlights = [];
             } catch (err) {
             }
         },
@@ -854,18 +883,26 @@ function onClickHighlight(element) {
     event.stopPropagation();
     thisHighlight = element;
 
-    var range = document.createRange(); // 创建一个范围对象
 
-      range.selectNodeContents(element); // 设置范围的起始位置和偏移量为span元素的内容
 
-      var selection = window.getSelection(); // 获取当前选中的文本范围
+    var id = element.getAttribute("id");
+    if(id && id.includes("mark")){
+        //直接跳转笔记
+        FolioWebView.showNoteDetail(id)
+    }else{
+        var range = document.createRange(); // 创建一个范围对象
 
-      selection.removeAllRanges(); // 清空所有选中的范围对象
+        range.selectNodeContents(element); // 设置范围的起始位置和偏移量为span元素的内容
 
-      selection.addRange(range); // 将新的范围加入到选中的文本中
+        var selection = window.getSelection(); // 获取当前选中的文本范围
 
-    var rectJson = getSelectionRect(element);
-    FolioWebView.setSelectionRect(rectJson.left, rectJson.top, rectJson.right, rectJson.bottom,element.getAttribute("id"));
+        selection.removeAllRanges(); // 清空所有选中的范围对象
+
+        selection.addRange(range); // 将新的范围加入到选中的文本中
+
+        var rectJson = getSelectionRect(element);
+        FolioWebView.setSelectionRect(rectJson.left, rectJson.top, rectJson.right, rectJson.bottom,null);
+    }
 }
 
 function deleteThisHighlight() {
@@ -949,7 +986,7 @@ function getFirstVisibleNode(node) {
     var rect = RangeFix.getBoundingClientRect(range);
     if (rect == null)
         return null;
-
+    console.log("getFirstVisibleNode--->rect",rect,viewportRect)
     var intersects = rectIntersects(viewportRect, rect);
     var contains = rectContains(viewportRect, rect);
 
@@ -1020,4 +1057,24 @@ function rectContains(a, b) {
     return a.left < a.right && a.top < a.bottom
         // now check for containment
         && a.left <= b.left && a.top <= b.top && a.right >= b.right && a.bottom >= b.bottom;
+}
+/**
+ * 笔记插入图标
+ * **/
+
+function insertMarkIcon(id) {
+    var oldElement = document.getElementById(id);
+    var parent = oldElement.parentNode;
+    var icon = document.createElement("img");
+    icon.src="file:///android_asset/image/page_mark.png";
+    icon.className = 'mark_image';
+    icon.setAttribute("class", 'mark_image');
+    icon.setAttribute("id", id+markIdSuffix);
+    icon.setAttribute("onclick","onClickMarkImage(this)");
+    parent.replaceChild(icon,oldElement);
+    parent.insertBefore(oldElement,icon)
+}
+function onClickMarkImage(element) {
+    let nodeId = element.getAttribute("id").replace(markIdSuffix,'');
+    FolioWebView.showNoteDetail(nodeId)
 }
