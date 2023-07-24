@@ -115,6 +115,7 @@ class FolioWebView : WebView {
     private val popupRect = Rect()
     private var popupWindow = PopupWindow()
     private lateinit var viewTextSelection: View
+    private lateinit var highlightScrollView:View
     private var isScrollingCheckDuration: Int = 0
     private var isScrollingRunnable: Runnable? = null
     private var oldScrollX: Int = 0
@@ -236,7 +237,7 @@ class FolioWebView : WebView {
             uiHandler.removeCallbacks(isScrollingRunnable!!)
         }
         isScrollingCheckDuration = 0
-
+        highlightScrollView.visibility = View.GONE
         return wasShowing
     }
 
@@ -324,8 +325,10 @@ class FolioWebView : WebView {
         }
         Log.i(LOG_TAG, config.toString())
         viewTextSelection = LayoutInflater.from(ctw).inflate(R.layout.widget_text_selection, null)
-
+        highlightScrollView =  viewTextSelection.findViewById(R.id.highlightScrollView)
         textUnderlineTextView = viewTextSelection.findViewById(R.id.tv_dv_line)
+
+
         viewTextSelection.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
 
         viewTextSelection.iv_font_light.setOnClickListener{
@@ -373,10 +376,18 @@ class FolioWebView : WebView {
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
         }
         viewTextSelection.tv_dv_line.setOnClickListener {
-            dismissPopupWindow()
+
             if(textUnderlineTextView!!.text =="删除划线"){
                 deleteThisHighlight(highlightId)
                 highlightId = null
+                dismissPopupWindow()
+            }else{
+                if(highlightScrollView.visibility == View.VISIBLE){
+                    highlightScrollView.visibility = View.GONE
+                }else{
+                    highlightScrollView.visibility = View.VISIBLE
+                }
+
             }
         }
         //写笔记

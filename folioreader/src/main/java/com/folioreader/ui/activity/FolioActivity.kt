@@ -573,8 +573,10 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             val intent = Intent(FolioReader.COLLECT_BOOK)
             if(changeSaveButtonText){
                 intent.putExtra(FolioReader.COLLECT_BOOK_PARAM, false)
+                tv_collect!!.text = "收藏"
             }else{
                 intent.putExtra(FolioReader.COLLECT_BOOK_PARAM, true)
+                tv_collect!!.text = "取消收藏"
             }
 
             sendBroadcast(intent)
