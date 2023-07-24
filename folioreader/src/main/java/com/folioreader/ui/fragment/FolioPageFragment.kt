@@ -75,6 +75,8 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
 
         Log.v(LOG_TAG,"onResume--->"+spineIndex)
+        //更新进度条
+        updatePageProgress()
 
     }
     companion object {
@@ -1200,8 +1202,8 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
     //更新进度条
     fun updatePageProgress(){
-        Log.v(LOG_TAG,"updatePageProgress-->"+pageProgress)
-        if(pageProgress != null){
+        Log.v(LOG_TAG,"updatePageProgress-->chapter:$spineIndex -->currentChapterIndex"+mActivityCallback!!.currentChapterIndex)
+        if(pageProgress != null && spineIndex == mActivityCallback!!.currentChapterIndex){
             //章节的开始占比+当前章节的阅读进度 * 章节总占比
            var totalProgress = pageProgress!!.start + (pageProgress!!.end - pageProgress!!.start) * (mWebview!!.currentProgress/100)
 
