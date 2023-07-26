@@ -578,7 +578,6 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 intent.putExtra(FolioReader.COLLECT_BOOK_PARAM, true)
                 tv_collect!!.text = "取消收藏"
             }
-
             sendBroadcast(intent)
         }
         //去听书
@@ -587,14 +586,16 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             ll_listen_book?.visibility = View.GONE
         }
         ll_listen_book?.setOnClickListener {
-
+            val mLIntent = Intent("listenAudioNotification")
+            sendBroadcast(mLIntent)
         }
         //看视频
         if(hideWatchVideo){
             ll_video?.visibility = View.GONE
         }
         ll_video?.setOnClickListener {
-
+            val mWIntent = Intent("WatchVideoNotification")
+            sendBroadcast(mWIntent)
         }
 //        et_page_note?.addTextChangedListener(object : TextWatcher {
 //            override fun beforeTextChanged(s: CharSequence, i: Int, i1: Int, i2: Int) {
