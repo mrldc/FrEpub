@@ -327,12 +327,7 @@ $(function () {
                 var params = {content: range, rangy: rangy, color: color,note:note};
                 this.clearSelection();
 
-                //添加图标
-                console.log("highlightSelection--->",rangy)
-                var id = rangy.split("|")[1];
-                if(color.includes("mark")){
-                    insertMarkIcon(id);
-                }
+
 
                 Highlight.onReceiveHighlights(JSON.stringify(params));
             } catch (err) {

@@ -157,9 +157,7 @@ public final class HtmlUtil {
                 break;
         }
         String styles = "font-family: '" + fontName + "';";
-        if(!StringUtils.isEmpty(config.getBackgroundColor())){
-            styles +="background-color: "+config.getBackgroundColor()+";";
-        }
+
         htmlContent = htmlContent.replace("<html",
                 "<html class=\"" + classes + "\"" +
                         " style=\"" + styles + "\"" +
@@ -184,6 +182,7 @@ public final class HtmlUtil {
             default:
                 break;
         }
+        padding = (int)(padding/1.75);
         String bodyStyles = "padding-left: "+ padding +"px;";
          bodyStyles += "padding-right: "+ padding +"px;";
         htmlContent = htmlContent.replace("<body",

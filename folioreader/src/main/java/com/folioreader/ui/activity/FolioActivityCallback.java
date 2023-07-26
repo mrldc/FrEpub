@@ -49,4 +49,6 @@ public interface FolioActivityCallback {
     void updateReadRecord(Book book);
     //控制显示哪一个tab
     void tabController(Boolean directory ,Boolean write  ,Boolean light  , Boolean font  );
+    /**选择背景图片**/
+    void selectBackground(Integer index);
 }

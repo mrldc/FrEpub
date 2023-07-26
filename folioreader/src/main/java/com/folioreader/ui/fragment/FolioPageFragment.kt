@@ -1090,7 +1090,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                 mBookId,
                 pageName,
                 spineIndex,
-                rangy
+                rangy,mWebview
             )
         }
     }

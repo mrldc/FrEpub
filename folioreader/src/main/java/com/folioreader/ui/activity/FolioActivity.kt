@@ -459,7 +459,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         val layoutParams: WindowManager.LayoutParams = getWindow().getAttributes()
         originBrightness = (layoutParams.screenBrightness*255).toInt()
         initScreenLight(config!!.light)
-
+        selectBackground(config!!.lightBackground)
     }
     //初始化章节进度
     private fun initPageProgress() {
@@ -571,12 +571,15 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
         ll_collect?.setOnClickListener {
             val intent = Intent(FolioReader.COLLECT_BOOK)
+            if( tv_collect!!.text == "收藏"){
+                tv_collect!!.text = "取消收藏"
+            }else{
+                tv_collect!!.text = "收藏"
+            }
             if(changeSaveButtonText){
                 intent.putExtra(FolioReader.COLLECT_BOOK_PARAM, false)
-                tv_collect!!.text = "收藏"
             }else{
                 intent.putExtra(FolioReader.COLLECT_BOOK_PARAM, true)
-                tv_collect!!.text = "取消收藏"
             }
             sendBroadcast(intent)
         }
@@ -1130,6 +1133,22 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     override fun updateReadRecord(book: Book?) {
         readBook = book
+    }
+
+    override fun selectBackground(index: Int) {
+        config!!.lightBackground = index
+        AppUtil.saveConfig(this, config!!)
+        if(index == 1){
+            mFolioPageViewPager!!.setBackgroundResource(R.mipmap.read_background)
+        }else if(index == 2){
+            mFolioPageViewPager!!.setBackgroundResource(R.mipmap.read_background2)
+        }else if(index == 3){
+            mFolioPageViewPager!!.setBackgroundResource(R.mipmap.read_background3)
+        }else if(index == 4){
+            mFolioPageViewPager!!.setBackgroundResource(R.mipmap.read_background4)
+        }else{
+            mFolioPageViewPager!!.setBackgroundResource(R.mipmap.read_background)
+        }
     }
 
     override fun tabController(

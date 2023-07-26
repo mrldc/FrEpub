@@ -44,6 +44,7 @@ import com.folioreader.util.UiUtil
 import dalvik.system.PathClassLoader
 import kotlinx.android.synthetic.main.text_selection.view.*
 import kotlinx.android.synthetic.main.widget_text_selection.view.UnderlineDotted2
+import kotlinx.android.synthetic.main.widget_text_selection.view.highlightSelectColor
 import kotlinx.android.synthetic.main.widget_text_selection.view.iv_blue
 import kotlinx.android.synthetic.main.widget_text_selection.view.iv_font_light
 import kotlinx.android.synthetic.main.widget_text_selection.view.iv_green
@@ -317,7 +318,7 @@ class FolioWebView : WebView {
         )
         handleHeight = textSelectionMiddleDrawable?.intrinsicHeight ?: (24 * density).toInt()
 
-        val config = AppUtil.getSavedConfig(context)!!
+        var config = AppUtil.getSavedConfig(context)!!
         val ctw = if (config.isNightMode) {
             ContextThemeWrapper(context, R.style.FolioNightTheme)
         } else {
@@ -333,23 +334,30 @@ class FolioWebView : WebView {
 
         viewTextSelection.iv_font_light.setOnClickListener{
             Log.v(LOG_TAG, "-> onClick -> yellowHighlight")
-            onHighlightColorItemsClicked(HighlightStyle.highlight_01, false)
+
+            onHighlightColorItemsClicked(getHighlightColor(config.highlightBackground), false)
+
         }
         viewTextSelection.iv_right_white.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> yellowHighlight")
+            config = AppUtil.getSavedConfig(parentFragment.context)!!
             onHighlightColorItemsClicked(HighlightStyle.highlight_01, false)
+
         }
         viewTextSelection.iv_green.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> greenHighlight")
             onHighlightColorItemsClicked(HighlightStyle.highlight_02, false)
+            initHighlightSelectColor(2)
         }
         viewTextSelection.iv_blue.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> blueHighlight")
             onHighlightColorItemsClicked(HighlightStyle.highlight_03, false)
+            initHighlightSelectColor(3)
         }
         viewTextSelection.iv_pink.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> pinkHighlight")
             onHighlightColorItemsClicked(HighlightStyle.highlight_04, false)
+            initHighlightSelectColor(4)
         }
       /*  viewTextSelection.underlineHighlight.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> underlineHighlight")
@@ -395,6 +403,8 @@ class FolioWebView : WebView {
             dismissPopupWindow()
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
         }
+
+        initHighlightSelectColor(config.highlightBackground)
     }
 
     @JavascriptInterface
@@ -856,7 +866,7 @@ class FolioWebView : WebView {
         popupRect.left = viewportRect.left
         popupRect.top = belowSelectionRect.top
         popupRect.right = popupRect.left + viewTextSelection.measuredWidth
-        popupRect.bottom = popupRect.top + viewTextSelection.measuredHeight
+        popupRect.bottom = popupRect.top + viewTextSelection.measuredHeight*3/2
         //Log.d(LOG_TAG, "-> Pre decision popupRect -> " + popupRect);
 
         val popupY: Int
@@ -960,5 +970,50 @@ class FolioWebView : WebView {
             Log.v(LOG_TAG, "-> doNotShowTextSelectionPopup")
         }
 
+    }
+    //选择划线默认底色
+    fun initHighlightSelectColor(index:Int?){
+        var config = AppUtil.getSavedConfig(parentFragment.context)
+        when (index) {
+            null ->{
+                viewTextSelection.highlightSelectColor.setBackgroundResource(R.color.highlight_01)
+            }
+            1 -> {
+                viewTextSelection.highlightSelectColor.setBackgroundResource(R.color.highlight_01)
+            }
+            2 -> {
+                viewTextSelection.highlightSelectColor.setBackgroundResource(R.color.highlight_02)
+            }
+            3 -> {
+                viewTextSelection.highlightSelectColor.setBackgroundResource(R.color.highlight_03)
+            }
+            4 -> {
+                viewTextSelection.highlightSelectColor.setBackgroundResource(R.color.highlight_04)
+            }
+        }
+
+        config!!.highlightBackground = index ?: 1
+        AppUtil.saveConfig(parentFragment.context,config)
+    }
+    fun getHighlightColor(index: Int): HighlightStyle {
+
+       var highlightStyle = when (index) {
+            1 -> {
+                 HighlightStyle.highlight_01
+            }
+            2 -> {
+                 HighlightStyle.highlight_02
+            }
+            3 -> {
+                 HighlightStyle.highlight_03
+            }
+            4 -> {
+                 HighlightStyle.highlight_04
+            }
+           else -> {
+                 HighlightStyle.highlight_01
+           }
+       }
+        return highlightStyle
     }
 }

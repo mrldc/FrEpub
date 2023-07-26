@@ -60,7 +60,7 @@ public class TableOfContentFragment extends Fragment implements TOCAdapter.TOCCa
         args.putString(SELECTED_CHAPTER_POSITION, selectedChapterHref);
         args.putString(BOOK_TITLE, bookTitle);
         args.putString(CFI, cfi);
-        args.putInt(PAGE_NUMBER, pageNumber);
+      //  args.putInt(PAGE_NUMBER, pageNumber);
         tableOfContentFragment.setArguments(args);
 
 

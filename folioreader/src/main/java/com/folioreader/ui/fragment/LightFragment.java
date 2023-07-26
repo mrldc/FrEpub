@@ -80,10 +80,9 @@ public class LightFragment extends Fragment {
             @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
-                config.setLightBackground(2);
-                AppUtil.saveConfig(getActivity(),config);
+                callback.selectBackground(2);
                 changeBackgroundSelect(false,true,false,false);
-                EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background)));
+              //  EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background)));
             }
         });
         // #EDEAE4
@@ -91,10 +90,10 @@ public class LightFragment extends Fragment {
             @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
-                config.setLightBackground(1);
-                AppUtil.saveConfig(getActivity(),config);
+                callback.selectBackground(1);
+
                 changeBackgroundSelect(true,false,false,false);
-                EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background02)));
+             //   EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background02)));
             }
         });
         //#E9F4E3
@@ -102,10 +101,9 @@ public class LightFragment extends Fragment {
             @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
-                config.setLightBackground(3);
-                AppUtil.saveConfig(getActivity(),config);
+                callback.selectBackground(3);
                 changeBackgroundSelect(false,false,true,false);
-                EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background03)));
+             //   EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background03)));
             }
         });
         // #E3F4F3
@@ -113,10 +111,9 @@ public class LightFragment extends Fragment {
             @SuppressLint("ResourceType")
             @Override
             public void onClick(View view) {
-                config.setLightBackground(4);
-                AppUtil.saveConfig(getActivity(),config);
+                callback.selectBackground(4);
                 changeBackgroundSelect(false,false,false,true);
-                EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background04)));
+            //    EventBus.getDefault().post(new ChangeBackgroundEvent(getActivity().getResources().getString(R.color.background04)));
 
             }
         });

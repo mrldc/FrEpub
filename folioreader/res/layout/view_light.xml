@@ -114,7 +114,7 @@
                 android:layout_width="38dp"
                 android:layout_height="38dp"
                 android:layout_gravity="center"
-                android:background="@drawable/light_background_selector_02"
+                android:background="@drawable/light_background_selector_03"
                 />
         </FrameLayout>
         <FrameLayout

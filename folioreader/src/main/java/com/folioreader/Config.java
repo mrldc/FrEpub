@@ -40,6 +40,7 @@ public class Config implements Parcelable {
     public static final String SCREEN_ORIENTATION = "SCREEN_ORIENTATION";
     public static final String LIGHT = "LIGHT";
     public static final String LIGHT_BACKGROUND = "lightBackground";
+    public static final String HIGHLIGHT_BACKGROUND = "highlightBackground";
     private static final AllowedDirection DEFAULT_ALLOWED_DIRECTION = AllowedDirection.ONLY_VERTICAL;
     private static final Direction DEFAULT_DIRECTION = Direction.HORIZONTAL;
     private static final int DEFAULT_THEME_COLOR_INT =
@@ -56,6 +57,8 @@ public class Config implements Parcelable {
     //亮度
     private int light = 100;
     private int lightBackground = 1;
+    //高亮默认颜色index
+    private int highlightBackground = 1;
     //是否开启横屏双页
     private boolean enableHorizontalColumn = true;
     private int screenOrientation = 0;
@@ -119,6 +122,7 @@ public class Config implements Parcelable {
         bundle.putInt(COLUMN_COUNT, columnCount);
         bundle.putInt(LIGHT, light);
         bundle.putInt(LIGHT_BACKGROUND, lightBackground);
+        bundle.putInt(HIGHLIGHT_BACKGROUND, highlightBackground);
         bundle.putBoolean(ENABLE_HORIZONTAL_COLUMN, enableHorizontalColumn);
         bundle.putInt(SCREEN_ORIENTATION, screenOrientation);
         dest.writeBundle(bundle);
@@ -139,6 +143,7 @@ public class Config implements Parcelable {
                 columnCount = getBundleItem(bundle, COLUMN_COUNT,2);
                 light = getBundleItem(bundle, LIGHT,100);
                 lightBackground = getBundleItem(bundle, LIGHT_BACKGROUND,1);
+                highlightBackground = getBundleItem(bundle, HIGHLIGHT_BACKGROUND,1);
                 enableHorizontalColumn = getBundleItem(bundle, ENABLE_HORIZONTAL_COLUMN,true);
                 screenOrientation = getBundleItem(bundle, SCREEN_ORIENTATION,0);
                 fontSize = getBundleItem(bundle, CONFIG_FONT_SIZE, 2);
@@ -180,6 +185,7 @@ public class Config implements Parcelable {
         columnCount = 2;
         light = 100;
         lightBackground = 1;
+        highlightBackground = 1;
         enableHorizontalColumn = true;
         screenOrientation = 0;
     }
@@ -221,6 +227,7 @@ public class Config implements Parcelable {
         textSpace = getJsonItem(obj, TEXT_SPACE, 5);
         columnCount = getJsonItem(obj, COLUMN_COUNT, 2);
         lightBackground = getJsonItem(obj, LIGHT_BACKGROUND, 1);
+        highlightBackground = getJsonItem(obj, HIGHLIGHT_BACKGROUND, 1);
         enableHorizontalColumn = getJsonItem(obj, ENABLE_HORIZONTAL_COLUMN, true);
         screenOrientation = getJsonItem(obj, SCREEN_ORIENTATION, 0);
     }
@@ -404,6 +411,14 @@ public class Config implements Parcelable {
         this.lightBackground = lightBackground;
     }
 
+    public int getHighlightBackground() {
+        return highlightBackground;
+    }
+
+    public void setHighlightBackground(int highlightBackground) {
+        this.highlightBackground = highlightBackground;
+    }
+
     public boolean getEnableHorizontalColumn() {
         return enableHorizontalColumn;
     }
@@ -541,6 +556,7 @@ public class Config implements Parcelable {
                 ", columnCount=" + columnCount +
                 ", light=" + light +
                 ", lightBackground=" + lightBackground +
+                ", highlightBackground=" + highlightBackground +
                 ", screenOrientation=" + screenOrientation +
                 ", enableHorizontalColumn=" + enableHorizontalColumn +
                 '}';

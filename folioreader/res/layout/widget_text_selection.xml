@@ -73,7 +73,7 @@
                 android:background="@android:color/transparent"
                 android:layout_marginTop="5dp"
                 app:layout_constraintStart_toStartOf="parent"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintTop_toBottomOf="@id/firstSectionLayout">
 
                 <LinearLayout
@@ -91,6 +91,7 @@
                         <View
                             android:layout_gravity="center"
                             style="@style/ImageViewTextSelectorMarker"
+                            android:id="@+id/highlightSelectColor"
                             android:background="@drawable/shape_10_solid_dd4f0f_bg"
                             >
                         </View>

@@ -10,6 +10,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.folioreader.model.HighLight;
 import com.folioreader.model.HighlightImpl;
 import com.folioreader.model.sqlite.HighLightTable;
+import com.folioreader.ui.view.FolioWebView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +32,7 @@ public class HighlightUtil {
                                               String bookId,
                                               String pageId,
                                               int pageNo,
-                                              String oldRangy) {
+                                              String oldRangy, FolioWebView webView) {
         try {
             JSONObject jObject = new JSONObject(content);
 
@@ -56,6 +57,10 @@ public class HighlightUtil {
             if (id != -1) {
                 highlightImpl.setId((int) id);
                 sendHighlightBroadcastEvent(context, highlightImpl, HighLight.HighLightAction.NEW);
+            }
+            if(rangyHighlightElement.contains("mark")){
+                //绘制笔记图标
+                webView.loadUrl("javascript:insertMarkIcon('"+rangyHighlightElement+"')");
             }
             return rangy;
         } catch (JSONException e) {

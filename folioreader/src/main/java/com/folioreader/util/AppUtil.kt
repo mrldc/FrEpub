@@ -108,6 +108,7 @@ class AppUtil {
                 obj.put(Config.COLUMN_COUNT, config.columnCount)
                 obj.put(Config.LIGHT, config.light)
                 obj.put(Config.LIGHT_BACKGROUND, config.lightBackground)
+                obj.put(Config.HIGHLIGHT_BACKGROUND, config.highlightBackground)
                 obj.put(Config.ENABLE_HORIZONTAL_COLUMN, config.enableHorizontalColumn)
                 obj.put(Config.SCREEN_ORIENTATION, config.screenOrientation)
                 SharedPreferenceUtil.putSharedPreferencesString(
