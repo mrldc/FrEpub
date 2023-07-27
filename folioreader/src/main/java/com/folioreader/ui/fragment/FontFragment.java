@@ -313,6 +313,7 @@ public class FontFragment extends Fragment implements FontsCallback {
         try {
 
             fontKeyList.addAll(Arrays.asList(getActivity().getAssets().list("fonts")));
+            fontKeyList.add("系统字体");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

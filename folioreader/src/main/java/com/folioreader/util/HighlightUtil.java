@@ -3,6 +3,7 @@ package com.folioreader.util;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -32,7 +33,7 @@ public class HighlightUtil {
                                               String bookId,
                                               String pageId,
                                               int pageNo,
-                                              String oldRangy, FolioWebView webView) {
+                                              String oldRangy, FolioWebView webView, Handler handler) {
         try {
             JSONObject jObject = new JSONObject(content);
 
@@ -60,7 +61,13 @@ public class HighlightUtil {
             }
             if(rangyHighlightElement.contains("mark")){
                 //绘制笔记图标
-                webView.loadUrl("javascript:insertMarkIcon('"+rangyHighlightElement+"')");
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        webView.loadUrl("javascript:insertMarkIcon('"+rangyHighlightElement+"')");
+                    }
+                });
+
             }
             return rangy;
         } catch (JSONException e) {

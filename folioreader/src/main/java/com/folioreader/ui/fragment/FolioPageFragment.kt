@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -499,6 +499,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         mWebview!!.setParentFragment(this)
         mWebview!!.setBackgroundColor(0)
         mWebview!!.background.alpha = 0
+
         //加载图片资源
         webViewPager = webViewLayout.findViewById(R.id.webViewPager)
 
@@ -1090,7 +1091,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                 mBookId,
                 pageName,
                 spineIndex,
-                rangy,mWebview
+                rangy,mWebview,uiHandler
             )
         }
     }

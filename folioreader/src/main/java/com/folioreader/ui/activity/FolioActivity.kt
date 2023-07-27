@@ -1136,6 +1136,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     }
 
     override fun selectBackground(index: Int) {
+        if(mFolioPageViewPager == null){
+            return
+        }
         config!!.lightBackground = index
         AppUtil.saveConfig(this, config!!)
         if(index == 1){
@@ -2069,7 +2072,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     //写笔记请求
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun writeHighlightNote(highlightNoteEvent: HighlightNoteEvent ){
-        val noteDetailFragment = AddNoteFragment(null,null,null,highlightNoteEvent.content,MarkVo.HighlightMarkType,currentFragment!!,null)
+        val noteDetailFragment = NoteDetailFragment(null,null,null,highlightNoteEvent.content,MarkVo.HighlightMarkType,currentFragment!!,null)
+        noteDetailFragment.show(supportFragmentManager,"")
+       /* val noteDetailFragment = AddNoteFragment(null,null,null,highlightNoteEvent.content,MarkVo.HighlightMarkType,currentFragment!!,null)
         noteDetailFragment.show(supportFragmentManager,"")
 
         //
@@ -2079,7 +2084,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rl_mark_content!!.visibility = View.GONE
         tv_mark_content!!.text = highlightNoteEvent.content
         rlMain!!.visibility = View.GONE
-        niftySlider!!.visibility = View.GONE
+        niftySlider!!.visibility = View.GONE*/
      /*   et_page_note!!.requestFocus()
         InputMethodUtils.show(et_page_note)*/
     }

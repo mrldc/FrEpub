@@ -342,7 +342,7 @@ class FolioWebView : WebView {
             Log.v(LOG_TAG, "-> onClick -> yellowHighlight")
             config = AppUtil.getSavedConfig(parentFragment.context)!!
             onHighlightColorItemsClicked(HighlightStyle.highlight_01, false)
-
+            initHighlightSelectColor(1)
         }
         viewTextSelection.iv_green.setOnClickListener {
             Log.v(LOG_TAG, "-> onClick -> greenHighlight")
@@ -389,6 +389,7 @@ class FolioWebView : WebView {
                 deleteThisHighlight(highlightId)
                 highlightId = null
                 dismissPopupWindow()
+                textUnderlineTextView!!.text ="划线"
             }else{
                 if(highlightScrollView.visibility == View.VISIBLE){
                     highlightScrollView.visibility = View.GONE
