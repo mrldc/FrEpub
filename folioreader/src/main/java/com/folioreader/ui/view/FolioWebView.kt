@@ -409,7 +409,7 @@ class FolioWebView : WebView {
     }
 
     @JavascriptInterface
-    fun onTextSelectionItemClicked(id: Int, selectedText: String?) {
+    fun onTextSelectionItemClicked(id: Int, selectedText: String?,overlap:Boolean) {
 
 
         when (id) {
@@ -427,7 +427,12 @@ class FolioWebView : WebView {
             }
             R.id.tv_write -> {
                 Log.v(LOG_TAG, "-> onTextSelectionItemClicked -> defineSelection -> $selectedText")
-                EventBus.getDefault().post(HighlightNoteEvent(selectedText))
+                if(overlap){
+                    uiHandler.post { Toast.makeText(context,"此处已有划线或笔记，不允许划线或笔记交叉",Toast.LENGTH_LONG).show() }
+                }else{
+                    EventBus.getDefault().post(HighlightNoteEvent(selectedText))
+
+                }
             }
             else -> {
                 Log.w(LOG_TAG, "-> onTextSelectionItemClicked -> unknown id = $id")

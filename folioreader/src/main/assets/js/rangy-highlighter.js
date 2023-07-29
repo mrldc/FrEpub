@@ -491,18 +491,40 @@
                 forEach(serializedSelection, function(rangeInfo) {
                     selCharRanges.push( CharacterRange.fromCharacterRange(rangeInfo.characterRange) );
                 });
-
+                console.log("rangy-selCharRanges",selCharRanges)
                 var newHighlights = this.highlightCharacterRanges(className, selCharRanges, {
                     containerElementId: containerElementId,
                     exclusive: exclusive
                 });
-
+                console.log("highlightSelection-->newHighlights-->",newHighlights)
                 // Restore selection
                 converter.restoreSelection(selection, serializedSelection, containerElement);
 
                 return newHighlights;
             },
+            getSelectionRange: function(options){
+                var converter = this.converter;
+                options = createOptions(options, {
+                    containerElementId: null,
+                    selection: api.getSelection(this.doc),
+                    exclusive: true
+                });
 
+                var containerElementId = options.containerElementId;
+                var exclusive = options.exclusive;
+                var selection = options.selection;
+                var doc = selection.win.document;
+                var containerElement = getContainerElement(doc, containerElementId);
+                // Store the existing selection as character ranges
+                var serializedSelection = converter.serializeSelection(selection, containerElement);
+
+                // Create an array of selected character ranges
+                var selCharRanges = [];
+                forEach(serializedSelection, function(rangeInfo) {
+                    selCharRanges.push( CharacterRange.fromCharacterRange(rangeInfo.characterRange) );
+                });
+                return selCharRanges
+            },
             unhighlightSelection: function(selection) {
                 selection = selection || api.getSelection(this.doc);
                 var intersectingHighlights = this.getIntersectingHighlights( selection.getAllRanges() );

@@ -23,6 +23,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -1098,6 +1099,13 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     //获取
     fun getFirstSentence(html: String?){
 
+    }
+
+    //划线重复
+    @JavascriptInterface
+    fun HighlightOverlap(result: Boolean){
+        Log.v(LOG_TAG,"Highlightoverlap")
+        uiHandler.post { Toast.makeText(activity,"此处已有划线或笔记，不允许划线或笔记交叉",Toast.LENGTH_LONG).show() }
     }
     override fun highLightText(fragmentId: String) {
         mWebview!!.loadUrl(String.format(getString(R.string.audio_mark_id), fragmentId))

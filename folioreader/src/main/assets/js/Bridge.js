@@ -320,13 +320,19 @@ $(function () {
 
         highlightSelection: function (color,note) {
             try {
-
+                if(this.checkHighlightOverlap()){
+                    console.log("highlightSelection->有交叉 " );
+                    //有交叉提示错误
+                    this.clearSelection();
+                    FolioPageFragment.HighlightOverlap(true)
+                }
+                console.log("highlightSelection-> 0: " ,this.highlighter);
                 this.highlighter.highlightSelection(color, null);
                 var range = window.getSelection().toString();
                 var rangy =  this.getHighlights()
                 var params = {content: range, rangy: rangy, color: color,note:note};
                 this.clearSelection();
-
+                console.log("highlightSelection-> 1: " ,this.highlighter);
 
 
                 Highlight.onReceiveHighlights(JSON.stringify(params));
@@ -352,7 +358,28 @@ $(function () {
             } catch (err) {
             }
         },
+        checkHighlightOverlap: function(){
+            //判断是否有重叠划线
+            var characterRange = this.highlighter.getSelectionRange(null)[0];
+            //查找当前的所有range
+            var highlights = this.highlighter.highlights;
+            console.log("highlightSelection->characterRange--> highlights",characterRange,highlights );
+            if(highlights && highlights.length > 0){
+                for (let i = 0; i < highlights.length; i++) {
+                    var existCharacterRange = highlights[i].characterRange;
+                    console.log("highlightSelection->existCharacterRange--> characterRange",existCharacterRange,characterRange );
+                    if(characterRange.start >= existCharacterRange.start && characterRange.start <= existCharacterRange.end ||
+                        characterRange.end >= existCharacterRange.start && characterRange.end <= existCharacterRange.end ||
+                        characterRange.start <= existCharacterRange.start && characterRange.end >= existCharacterRange.end
+                    ){
 
+                        return true
+                    }
+                }
+
+            }
+            return false;
+        },
         getHighlights: function () {
             try {
                 return this.highlighter.serialize();
@@ -374,6 +401,7 @@ $(function () {
                     }
                 }
                 var highlights = [];
+                console.log("setHighlights : highlights--" ,this.highlighter.highlights);
             } catch (err) {
             }
         },
@@ -913,7 +941,7 @@ function onTextSelectionItemClicked(id) {
     } else {
         selectedText = thisHighlight.textContent;
     }
-    FolioWebView.onTextSelectionItemClicked(id, selectedText);
+    FolioWebView.onTextSelectionItemClicked(id, selectedText,window.ssReader.checkHighlightOverlap());
 }
 
 function onClickHtml() {
