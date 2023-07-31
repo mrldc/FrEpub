@@ -143,6 +143,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     private var mPagesLeftTextView: TextView? = null
     private var mMinutesLeftTextView: TextView? = null
     private var mActivityCallback: FolioActivityCallback? = null
+    private var refreshLayout : RefreshLayout? =null
 
     private var mTotalMinutes: Int = 0
     private var mFadeInAnimation: Animation? = null
@@ -254,20 +255,23 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
      */
     private fun initBookMarkListen() {
         Log.v(LOG_TAG, "initBookMarkListen-->$currentPageHasBookmark-->chapter:$spineIndex")
-        val refreshLayout  =  mRootView!!.findViewById<View>(R.id.refreshLayout) as RefreshLayout
+        if(refreshLayout == null){
+            refreshLayout  =  mRootView!!.findViewById<View>(R.id.refreshLayout) as RefreshLayout
+        }
+
         //当前页有书签，添加头部为删除书签头部
         if(currentPageHasBookmark){
             ivBookmark!!.visibility = View.VISIBLE
-            refreshLayout.setRefreshHeader(DeleteBookmarkHeaderView(context))
+            refreshLayout!!.setRefreshHeader(DeleteBookmarkHeaderView(context))
         }else{
             //当前页有书签，添加头部为添加书签头部
-            refreshLayout.setRefreshHeader(AddBookmarkHeaderView(context))
+            refreshLayout!!.setRefreshHeader(AddBookmarkHeaderView(context))
             ivBookmark!!.visibility = View.GONE
         }
 
 //        refreshLayout.setRefreshHeader(AddBookmarkHeaderView(context))
 
-        refreshLayout.setOnRefreshListener { refreshlayout ->
+        refreshLayout!!.setOnRefreshListener { refreshlayout ->
             refreshlayout.finishRefresh(10 )
             //进行
             getLastReadLocator(FolioReader.ACTION_BOOKMARK);
@@ -291,6 +295,17 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
 
         }
     }
+
+    /**
+     * 是否允许书签下拉
+     */
+    fun setBookMarkStatus(status:Boolean){
+        if(refreshLayout != null){
+            refreshLayout!!.setEnableRefresh(status)
+
+        }
+    }
+
 
     /**
      * [EVENT BUS FUNCTION]

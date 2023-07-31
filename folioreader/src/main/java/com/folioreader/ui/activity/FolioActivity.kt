@@ -1538,7 +1538,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         Log.v(LOG_TAG, "-> showSystemUI")
         //停止滑动
         if(currentFragment != null &&  currentFragment!!.mWebview != null){
-            currentFragment!!.mWebview!!.stopScroll = true
+            currentFragment!!.mWebview!!.setWebViewStopScroll(true)
         }
 
         if(Build.VERSION.SDK_INT >= 30){
@@ -1564,7 +1564,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         Log.v(LOG_TAG, "-> hideSystemUI")
         //允许滑动
         if(currentFragment != null &&  currentFragment!!.mWebview != null){
-            currentFragment!!.mWebview!!.stopScroll = false
+            currentFragment!!.mWebview!!.setWebViewStopScroll(false)
         }
         if(Build.VERSION.SDK_INT >= 30){
             Log.v(LOG_TAG, "-> hideSystemUI01")

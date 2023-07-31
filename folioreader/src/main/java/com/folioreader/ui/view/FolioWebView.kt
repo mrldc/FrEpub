@@ -129,7 +129,7 @@ class FolioWebView : WebView {
     private var lastScrollType: LastScrollType? = null
     private  var highlightId: String? = null
     private var textUnderlineTextView: TextView? = null
-    public var stopScroll: Boolean = false
+    var stopScroll: Boolean = false
     val contentHeightVal: Int
         get() = floor((this.contentHeight * this.scale).toDouble()).toInt()
 
@@ -226,7 +226,8 @@ class FolioWebView : WebView {
     @JavascriptInterface
     fun dismissPopupWindow(): Boolean {
         Log.d(LOG_TAG, "-> dismissPopupWindow -> " + parentFragment.spineItem?.href)
-        stopScroll = false
+
+        setWebViewStopScroll(false)
         val wasShowing = popupWindow.isShowing
         if (Looper.getMainLooper().thread == Thread.currentThread()) {
             popupWindow.dismiss()
@@ -516,7 +517,13 @@ class FolioWebView : WebView {
             computeVerticalScroll(event)
         }
     }
-
+    //长按事件
+    override fun performLongClick(): Boolean {
+        if(stopScroll){
+            return true
+        }
+        return super.performLongClick()
+    }
     private fun computeVerticalScroll(event: MotionEvent): Boolean {
 
         gestureDetector.onTouchEvent(event)
@@ -663,7 +670,7 @@ class FolioWebView : WebView {
     }
 
     override fun startActionMode(callback: Callback): ActionMode {
-        Log.d(LOG_TAG, "-> startActionMode")
+        Log.d(LOG_TAG, "-> startActionMode-->01")
 
         textSelectionCb = TextSelectionCb()
         actionMode = super.startActionMode(textSelectionCb)
@@ -684,7 +691,7 @@ class FolioWebView : WebView {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     override fun startActionMode(callback: Callback, type: Int): ActionMode {
-        Log.d(LOG_TAG, "-> startActionMode")
+        Log.d(LOG_TAG, "-> startActionMode-->02")
 
         textSelectionCb2 = TextSelectionCb2()
         actionMode = super.startActionMode(textSelectionCb2, type)
@@ -945,7 +952,8 @@ class FolioWebView : WebView {
                         this@FolioWebView, Gravity.NO_GRAVITY,
                         popupRect.left, popupRect.top
                     )
-                    stopScroll = true
+                    setWebViewStopScroll(true)
+
                     if(id != null){
                         //选择的高亮部分
                         textUnderlineTextView!!.text ="删除划线"
@@ -1021,5 +1029,10 @@ class FolioWebView : WebView {
            }
        }
         return highlightStyle
+    }
+    fun setWebViewStopScroll(status : Boolean){
+       //设置书签是否可以下拉
+        parentFragment.setBookMarkStatus(!status)
+        stopScroll = status
     }
 }
