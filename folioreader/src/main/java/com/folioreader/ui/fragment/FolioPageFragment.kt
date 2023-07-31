@@ -270,8 +270,11 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
         }
 
 //        refreshLayout.setRefreshHeader(AddBookmarkHeaderView(context))
-
+        refreshLayout!!.setEnableRefresh(true)
+        refreshLayout!!.setHeaderMaxDragRate(6f)
+        refreshLayout!!.setHeaderTriggerRate(0.4f)
         refreshLayout!!.setOnRefreshListener { refreshlayout ->
+            Log.v(LOG_TAG,"setOnRefreshListener")
             refreshlayout.finishRefresh(10 )
             //进行
             getLastReadLocator(FolioReader.ACTION_BOOKMARK);
@@ -858,7 +861,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                     uiHandler.post{ivPageNote!!.visibility = View.GONE}
                 }
                 val bookmarkId = BookmarkTable.getBookmarkIdByCfi(href+cfi,mBookId,BookmarkTable.MARK_TYPE,context!!)
-                Log.v(LOG_TAG,"check bookmark--->bookmarkId:$bookmarkId")
+                Log.v(LOG_TAG,"check PAGE_MARK--->bookmarkId:$bookmarkId")
                 currentPageHasBookmark = bookmarkId != -1
                 uiHandler.post{initBookMarkListen()}
 
