@@ -22,6 +22,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -460,6 +461,17 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         originBrightness = (layoutParams.screenBrightness*255).toInt()
         initScreenLight(config!!.light)
         selectBackground(config!!.lightBackground)
+        //设置屏幕方向
+        if(config!!.screenOrientation == 1){
+            //竖屏
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+
+        }else if(config!!.screenOrientation == 2){
+            //横屏
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+        }else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        }
     }
     //初始化章节进度
     private fun initPageProgress() {
@@ -1755,6 +1767,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private fun configFolio() {
 
         mFolioPageViewPager = findViewById(R.id.folioPageViewPager)
+        mFolioPageViewPager!!.offscreenPageLimit = 5
         // Replacing with addOnPageChangeListener(), onPageSelected() is not invoked
         mFolioPageViewPager!!.addOnPageChangeListener(object :
             DirectionalViewpager.OnPageChangeListener {

@@ -61,6 +61,7 @@ public class Config implements Parcelable {
     private int highlightBackground = 1;
     //是否开启横屏双页
     private boolean enableHorizontalColumn = true;
+    //屏幕方向，0：自动，1：竖屏，2:横屏
     private int screenOrientation = 0;
     private boolean nightMode;
     @ColorInt
@@ -227,6 +228,7 @@ public class Config implements Parcelable {
         textSpace = getJsonItem(obj, TEXT_SPACE, 5);
         columnCount = getJsonItem(obj, COLUMN_COUNT, 2);
         lightBackground = getJsonItem(obj, LIGHT_BACKGROUND, 1);
+        light = getJsonItem(obj,LIGHT,100);
         highlightBackground = getJsonItem(obj, HIGHLIGHT_BACKGROUND, 1);
         enableHorizontalColumn = getJsonItem(obj, ENABLE_HORIZONTAL_COLUMN, true);
         screenOrientation = getJsonItem(obj, SCREEN_ORIENTATION, 0);

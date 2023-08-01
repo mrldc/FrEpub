@@ -958,6 +958,8 @@ class FolioWebView : WebView {
                         //选择的高亮部分
                         textUnderlineTextView!!.text ="删除划线"
                         highlightId = id
+                    }else{
+                        textUnderlineTextView!!.text ="划线"
                     }
                 } else {
                     Log.i(LOG_TAG, "-> Still scrolling, don't show Popup")

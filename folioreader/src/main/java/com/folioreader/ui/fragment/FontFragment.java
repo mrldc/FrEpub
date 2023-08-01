@@ -132,10 +132,11 @@ public class FontFragment extends Fragment implements FontsCallback {
                 mRootView.findViewById(R.id.tv_screen_v).setSelected(false);
                 //设置横屏
                 if(config.getEnableHorizontalColumn()){
-                    config.setScreenOrientation(2);
+                    config.setColumnCount(2);
                 }else{
-                    config.setScreenOrientation(1);
+                    config.setColumnCount(1);
                 }
+                config.setScreenOrientation(2);
                 AppUtil.saveConfig(getActivity(),config);
                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
