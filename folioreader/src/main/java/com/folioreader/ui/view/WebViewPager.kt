@@ -178,7 +178,7 @@ class WebViewPager : ViewPager {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        Log.d(LOG_TAG, "-> onTouchEvent -> " );
+        Log.d(LOG_TAG, "-> onTouchEvent -> event.action->"+event!!.action );
 
         if (event == null)
             return false

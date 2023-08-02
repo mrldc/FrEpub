@@ -83,6 +83,7 @@ import com.folioreader.ui.fragment.*
 import com.folioreader.ui.view.ConfigBottomSheetDialogFragment
 import com.folioreader.ui.view.DirectionalViewpager
 import com.folioreader.ui.view.FolioAppBarLayout
+import com.folioreader.ui.view.FolioWebView
 import com.folioreader.ui.view.MediaControllerCallback
 import com.folioreader.util.*
 import com.folioreader.util.AppUtil.Companion.getSavedConfig
@@ -196,6 +197,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     private var niftySlider : NiftySlider? = null
     private var customTipView : CustomTipViewBinding ?= null
+
     // page count
     private lateinit var pageTrackerViewModel: PageTrackerViewModel
 
@@ -507,6 +509,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rlMain!!.setOnClickListener(View.OnClickListener {
             hideSystemUI()
         })
+
         rl_edit!!.setOnClickListener(View.OnClickListener {
 
         })
@@ -1147,6 +1150,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         readBook = book
     }
 
+    override fun setStopScroll(stopScroll: Boolean) {
+        if(mFolioPageViewPager != null){
+            mFolioPageViewPager!!.stopScroll = stopScroll
+        }
+    }
+
     override fun selectBackground(index: Int) {
         if(mFolioPageViewPager == null){
             return
@@ -1552,6 +1561,10 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         if(currentFragment != null &&  currentFragment!!.mWebview != null){
             currentFragment!!.mWebview!!.setWebViewStopScroll(true)
         }
+        if(mFolioPageViewPager != null){
+            mFolioPageViewPager!!.stopScroll = true
+        }
+
 
         if(Build.VERSION.SDK_INT >= 30){
             val windowInsetsController = window.decorView.windowInsetsController
@@ -1577,6 +1590,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         //允许滑动
         if(currentFragment != null &&  currentFragment!!.mWebview != null){
             currentFragment!!.mWebview!!.setWebViewStopScroll(false)
+        }
+        if(mFolioPageViewPager != null){
+            mFolioPageViewPager!!.stopScroll = false
         }
         if(Build.VERSION.SDK_INT >= 30){
             Log.v(LOG_TAG, "-> hideSystemUI01")
@@ -1767,7 +1783,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private fun configFolio() {
 
         mFolioPageViewPager = findViewById(R.id.folioPageViewPager)
-        mFolioPageViewPager!!.offscreenPageLimit = 5
+        mFolioPageViewPager!!.offscreenPageLimit = 3
         // Replacing with addOnPageChangeListener(), onPageSelected() is not invoked
         mFolioPageViewPager!!.addOnPageChangeListener(object :
             DirectionalViewpager.OnPageChangeListener {
@@ -1776,7 +1792,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             ) {
                 Log.v(
                     LOG_TAG,
-                    "-> onPageScrolled value -> DirectionalViewpager -> position = $position"
+                    "-> onPageScrolled value -> DirectionalViewpager -> position = $position--positionOffset:$positionOffset"
                 )
 
 
@@ -1837,7 +1853,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         })
 
         mFolioPageViewPager!!.setDirection(direction)
-       // mFolioPageViewPager!!.offscreenPageLimit = 5
+
         mFolioPageFragmentAdapter = FolioPageFragmentAdapter(
             supportFragmentManager, spine, bookFileName, mBookId, pageTrackerViewModel
         )

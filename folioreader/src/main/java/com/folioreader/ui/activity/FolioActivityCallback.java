@@ -51,4 +51,6 @@ public interface FolioActivityCallback {
     void tabController(Boolean directory ,Boolean write  ,Boolean light  , Boolean font  );
     /**选择背景图片**/
     void selectBackground(Integer index);
+
+    void setStopScroll(Boolean stopScroll);
 }

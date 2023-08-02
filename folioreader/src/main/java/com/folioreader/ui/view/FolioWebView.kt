@@ -66,7 +66,7 @@ import kotlin.math.floor
 class FolioWebView : WebView {
 
     companion object {
-
+        @JvmStatic var stopScroll: Boolean = false
         val LOG_TAG: String = FolioWebView::class.java.simpleName
         private const val IS_SCROLLING_CHECK_TIMER = 100
         private const val IS_SCROLLING_CHECK_MAX_DURATION = 10000
@@ -129,7 +129,7 @@ class FolioWebView : WebView {
     private var lastScrollType: LastScrollType? = null
     private  var highlightId: String? = null
     private var textUnderlineTextView: TextView? = null
-    var stopScroll: Boolean = false
+
     val contentHeightVal: Int
         get() = floor((this.contentHeight * this.scale).toDouble()).toInt()
 
@@ -228,6 +228,7 @@ class FolioWebView : WebView {
         Log.d(LOG_TAG, "-> dismissPopupWindow -> " + parentFragment.spineItem?.href)
 
         setWebViewStopScroll(false)
+        folioActivityCallback.setStopScroll(false)
         val wasShowing = popupWindow.isShowing
         if (Looper.getMainLooper().thread == Thread.currentThread()) {
             popupWindow.dismiss()
@@ -531,10 +532,10 @@ class FolioWebView : WebView {
     }
 
     private fun computeHorizontalScroll(event: MotionEvent): Boolean {
-        Log.v(LOG_TAG, "-> computeHorizontalScroll--> event.action"+ event.action);
+        Log.v(LOG_TAG, "-> computeHorizontalScroll--> event.action->"+ event.action+" stopScroll-->$stopScroll");
         //非点击事件，停止滑动标志为真时，禁止滑动
         if(event.action != MotionEvent.ACTION_DOWN && event.action != MotionEvent.ACTION_UP && stopScroll){
-            return false
+            return true
         }
         // Rare condition in fast scrolling
         if (!::webViewPager.isInitialized )
@@ -696,7 +697,8 @@ class FolioWebView : WebView {
         textSelectionCb2 = TextSelectionCb2()
         actionMode = super.startActionMode(textSelectionCb2, type)
         actionMode?.finish()
-
+        //文本选择停止滚动
+        folioActivityCallback.setStopScroll(true)
         /*try {
             applyThemeColorToHandles()
         } catch (e: Exception) {
@@ -953,7 +955,7 @@ class FolioWebView : WebView {
                         popupRect.left, popupRect.top
                     )
                     setWebViewStopScroll(true)
-
+                    folioActivityCallback.setStopScroll(true)
                     if(id != null){
                         //选择的高亮部分
                         textUnderlineTextView!!.text ="删除划线"

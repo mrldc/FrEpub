@@ -87,6 +87,8 @@ public class DirectionalViewpager extends ViewGroup {
      * If the app changes this when we don't expect it, we'll throw a big obnoxious exception.
      */
     private int mExpectedAdapterCount;
+    //是否禁止滑动
+    public boolean stopScroll = false;
     public String mDirection = Direction.VERTICAL.name();
 
     static class ItemInfo {
@@ -2439,6 +2441,9 @@ public class DirectionalViewpager extends ViewGroup {
                 if (DEBUG) Log.v(TAG, "Intercept returning false!");
                 return false;
             }
+            if(stopScroll){
+                return true;
+            }
         }
 
         if (isHorizontal()) {
@@ -2660,6 +2665,9 @@ public class DirectionalViewpager extends ViewGroup {
             // A fake drag is in progress already, ignore this real one
             // but still eat the touch events.
             // (It is likely that the user is multi-touching the screen.)
+            return true;
+        }
+        if(stopScroll){
             return true;
         }
 
@@ -2906,6 +2914,7 @@ public class DirectionalViewpager extends ViewGroup {
     private boolean performDrag(float x, float y) {
         boolean needsInvalidate = false;
         if (isHorizontal()) {
+
             final float deltaX = mLastMotionX - x;
             mLastMotionX = x;
 
@@ -2944,6 +2953,7 @@ public class DirectionalViewpager extends ViewGroup {
             }
             // Don't lose the rounded component
             mLastMotionX += scrollX - (int) scrollX;
+            Log.v("DirectionalViewpager","scrollX-->"+scrollX+" ScrollY-->"+getScrollY());
             scrollTo((int) scrollX, getScrollY());
             pageScrolled((int) scrollX, 0);
         } else {
