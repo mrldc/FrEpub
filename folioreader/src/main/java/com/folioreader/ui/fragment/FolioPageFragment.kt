@@ -527,7 +527,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
                 Log.v(LOG_TAG, "-> onPageScrolled ->pagePosition-> $position->chapter->$spineIndex-->positionOffsetPixels:$positionOffsetPixels")
                 // pageViewModel.setCurrentPage(position + 1)
 
-
+                mActivityCallback!!.toggleSystemUI(false)
             }
 
             override fun onPageSelected(position: Int) {

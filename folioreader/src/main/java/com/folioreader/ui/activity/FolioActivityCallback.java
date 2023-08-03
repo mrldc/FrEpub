@@ -27,7 +27,7 @@ public interface FolioActivityCallback {
     void storeLastReadLocator(ReadLocator lastReadLocator);
 
     void toggleSystemUI();
-
+    void toggleSystemUI(Boolean showUI);
     void setDayMode();
 
     void setNightMode();

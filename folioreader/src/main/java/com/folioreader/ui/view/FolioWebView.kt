@@ -955,7 +955,7 @@ class FolioWebView : WebView {
                         popupRect.left, popupRect.top
                     )
                     setWebViewStopScroll(true)
-                    folioActivityCallback.setStopScroll(true)
+                    folioActivityCallback.toggleSystemUI(false)
                     if(id != null){
                         //选择的高亮部分
                         textUnderlineTextView!!.text ="删除划线"

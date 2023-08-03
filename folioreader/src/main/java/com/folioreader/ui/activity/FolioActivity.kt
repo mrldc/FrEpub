@@ -1554,13 +1554,23 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         rl_edit!!.visibility = View.GONE
         rlMain!!.visibility = View.GONE
     }
+    override fun toggleSystemUI(showUI :Boolean) {
+        if(distractionFreeMode && showUI){
+            showSystemUI()
+            distractionFreeMode = !distractionFreeMode
+        }
+        if(!distractionFreeMode && !showUI){
+            hideSystemUI()
+            distractionFreeMode = !distractionFreeMode
+        }
+    }
 
     private fun showSystemUI() {
         Log.v(LOG_TAG, "-> showSystemUI")
         //停止滑动
-        if(currentFragment != null &&  currentFragment!!.mWebview != null){
+       /* if(currentFragment != null &&  currentFragment!!.mWebview != null){
             currentFragment!!.mWebview!!.setWebViewStopScroll(true)
-        }
+        }*/
         if(mFolioPageViewPager != null){
             mFolioPageViewPager!!.stopScroll = true
         }
@@ -1588,12 +1598,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private fun hideSystemUI() {
         Log.v(LOG_TAG, "-> hideSystemUI")
         //允许滑动
-        if(currentFragment != null &&  currentFragment!!.mWebview != null){
+       /* if(currentFragment != null &&  currentFragment!!.mWebview != null){
             currentFragment!!.mWebview!!.setWebViewStopScroll(false)
         }
         if(mFolioPageViewPager != null){
             mFolioPageViewPager!!.stopScroll = false
-        }
+        }*/
         if(Build.VERSION.SDK_INT >= 30){
             Log.v(LOG_TAG, "-> hideSystemUI01")
             val windowInsetsController = window.decorView.windowInsetsController
@@ -1794,7 +1804,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                     LOG_TAG,
                     "-> onPageScrolled value -> DirectionalViewpager -> position = $position--positionOffset:$positionOffset"
                 )
-
+                toggleSystemUI(false)
 
             }
 
