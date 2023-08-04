@@ -1571,9 +1571,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
        /* if(currentFragment != null &&  currentFragment!!.mWebview != null){
             currentFragment!!.mWebview!!.setWebViewStopScroll(true)
         }*/
-        if(mFolioPageViewPager != null){
+       /* if(mFolioPageViewPager != null){
             mFolioPageViewPager!!.stopScroll = true
-        }
+        }*/
 
 
         if(Build.VERSION.SDK_INT >= 30){
