@@ -1212,7 +1212,7 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         Log.v(LOG_TAG,"onConfigurationChanged")
-        AppUtil.initHorizontalColumn(newConfig.orientation,activity)
+        AppUtil.initHorizontalColumn(newConfig.orientation,activity,null)
         initHorizontalDirection()
         reload(ReloadDataEvent())
     }

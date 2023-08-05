@@ -201,23 +201,26 @@ class AppUtil {
             return portNumberAvailable
         }
         //初始化页面时单页还是双页
-        fun initHorizontalColumn(orientation:Int,context: Context?,config:Config){
-
+        fun initHorizontalColumn(orientation:Int,context: Context?,config:Config?){
+            var mConfig = config
+            if(config == null){
+                mConfig = AppUtil.getSavedConfig(context)
+            }
             if(orientation == Configuration.ORIENTATION_LANDSCAPE){
                 //横屏
                 //判断当前是否有开启横屏双页
-                if(config!!.enableHorizontalColumn){
+                if(mConfig!!.enableHorizontalColumn){
                     //横屏双页
-                    config!!.columnCount = 2
+                    mConfig!!.columnCount = 2
                 }else{
-                    config!!.columnCount = 1
+                    mConfig!!.columnCount = 1
                 }
 
             }else{
                 //竖屏
-                config!!.columnCount = 1
+                mConfig!!.columnCount = 1
             }
-            saveConfig(context,config!!)
+            saveConfig(context,mConfig!!)
         }
     }
 }
