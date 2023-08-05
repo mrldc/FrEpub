@@ -50,6 +50,7 @@ import kotlinx.android.synthetic.main.widget_text_selection.view.iv_font_light
 import kotlinx.android.synthetic.main.widget_text_selection.view.iv_green
 import kotlinx.android.synthetic.main.widget_text_selection.view.iv_pink
 import kotlinx.android.synthetic.main.widget_text_selection.view.iv_right_white
+import kotlinx.android.synthetic.main.widget_text_selection.view.tv_cancel
 import kotlinx.android.synthetic.main.widget_text_selection.view.tv_copy
 import kotlinx.android.synthetic.main.widget_text_selection.view.tv_dv_line
 import kotlinx.android.synthetic.main.widget_text_selection.view.tv_write
@@ -187,6 +188,9 @@ class FolioWebView : WebView {
             distanceX: Float,
             distanceY: Float
         ): Boolean {
+            if(folioActivityCallback.toggleSystemUI){
+                folioActivityCallback.toggleSystemUI(false)
+            }
             //Log.d(LOG_TAG, "-> onScroll -> e1 = " + e1 + ", e2 = " + e2 + ", distanceX = " + distanceX + ", distanceY = " + distanceY);
             lastScrollType = LastScrollType.USER
             return false
@@ -406,7 +410,10 @@ class FolioWebView : WebView {
             dismissPopupWindow()
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
         }
-
+        //取消
+        viewTextSelection.tv_cancel.setOnClickListener{
+            dismissPopupWindowAndClearSelection()
+        }
         initHighlightSelectColor(config.highlightBackground)
     }
 
@@ -505,10 +512,10 @@ class FolioWebView : WebView {
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        //Log.v(LOG_TAG, "-> onTouchEvent -> " + AppUtil.actionToString(event.getAction()));
 
         if (event == null)
             return false
+        Log.v(LOG_TAG, "-> onTouchEvent -> " + AppUtil.actionToString(event!!.getAction()));
 
         lastTouchAction = event.action
 
@@ -531,18 +538,30 @@ class FolioWebView : WebView {
         return super.onTouchEvent(event)
     }
 
+
     private fun computeHorizontalScroll(event: MotionEvent): Boolean {
         Log.v(LOG_TAG, "-> computeHorizontalScroll--> event.action->"+ event.action+" stopScroll-->$stopScroll");
         //非点击事件，停止滑动标志为真时，禁止滑动
-        if(event.action != MotionEvent.ACTION_DOWN && event.action != MotionEvent.ACTION_UP && stopScroll){
+        if(event.action == MotionEvent.ACTION_MOVE && stopScroll){
             return true
         }
+        if(event.action == MotionEvent.ACTION_CANCEL || event.action == MotionEvent.ACTION_UP){
+            if(stopScroll){
+                dismissPopupWindowAndClearSelection()
+            }
+        }
+        if(event.action == MotionEvent.ACTION_CANCEL ){
+            if(folioActivityCallback.toggleSystemUI){
+                folioActivityCallback.toggleSystemUI(false)
+            }
+        }
+        val gestureReturn = gestureDetector.onTouchEvent(event)
         // Rare condition in fast scrolling
         if (!::webViewPager.isInitialized )
             return super.onTouchEvent(event)
 
         webViewPager.dispatchTouchEvent(event)
-        val gestureReturn = gestureDetector.onTouchEvent(event)
+
         return if (gestureReturn) true else super.onTouchEvent(event)
     }
 

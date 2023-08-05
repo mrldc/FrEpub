@@ -269,12 +269,15 @@ class FolioPageFragment(private var pageViewModel: PageTrackerViewModel) : Fragm
             ivBookmark!!.visibility = View.GONE
         }
 
+
 //        refreshLayout.setRefreshHeader(AddBookmarkHeaderView(context))
         refreshLayout!!.setEnableRefresh(true)
         refreshLayout!!.setHeaderMaxDragRate(6f)
         refreshLayout!!.setHeaderTriggerRate(0.4f)
         refreshLayout!!.setOnRefreshListener { refreshlayout ->
             Log.v(LOG_TAG,"setOnRefreshListener")
+            //隐藏导航栏
+            mActivityCallback!!.toggleSystemUI(false)
             refreshlayout.finishRefresh(10 )
             //进行
             getLastReadLocator(FolioReader.ACTION_BOOKMARK);

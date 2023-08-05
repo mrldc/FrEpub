@@ -53,4 +53,6 @@ public interface FolioActivityCallback {
     void selectBackground(Integer index);
 
     void setStopScroll(Boolean stopScroll);
+
+    boolean getToggleSystemUI();
 }

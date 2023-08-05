@@ -323,14 +323,18 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             }*/
         },500)
 
-        //当有阅读记录时，跳转
-        if(readBook != null){
-            gotoChapterByNumber(readBook!!.chapterNumber!!,readBook!!.pageNumber!!)
-           // goToChapter(readBook!!.href,readBook!!.cfi)
-        }
+
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        //当有阅读记录时，跳转
+        if(readBook != null){
+            gotoChapterByNumber(readBook!!.chapterNumber!!,readBook!!.pageNumber!!)
+            // goToChapter(readBook!!.href,readBook!!.cfi)
+        }
+    }
 //    @Subscribe(threadMode = ThreadMode.MAIN)
 //    fun onMessageEvent(event: MessageEvent) {
 //        //TODO 接收事件后Do something
@@ -1150,6 +1154,10 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         readBook = book
     }
 
+    override fun getToggleSystemUI(): Boolean {
+        return !distractionFreeMode
+    }
+
     override fun setStopScroll(stopScroll: Boolean) {
         if(mFolioPageViewPager != null){
             mFolioPageViewPager!!.stopScroll = stopScroll
@@ -1571,9 +1579,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
        /* if(currentFragment != null &&  currentFragment!!.mWebview != null){
             currentFragment!!.mWebview!!.setWebViewStopScroll(true)
         }*/
-        if(mFolioPageViewPager != null){
+      /*  if(mFolioPageViewPager != null){
             mFolioPageViewPager!!.stopScroll = true
-        }
+        }*/
 
 
         if(Build.VERSION.SDK_INT >= 30){

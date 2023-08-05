@@ -2441,11 +2441,13 @@ public class DirectionalViewpager extends ViewGroup {
                 if (DEBUG) Log.v(TAG, "Intercept returning false!");
                 return false;
             }
+
+        }
+        if(action == MotionEvent.ACTION_MOVE){
             if(stopScroll){
                 return true;
             }
         }
-
         if (isHorizontal()) {
 
             switch (action) {
