@@ -389,8 +389,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         config!!.allowedDirection = Config.AllowedDirection.ONLY_HORIZONTAL
         config!!.isShowTextSelection = true
         //横屏双页
-        AppUtil.saveConfig(this,config!!)
-        AppUtil.initHorizontalColumn(resources.configuration.orientation,this)
+        AppUtil.initHorizontalColumn(resources.configuration.orientation,this, config!!)
 
         //获取其他参数
         hideListenAudeoL = intent.getBooleanExtra(this.HIDE_LISTEN_AUDEOL,false)
