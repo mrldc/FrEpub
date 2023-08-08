@@ -84,7 +84,14 @@ public class FolioPageFragmentAdapter extends FragmentStatePagerAdapter {
             }
 
             fragments.set(position, fragment);
+        }else{
+            if(fragment.getPageProgress() == null){
+                if(pageProgressesList != null && pageProgressesList.size() > 0){
+                    fragment.setPageProgress(pageProgressesList.get(position));
+                }
+            }
         }
+        fragment.updatePageProgress();
         return fragment;
     }
 

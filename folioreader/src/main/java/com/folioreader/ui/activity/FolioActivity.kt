@@ -1137,6 +1137,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     }
 
     override fun updateProgressUi(percent: Double) {
+        Log.v(LOG_TAG,"updateProgressUi-->$percent")
        niftySlider!!.setValue((percent*100).toFloat(),true)
     }
 
@@ -1873,7 +1874,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         var pageProgressList = PageProgressTable.getAllPageProgress(mBookId,this)
         if(pageProgressList != null && pageProgressList.size > 0){
-            mFolioPageFragmentAdapter!!.pageProgressesList = pageProgressList
+
             //有记录
             onCompletePageCalculate(pageProgressList)
         }else{
@@ -2138,15 +2139,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     /**完成页面进度计算**/
     override fun onCompletePageCalculate(pageProgressList: MutableList<PageProgress>?) {
         if(pageProgressList != null && pageProgressList.size > 0){
+            mFolioPageFragmentAdapter!!.pageProgressesList = pageProgressList
             if(mFolioPageFragmentAdapter != null && mFolioPageFragmentAdapter!!.fragments.size == pageProgressList.size){
-                //初始化页面
-                for (i in pageProgressList.indices){
-                   var fragment = mFolioPageFragmentAdapter!!.fragments[i]
-                    if(fragment != null){
-                        fragment.pageProgress = pageProgressList[i];
-                    }
 
-                }
             }else{
                 Log.v(LOG_TAG,"页面进度计算结果与现有章节数对应不上")
             }
