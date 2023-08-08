@@ -201,8 +201,11 @@ class AppUtil {
             return portNumberAvailable
         }
         //初始化页面时单页还是双页
-        fun initHorizontalColumn(orientation:Int,context: Context?){
-            var mConfig = getSavedConfig(context)
+        fun initHorizontalColumn(orientation:Int,context: Context?,config:Config?){
+            var mConfig = config
+            if(config == null){
+                mConfig = AppUtil.getSavedConfig(context)
+            }
             if(orientation == Configuration.ORIENTATION_LANDSCAPE){
                 //横屏
                 //判断当前是否有开启横屏双页

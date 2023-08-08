@@ -197,6 +197,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
     private var niftySlider : NiftySlider? = null
     private var customTipView : CustomTipViewBinding ?= null
+    private var filePath : String? = null
 
     // page count
     private lateinit var pageTrackerViewModel: PageTrackerViewModel
@@ -313,24 +314,19 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             // FolioActivity is topActivity, so need to broadcast ReadLocator.
             finish()
         }
-        handler!!.postDelayed({
-            //读取章节位置信息-校验是否有书签
-            Log.v(LOG_TAG,"ACTION_PAGE_MARK-->onResume ")
-         /*   if(currentFragment != null){
-                currentFragment!!.getLastReadLocator(FolioReader.ACTION_CHECK_BOOKMARK +"|" +FolioReader.ACTION_PAGE_MARK)
-                //更新阅读进度条
-                currentFragment!!.updatePageProgress()
-            }*/
-        },500)
 
-        //当有阅读记录时，跳转
-        if(readBook != null){
-            gotoChapterByNumber(readBook!!.chapterNumber!!,readBook!!.pageNumber!!)
-           // goToChapter(readBook!!.href,readBook!!.cfi)
-        }
+
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        //当有阅读记录时，跳转
+        if(readBook != null){
+            gotoChapterByNumber(readBook!!.chapterNumber!!,readBook!!.pageNumber!!)
+            // goToChapter(readBook!!.href,readBook!!.cfi)
+        }
+    }
 //    @Subscribe(threadMode = ThreadMode.MAIN)
 //    fun onMessageEvent(event: MessageEvent) {
 //        //TODO 接收事件后Do something
@@ -375,7 +371,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         // TODO -> Make this configurable
         // getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        setConfig(savedInstanceState)
+       // setConfig(savedInstanceState)
 
         initDistractionFreeMode(savedInstanceState)
 
@@ -393,8 +389,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         config!!.allowedDirection = Config.AllowedDirection.ONLY_HORIZONTAL
         config!!.isShowTextSelection = true
         //横屏双页
-        AppUtil.saveConfig(this,config!!)
-        AppUtil.initHorizontalColumn(resources.configuration.orientation,this)
+        AppUtil.initHorizontalColumn(resources.configuration.orientation,this, config!!)
 
         //获取其他参数
         hideListenAudeoL = intent.getBooleanExtra(this.HIDE_LISTEN_AUDEOL,false)
@@ -403,6 +398,9 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         //外部传入电子书的路径
         var path  = intent.getStringExtra(FolioReader.BOOK_FILE_URL)
+        if (savedInstanceState != null) {
+            path = savedInstanceState.getString(FolioReader.BOOK_FILE_URL)
+        }
         if(path == null){
             //从共享文件夹读取文件
              path= applicationContext.getExternalFilesDir(
@@ -1150,6 +1148,10 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         readBook = book
     }
 
+    override fun getToggleSystemUI(): Boolean {
+        return !distractionFreeMode
+    }
+
     override fun setStopScroll(stopScroll: Boolean) {
         if(mFolioPageViewPager != null){
             mFolioPageViewPager!!.stopScroll = stopScroll
@@ -1571,7 +1573,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
        /* if(currentFragment != null &&  currentFragment!!.mWebview != null){
             currentFragment!!.mWebview!!.setWebViewStopScroll(true)
         }*/
-       /* if(mFolioPageViewPager != null){
+      /*  if(mFolioPageViewPager != null){
             mFolioPageViewPager!!.stopScroll = true
         }*/
 
@@ -1947,6 +1949,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         outState.putBoolean(BUNDLE_DISTRACTION_FREE_MODE, distractionFreeMode)
         outState.putBundle(SearchAdapter.DATA_BUNDLE, searchAdapterDataBundle)
         outState.putCharSequence(SearchActivity.BUNDLE_SAVE_SEARCH_QUERY, searchQuery)
+        //保存文件地址
+        outState.putString(FolioReader.BOOK_FILE_URL,mEpubFilePath)
     }
 
     override fun storeLastReadLocator(lastReadLocator: ReadLocator) {

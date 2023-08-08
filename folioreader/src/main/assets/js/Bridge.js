@@ -1087,12 +1087,18 @@ function rectContains(a, b) {
 
 function insertMarkIcon(id) {
     var oldElement = document.getElementById(id);
+    var imgId = id+markIdSuffix;
+
+    //判断图标是否已存在
+    if(document.getElementById(imgId)){
+      return
+    }
     var parent = oldElement.parentNode;
     var icon = document.createElement("img");
     icon.src="file:///android_asset/image/page_mark.png";
     icon.className = 'mark_image';
     icon.setAttribute("class", 'mark_image');
-    icon.setAttribute("id", id+markIdSuffix);
+    icon.setAttribute("id", imgId);
     icon.setAttribute("onclick","onClickMarkImage(this)");
     parent.replaceChild(icon,oldElement);
     parent.insertBefore(oldElement,icon)
